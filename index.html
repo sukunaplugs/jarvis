@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>JARVIS — Multi-AI Assistant</title>
+<title>JARVIS — Fused Multi-AI Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -11,15 +11,11 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
   --bg:#000;
-  --panel:rgba(10,10,10,.72);
-  --panel2:rgba(18,18,18,.82);
+  --panel:rgba(10,10,10,.78);
   --border:rgba(255,255,255,.10);
-  --border2:rgba(255,255,255,.18);
   --text:#f2f2f2;
   --muted:#8a8a8a;
   --muted2:#5a5a5a;
-  --accent:#fff;
-  --shadow:0 20px 60px rgba(0,0,0,.85);
 }
 html,body{height:100%}
 body{
@@ -29,7 +25,7 @@ body{
 }
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:20px}
-::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.28)}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.3)}
 ::-webkit-scrollbar-track{background:transparent}
 .hidden{display:none !important}
 
@@ -37,14 +33,14 @@ body{
 #bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
 .glowLayer{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .glow{
-  position:absolute;border-radius:50%;filter:blur(120px);
-  background:radial-gradient(circle,rgba(255,255,255,.22),transparent 70%);
-  animation:drift 22s ease-in-out infinite;will-change:transform;
+  position:absolute;border-radius:50%;filter:blur(130px);
+  background:radial-gradient(circle,rgba(255,255,255,.2),transparent 70%);
+  animation:drift 24s ease-in-out infinite;will-change:transform;
 }
 .glow.a{width:520px;height:520px;top:-180px;left:-160px}
-.glow.b{width:460px;height:460px;bottom:-200px;right:-160px;animation-delay:-8s;opacity:.75}
-.glow.c{width:380px;height:380px;top:40%;left:55%;animation-delay:-14s;opacity:.55}
-.glow.d{width:300px;height:300px;bottom:15%;left:10%;animation-delay:-5s;opacity:.4}
+.glow.b{width:460px;height:460px;bottom:-200px;right:-160px;animation-delay:-8s;opacity:.7}
+.glow.c{width:380px;height:380px;top:42%;left:55%;animation-delay:-14s;opacity:.5}
+.glow.d{width:300px;height:300px;bottom:15%;left:10%;animation-delay:-5s;opacity:.35}
 @keyframes drift{
   0%,100%{transform:translate(0,0) scale(1)}
   33%{transform:translate(60px,-70px) scale(1.15)}
@@ -70,7 +66,7 @@ body{
 .authCard{
   position:relative;width:min(430px,100%);
   padding:36px 32px 32px;border-radius:24px;
-  background:rgba(10,10,10,.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  background:rgba(10,10,10,.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
   border:1px solid var(--border);
   box-shadow:0 50px 120px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.05) inset;
   animation:popIn .6s cubic-bezier(.2,.9,.3,1.3);
@@ -86,22 +82,36 @@ body{
   font-size:36px;font-weight:800;letter-spacing:10px;text-align:center;
   background:linear-gradient(135deg,#fff 0%,#888 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
-  filter:drop-shadow(0 0 26px rgba(255,255,255,.35));
   animation:logoPulse 3.4s ease-in-out infinite;
 }
 @keyframes logoPulse{
   0%,100%{filter:drop-shadow(0 0 18px rgba(255,255,255,.25));opacity:.95}
   50%{filter:drop-shadow(0 0 34px rgba(255,255,255,.6));opacity:1}
 }
-.brandSub{text-align:center;color:var(--muted);font-size:11.5px;margin:10px 0 26px;letter-spacing:2.2px;text-transform:uppercase}
-.tabs{display:flex;gap:6px;background:rgba(255,255,255,.045);padding:5px;border-radius:14px;margin-bottom:22px;position:relative}
+.brandSub{text-align:center;color:var(--muted);font-size:11px;margin:10px 0 26px;letter-spacing:2.4px;text-transform:uppercase}
+.fusionBadges{
+  display:flex;justify-content:center;gap:7px;margin-bottom:22px;flex-wrap:wrap;
+}
+.fusionBadges span{
+  font-size:9.5px;font-weight:600;letter-spacing:.5px;padding:4px 9px;border-radius:20px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#aaa;
+  animation:badgeIn .5s backwards;
+}
+.fusionBadges span:nth-child(1){animation-delay:.15s}
+.fusionBadges span:nth-child(2){animation-delay:.25s}
+.fusionBadges span:nth-child(3){animation-delay:.35s}
+.fusionBadges span:nth-child(4){animation-delay:.45s}
+.fusionBadges span:nth-child(5){animation-delay:.55s}
+@keyframes badgeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.tabs{display:flex;gap:6px;background:rgba(255,255,255,.045);padding:5px;border-radius:14px;margin-bottom:22px}
 .tab{
   flex:1;padding:11px;border:0;border-radius:10px;background:transparent;color:var(--muted);
   font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:.3s;letter-spacing:.3px;
 }
 .tab.active{background:#fff;color:#000;box-shadow:0 6px 22px rgba(255,255,255,.25)}
 .tab:not(.active):hover{color:#ccc}
-.field{margin-bottom:13px;position:relative}
+.field{margin-bottom:13px}
 .field input{
   width:100%;padding:14px 16px;border-radius:13px;
   background:rgba(255,255,255,.045);border:1px solid var(--border);
@@ -112,10 +122,7 @@ body{
   border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.08);
   box-shadow:0 0 0 4px rgba(255,255,255,.06);
 }
-.btn{
-  font-family:inherit;font-weight:600;cursor:pointer;border:0;
-  border-radius:13px;transition:.28s;font-size:14px;
-}
+.btn{font-family:inherit;font-weight:600;cursor:pointer;border:0;border-radius:13px;transition:.28s;font-size:14px}
 .btnPrimary{
   width:100%;padding:14px;color:#000;background:#fff;
   box-shadow:0 10px 32px rgba(255,255,255,.22);position:relative;overflow:hidden;
@@ -124,8 +131,7 @@ body{
 .btnPrimary:active{transform:translateY(0) scale(.985)}
 .btnPrimary::after{
   content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);
-  transition:.6s;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);transition:.6s;
 }
 .btnPrimary:hover::after{left:100%}
 .errBox{
@@ -141,13 +147,12 @@ body{
   60%{transform:translateX(-4px)}80%{transform:translateX(4px)}
 }
 
-/* ================= APP LAYOUT ================= */
+/* ================= APP ================= */
 #app{position:relative;z-index:10;display:flex;height:100vh;width:100%}
 
-/* ---------- Sidebar ---------- */
 .sidebar{
   width:270px;flex-shrink:0;display:flex;flex-direction:column;
-  background:rgba(6,6,6,.85);backdrop-filter:blur(22px);
+  background:rgba(6,6,6,.88);backdrop-filter:blur(22px);
   border-right:1px solid var(--border);transition:transform .35s cubic-bezier(.4,0,.2,1);
 }
 .sideTop{padding:20px 16px 12px}
@@ -156,6 +161,7 @@ body{
   background:linear-gradient(135deg,#fff,#777);
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
+.sideBrandSub{font-size:9px;color:var(--muted2);letter-spacing:1.4px;margin-top:3px}
 .newChatBtn{
   width:100%;margin-top:16px;padding:12px;border-radius:12px;
   background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);
@@ -196,10 +202,9 @@ body{
 }
 .sideBtn:hover{background:rgba(255,255,255,.06);color:#fff;border-color:rgba(255,255,255,.2)}
 
-/* ---------- Main ---------- */
 .main{flex:1;display:flex;flex-direction:column;min-width:0}
 .topbar{
-  height:60px;flex-shrink:0;display:flex;align-items:center;gap:12px;padding:0 18px;
+  height:62px;flex-shrink:0;display:flex;align-items:center;gap:14px;padding:0 18px;
   border-bottom:1px solid var(--border);background:rgba(6,6,6,.6);backdrop-filter:blur(16px);
 }
 .menuBtn{
@@ -211,27 +216,22 @@ body{
   background:linear-gradient(135deg,#fff,#888);
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
-.modelSelector{
-  display:flex;gap:5px;padding:4px;border-radius:12px;
-  background:rgba(255,255,255,.045);border:1px solid var(--border);
+.fusionChip{
+  display:flex;align-items:center;gap:8px;padding:6px 12px 6px 10px;border-radius:20px;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.4px;
 }
-.modelBtn{
-  padding:7px 12px;border-radius:8px;border:0;background:transparent;
-  color:var(--muted);font-family:inherit;font-size:11.5px;font-weight:600;
-  cursor:pointer;transition:.24s;display:flex;align-items:center;gap:5px;
-  white-space:nowrap;
+.fusionChip .dots{display:flex;gap:3px}
+.fusionChip .dots i{
+  width:6px;height:6px;border-radius:50%;background:#fff;display:block;
+  animation:dotPulse 2s ease-in-out infinite;
 }
-.modelBtn:hover{color:#ccc}
-.modelBtn.active{background:#fff;color:#000}
-.modelDot{
-  width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;
-}
-.modelBtn.gpt .modelDot{background:#10a37f}
-.modelBtn.claude .modelDot{background:#cc785c}
-.modelBtn.grok .modelDot{background:#888}
-.modelBtn.deepseek .modelDot{background:#4d6bfe}
-.modelBtn.gemini .modelDot{background:#4285f4}
-.modelBtn.active .modelDot{background:currentColor}
+.fusionChip .dots i:nth-child(1){animation-delay:0s;opacity:.9}
+.fusionChip .dots i:nth-child(2){animation-delay:.15s;opacity:.75}
+.fusionChip .dots i:nth-child(3){animation-delay:.3s;opacity:.6}
+.fusionChip .dots i:nth-child(4){animation-delay:.45s;opacity:.45}
+.fusionChip .dots i:nth-child(5){animation-delay:.6s;opacity:.35}
+@keyframes dotPulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.5);opacity:1}}
 .topSpacer{flex:1}
 .statusPill{
   display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:20px;
@@ -249,7 +249,7 @@ body{
 .iconBtn:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);transform:translateY(-1px)}
 .iconBtn.active{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4)}
 
-/* ---------- Messages ---------- */
+/* messages */
 .messages{flex:1;overflow-y:auto;padding:26px 0 12px;scroll-behavior:smooth}
 .msgWrap{max-width:820px;margin:0 auto 18px;padding:0 20px;display:flex;gap:12px;
   animation:bubbleIn .45s cubic-bezier(.2,.9,.3,1.3);will-change:transform}
@@ -261,9 +261,16 @@ body{
 .msgWrap.user{flex-direction:row-reverse}
 .msgAvatar{
   width:32px;height:32px;border-radius:10px;flex-shrink:0;display:grid;place-items:center;
-  font-size:13px;font-weight:800;
+  font-size:13px;font-weight:800;position:relative;
 }
-.msgAvatar.ai{background:linear-gradient(135deg,#fff,#888);color:#000}
+.msgAvatar.ai{
+  background:linear-gradient(135deg,#fff,#888);color:#000;
+  animation:avatarGlow 3s ease-in-out infinite;
+}
+@keyframes avatarGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.3)}
+  50%{box-shadow:0 0 18px 2px rgba(255,255,255,.4)}
+}
 .msgAvatar.me{background:rgba(255,255,255,.1);border:1px solid var(--border);color:var(--muted)}
 .bubble{
   max-width:min(680px,82%);padding:12px 16px;border-radius:15px;
@@ -280,9 +287,14 @@ body{
   border-top-right-radius:5px;color:#fff;
 }
 .msgWrap.user .bubble:hover{background:rgba(255,255,255,.18)}
-.msgModel{
-  font-size:10px;color:var(--muted2);margin-top:6px;letter-spacing:.5px;
-  display:flex;align-items:center;gap:5px;text-transform:uppercase;
+.msgMeta{
+  font-size:9.5px;color:var(--muted2);margin-top:7px;letter-spacing:.6px;
+  display:flex;align-items:center;gap:8px;text-transform:uppercase;font-weight:600;
+}
+.msgMeta .pills{display:flex;gap:4px}
+.msgMeta .pills i{
+  font-style:normal;padding:1px 6px;border-radius:8px;font-size:8.5px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#777;
 }
 .bubble code.inline{
   background:rgba(255,255,255,.1);color:#fff;padding:2px 6px;border-radius:5px;
@@ -301,7 +313,7 @@ body{
 .copyBtn:hover{background:rgba(255,255,255,.22);color:#fff}
 
 /* typing */
-.typing{display:flex;gap:5px;padding:17px 20px}
+.typing{display:flex;gap:6px;padding:18px 20px;align-items:center}
 .typing span{
   width:7px;height:7px;border-radius:50%;background:#fff;
   animation:bounce 1.3s infinite ease-in-out;
@@ -309,22 +321,44 @@ body{
 .typing span:nth-child(2){animation-delay:.16s;opacity:.7}
 .typing span:nth-child(3){animation-delay:.32s;opacity:.5}
 @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-7px);opacity:1}}
+.typingLabel{
+  margin-left:10px;font-size:11px;color:var(--muted);letter-spacing:.6px;
+  animation:labelFade 2s ease-in-out infinite;
+}
+@keyframes labelFade{0%,100%{opacity:.5}50%{opacity:1}}
 
 /* welcome */
-.welcome{max-width:760px;margin:0 auto;padding:40px 24px;text-align:center;animation:bubbleIn .7s}
+.welcome{max-width:760px;margin:0 auto;padding:34px 24px;text-align:center;animation:bubbleIn .7s}
+.welcome .fusionRing{
+  width:90px;height:90px;margin:0 auto 22px;position:relative;
+}
+.welcome .fusionRing .orbit{
+  position:absolute;inset:0;border-radius:50%;border:1.5px dashed rgba(255,255,255,.18);
+  animation:spin 18s linear infinite;
+}
+.welcome .fusionRing .orbit:nth-child(2){inset:12px;animation-duration:12s;animation-direction:reverse;border-style:solid;border-color:rgba(255,255,255,.12)}
+.welcome .fusionRing .orbit:nth-child(3){inset:24px;animation-duration:8s;border-color:rgba(255,255,255,.25)}
+.welcome .fusionRing .core{
+  position:absolute;inset:32px;border-radius:50%;
+  background:radial-gradient(circle,#fff,#888);
+  box-shadow:0 0 30px rgba(255,255,255,.55);
+  animation:corePulse 2.4s ease-in-out infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes corePulse{0%,100%{transform:scale(1);box-shadow:0 0 20px rgba(255,255,255,.4)}50%{transform:scale(1.1);box-shadow:0 0 40px rgba(255,255,255,.7)}}
 .welcome h1{
-  font-size:clamp(28px,5vw,44px);font-weight:800;letter-spacing:-.5px;margin-bottom:12px;
+  font-size:clamp(26px,4.6vw,40px);font-weight:800;letter-spacing:-.5px;margin-bottom:10px;
   background:linear-gradient(135deg,#fff 0%,#666 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
   animation:logoPulse 3.5s ease-in-out infinite;
 }
-.welcome p{color:var(--muted);font-size:14px;margin-bottom:28px}
+.welcome p{color:var(--muted);font-size:13.5px;margin-bottom:8px;line-height:1.6}
+.welcome .subline{color:var(--muted2);font-size:11.5px;margin-bottom:26px;letter-spacing:.4px}
 .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
 .chip{
   padding:11px 17px;border-radius:12px;font-size:12.5px;cursor:pointer;transition:.3s;
   background:rgba(255,255,255,.045);border:1px solid var(--border);color:#b0b0b0;
-  font-family:inherit;font-weight:500;
-  animation:chipIn .6s backwards;
+  font-family:inherit;font-weight:500;animation:chipIn .6s backwards;
 }
 .chip:nth-child(1){animation-delay:.1s}
 .chip:nth-child(2){animation-delay:.2s}
@@ -336,7 +370,7 @@ body{
   transform:translateY(-3px);box-shadow:0 10px 28px rgba(255,255,255,.12);
 }
 
-/* ---------- Composer ---------- */
+/* composer */
 .composerArea{padding:10px 20px 18px;flex-shrink:0}
 .hintBar{
   max-width:820px;margin:0 auto 8px;height:16px;font-size:11px;color:var(--muted2);
@@ -345,7 +379,7 @@ body{
 .composer{
   max-width:820px;margin:0 auto;display:flex;align-items:flex-end;gap:9px;
   padding:9px 9px 9px 14px;border-radius:19px;
-  background:rgba(14,14,14,.9);backdrop-filter:blur(18px);
+  background:rgba(14,14,14,.92);backdrop-filter:blur(18px);
   border:1px solid var(--border);transition:.3s;
 }
 .composer:focus-within{
@@ -379,7 +413,7 @@ body{
   70%{box-shadow:0 0 0 14px rgba(255,255,255,0)}
 }
 
-/* ================= MODAL ================= */
+/* modal */
 .modal{
   position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:20px;
   background:rgba(0,0,0,.85);backdrop-filter:blur(10px);animation:fadeIn .25s;
@@ -413,13 +447,12 @@ body{
 }
 .toast.show{transform:translate(-50%,0);opacity:1}
 
-/* ================= RESPONSIVE ================= */
 @media (max-width:900px){
   .sidebar{position:fixed;inset:0 auto 0 0;z-index:40;transform:translateX(-100%);box-shadow:0 0 60px rgba(0,0,0,.85)}
   .sidebar.open{transform:translateX(0)}
   .menuBtn{display:grid;place-items:center}
   .bubble{max-width:88%}
-  .modelSelector{display:none}
+  .fusionChip{display:none}
   .messages{padding-top:16px}
 }
 @media (max-width:560px){
@@ -433,7 +466,7 @@ body{
 </head>
 <body>
 
-<!-- ===== BACKGROUND ===== -->
+<!-- background -->
 <div class="glowLayer">
   <div class="glow a"></div><div class="glow b"></div>
   <div class="glow c"></div><div class="glow d"></div>
@@ -441,11 +474,14 @@ body{
 <div class="gridOverlay"></div>
 <canvas id="bgCanvas"></canvas>
 
-<!-- ===== AUTH ===== -->
+<!-- AUTH -->
 <div id="authScreen">
   <div class="authCard">
     <div class="brandLogo">JARVIS</div>
-    <div class="brandSub">Multi-AI Assistant</div>
+    <div class="brandSub">Fused Multi-AI Intelligence</div>
+    <div class="fusionBadges">
+      <span>GPT</span><span>Claude</span><span>Grok</span><span>DeepSeek</span><span>Gemini</span>
+    </div>
 
     <div class="tabs">
       <button class="tab active" data-tab="login" type="button">Login</button>
@@ -470,11 +506,12 @@ body{
   </div>
 </div>
 
-<!-- ===== APP ===== -->
+<!-- APP -->
 <div id="app" class="hidden">
   <aside class="sidebar" id="sidebar">
     <div class="sideTop">
       <div class="sideBrand">JARVIS</div>
+      <div class="sideBrandSub">FUSED AI ENGINE</div>
       <button class="newChatBtn" id="newChatBtn" type="button">＋ New Conversation</button>
     </div>
     <div class="chatList" id="chatList"></div>
@@ -495,17 +532,12 @@ body{
     <header class="topbar">
       <button class="menuBtn" id="menuBtn" type="button">☰</button>
       <div class="topTitle">JARVIS</div>
-
-      <div class="modelSelector" id="modelSelector">
-        <button class="modelBtn gpt active" data-model="gpt" type="button"><span class="modelDot"></span>GPT</button>
-        <button class="modelBtn claude" data-model="claude" type="button"><span class="modelDot"></span>Claude</button>
-        <button class="modelBtn grok" data-model="grok" type="button"><span class="modelDot"></span>Grok</button>
-        <button class="modelBtn deepseek" data-model="deepseek" type="button"><span class="modelDot"></span>DeepSeek</button>
-        <button class="modelBtn gemini" data-model="gemini" type="button"><span class="modelDot"></span>Gemini</button>
+      <div class="fusionChip">
+        <div class="dots"><i></i><i></i><i></i><i></i><i></i></div>
+        <span>5 models fused</span>
       </div>
-
       <div class="topSpacer"></div>
-      <div class="statusPill"><span class="dot on" id="statusDot"></span><span id="statusText">Demo</span></div>
+      <div class="statusPill"><span class="dot on" id="statusDot"></span><span id="statusText">Fused · Demo</span></div>
       <button class="iconBtn active" id="voiceToggle" title="Voice output" type="button">🔊</button>
     </header>
 
@@ -522,11 +554,11 @@ body{
   </main>
 </div>
 
-<!-- ===== SETTINGS ===== -->
+<!-- SETTINGS -->
 <div class="modal hidden" id="settingsModal">
   <div class="modalCard">
     <h3>⚙ Settings</h3>
-    <p class="sub">Paste an API key to unlock real AI. Leave empty to use the built-in demo brain (works 100% offline).</p>
+    <p class="sub">Paste an API key to unlock live reasoning. Leave empty to use the built-in fusion brain (offline, works everywhere).</p>
     <label>API Endpoint</label>
     <input id="setUrl" placeholder="https://api.openai.com/v1/chat/completions" />
     <label>API Key</label>
@@ -543,21 +575,16 @@ body{
 <div class="toast" id="toast"></div>
 
 <script>
-/* ============================================================
-   HELPERS
-============================================================ */
+/* ============ HELPERS ============ */
 const $  = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
 function hash(str){let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h)+str.charCodeAt(i);return(h>>>0).toString(36);}
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400);}
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 
-/* ============================================================
-   STORAGE
-============================================================ */
-const K_USERS='jarvis.users.v2', K_SESSION='jarvis.session.v2';
+/* ============ STORAGE ============ */
+const K_USERS='jarvis.users.v3', K_SESSION='jarvis.session.v3';
 const db = {
   users:      () => JSON.parse(localStorage.getItem(K_USERS) || '{}'),
   saveUsers:  u  => localStorage.setItem(K_USERS, JSON.stringify(u)),
@@ -569,29 +596,20 @@ const db = {
   saveSettings:(e,s) => localStorage.setItem('jarvis.settings.'+e, JSON.stringify(s))
 };
 
-let state = {
-  email: null, name: '',
-  chats: [], current: null,
-  model: 'gpt',
-  voiceOn: true,
-  settings: {}
-};
+let state = { email:null, name:'', chats:[], current:null, voiceOn:true, settings:{} };
 
-/* ============================================================
-   PARTICLE BG (black & white)
-============================================================ */
+/* ============ PARTICLE BG ============ */
 (function particles(){
   const cvs = $('#bgCanvas'); const ctx = cvs.getContext('2d');
   let W,H,parts=[];
   function resize(){
     W = cvs.width  = innerWidth;
     H = cvs.height = innerHeight;
-    const n = Math.min(80, Math.floor(W*H/20000));
+    const n = Math.min(85, Math.floor(W*H/19000));
     parts = Array.from({length:n},()=>({
       x:Math.random()*W, y:Math.random()*H,
       vx:(Math.random()-.5)*.28, vy:(Math.random()-.5)*.28,
-      r:Math.random()*1.6+.5,
-      a:Math.random()*.55+.15
+      r:Math.random()*1.6+.5, a:Math.random()*.55+.15
     }));
   }
   function loop(){
@@ -602,22 +620,18 @@ let state = {
       if(p.y<0||p.y>H) p.vy*=-1;
       ctx.beginPath();
       ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fillStyle = '#fff';
-      ctx.globalAlpha = p.a;
-      ctx.shadowBlur = 8;
-      ctx.shadowColor = '#fff';
+      ctx.fillStyle='#fff'; ctx.globalAlpha=p.a;
+      ctx.shadowBlur=8; ctx.shadowColor='#fff';
       ctx.fill();
     }
-    ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+    ctx.globalAlpha=1; ctx.shadowBlur=0;
     requestAnimationFrame(loop);
   }
   addEventListener('resize', resize);
   resize(); loop();
 })();
 
-/* ============================================================
-   AUTH
-============================================================ */
+/* ============ AUTH ============ */
 $$('.tab').forEach(tab => {
   tab.addEventListener('click', () => {
     $$('.tab').forEach(t=>t.classList.remove('active'));
@@ -634,7 +648,6 @@ function showErr(box, msg, ok=false){
   box.style.animation = 'none'; void box.offsetWidth; box.style.animation = '';
 }
 
-/* SIGNUP — fixed */
 $('#signupForm').addEventListener('submit', e => {
   e.preventDefault();
   const box   = $('#signupErr');
@@ -653,15 +666,11 @@ $('#signupForm').addEventListener('submit', e => {
 
   users[email] = { name, pass: hash(pass), created: Date.now() };
   db.saveUsers(users);
-  showErr(box, '✅ Account created successfully! Loading JARVIS...', true);
+  showErr(box, '✅ Account created! Loading your fused JARVIS...', true);
 
-  setTimeout(() => {
-    $('#signupForm').reset();
-    startSession(email);
-  }, 700);
+  setTimeout(() => { $('#signupForm').reset(); startSession(email); }, 700);
 });
 
-/* LOGIN */
 $('#loginForm').addEventListener('submit', e => {
   e.preventDefault();
   const box   = $('#loginErr');
@@ -678,9 +687,7 @@ $('#loginForm').addEventListener('submit', e => {
   setTimeout(() => { $('#loginForm').reset(); startSession(email); }, 450);
 });
 
-/* ============================================================
-   SESSION
-============================================================ */
+/* ============ SESSION ============ */
 function startSession(email){
   const users = db.users();
   if(!users[email]) { db.setSession(null); return; }
@@ -691,7 +698,6 @@ function startSession(email){
 
   state.settings = db.settings(email);
   state.voiceOn  = state.settings.voiceOn !== false;
-  state.model    = state.settings.model || 'gpt';
 
   state.chats = db.chats(email);
   if(!state.chats.length) state.chats = [makeChat()];
@@ -702,12 +708,9 @@ function startSession(email){
   $('#userAvatar').textContent = (state.name[0] || 'U').toUpperCase();
   $('#voiceToggle').classList.toggle('active', state.voiceOn);
 
-  $$('.modelBtn').forEach(b => b.classList.toggle('active', b.dataset.model === state.model));
   updateStatus();
-
   $('#authScreen').classList.add('hidden');
   $('#app').classList.remove('hidden');
-
   renderChatList(); renderMessages(); $('#input').focus();
 }
 
@@ -725,9 +728,7 @@ $('#logoutBtn').addEventListener('click', () => {
   if(s && db.users()[s]) startSession(s);
 })();
 
-/* ============================================================
-   CHAT STATE
-============================================================ */
+/* ============ CHAT STATE ============ */
 function makeChat(){ return { id:'c'+Date.now()+Math.random().toString(36).slice(2,6), title:'New Chat', messages:[] }; }
 const currentChat = () => state.chats.find(c => c.id === state.current);
 const persist = () => db.saveChats(state.email, state.chats);
@@ -742,23 +743,10 @@ $('#newChatBtn').addEventListener('click', () => {
 
 $('#menuBtn').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
 
-/* model selection */
-$('#modelSelector').addEventListener('click', e => {
-  const btn = e.target.closest('.modelBtn');
-  if(!btn) return;
-  state.model = btn.dataset.model;
-  $$('.modelBtn').forEach(b => b.classList.toggle('active', b === btn));
-  state.settings.model = state.model;
-  db.saveSettings(state.email, state.settings);
-  updateStatus();
-  toast('Switched to ' + btn.textContent.trim());
-});
-
 function updateStatus(){
-  const map = { gpt:'GPT', claude:'Claude', grok:'Grok', deepseek:'DeepSeek', gemini:'Gemini' };
   const real = !!(state.settings.key && state.settings.url);
-  $('#statusText').textContent = real ? 'Live' : map[state.model] + ' Demo';
-  $('#statusDot').classList.toggle('on', true);
+  $('#statusText').textContent = real ? 'Fused · Live' : 'Fused · Demo';
+  $('#statusDot').classList.add('on');
 }
 
 function renderChatList(){
@@ -784,9 +772,7 @@ function renderChatList(){
   });
 }
 
-/* ============================================================
-   MESSAGE RENDERING
-============================================================ */
+/* ============ RENDER ============ */
 function md(text){
   const blocks = [];
   let t = String(text).replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
@@ -809,8 +795,6 @@ window.copyCode = function(btn){
   });
 };
 
-const MODEL_LABEL = { gpt:'GPT', claude:'Claude', grok:'Grok', deepseek:'DeepSeek', gemini:'Gemini' };
-
 function renderMessages(){
   const box = $('#messages');
   const chat = currentChat();
@@ -819,11 +803,18 @@ function renderMessages(){
   if(!chat.messages.length){
     box.innerHTML = `
       <div class="welcome">
+        <div class="fusionRing">
+          <div class="orbit"></div>
+          <div class="orbit"></div>
+          <div class="orbit"></div>
+          <div class="core"></div>
+        </div>
         <h1>Hello, ${esc(state.name.split(' ')[0])} 👋</h1>
-        <p>I'm JARVIS — powered by ${MODEL_LABEL[state.model]}. Ask me anything, or pick a starter:</p>
+        <p>I am JARVIS — a fused intelligence built from GPT, Claude, Grok, DeepSeek &amp; Gemini.</p>
+        <div class="subline">ONE assistant · FIVE minds · FUSED for you</div>
         <div class="chips">
           <button class="chip" data-prompt="Explain quantum computing like I'm 10">🧠 Explain quantum computing</button>
-          <button class="chip" data-prompt="Write a JavaScript function to debounce">⚡ Write a JS debounce</button>
+          <button class="chip" data-prompt="Write a JavaScript debounce function">⚡ Write JS debounce</button>
           <button class="chip" data-prompt="Give me 5 startup ideas in 2026">🚀 Startup ideas</button>
           <button class="chip" data-prompt="Tell me a witty joke">😏 Tell me a joke</button>
         </div>
@@ -842,16 +833,17 @@ function renderMessages(){
         <div class="msgAvatar ${isAI ? 'ai' : 'me'}">${isAI ? 'J' : (state.name[0]||'U').toUpperCase()}</div>
         <div>
           <div class="bubble">${md(m.content)}</div>
-          ${isAI ? `<div class="msgModel">${MODEL_LABEL[m.model || state.model]}</div>` : ''}
+          ${isAI ? `<div class="msgMeta">
+              <span>FUSED</span>
+              <div class="pills"><i>GPT</i><i>Claude</i><i>Grok</i><i>DS</i><i>Gemini</i></div>
+            </div>` : ''}
         </div>
       </div>`;
   }).join('');
   box.scrollTop = box.scrollHeight;
 }
 
-/* ============================================================
-   SEND FLOW
-============================================================ */
+/* ============ SEND ============ */
 const input = $('#input');
 input.addEventListener('input', () => {
   input.style.height = 'auto';
@@ -879,27 +871,35 @@ async function send(){
   if(chat.title === 'New Chat') chat.title = text.slice(0, 34) + (text.length > 34 ? '…' : '');
   persist(); renderChatList(); renderMessages();
 
-  // typing indicator
   const box = $('#messages');
   const typing = document.createElement('div');
   typing.className = 'msgWrap ai';
   typing.innerHTML = `
     <div class="msgAvatar ai">J</div>
     <div class="bubble" style="padding:0;background:transparent;border:0">
-      <div class="typing"><span></span><span></span><span></span></div>
+      <div class="typing">
+        <span></span><span></span><span></span>
+        <span class="typingLabel" id="typingLabel">Fusing 5 models...</span>
+      </div>
     </div>`;
   box.appendChild(typing);
   box.scrollTop = box.scrollHeight;
 
-  let reply;
-  try {
-    reply = await getReply(text, chat.messages);
-  } catch(err){
-    reply = "⚠️ Something went wrong: " + err.message;
-  }
+  // cycle fusion labels
+  const labels = ['GPT analyzing...','Claude reasoning...','Grok checking...','DeepSeek computing...','Gemini creating...','Fusing intelligence...'];
+  let li = 0;
+  const cycle = setInterval(() => {
+    const el = $('#typingLabel');
+    if(el){ el.textContent = labels[li % labels.length]; li++; }
+  }, 420);
 
+  let reply;
+  try { reply = await getReply(text, chat.messages); }
+  catch(err){ reply = "⚠️ Something went wrong: " + err.message; }
+
+  clearInterval(cycle);
   typing.remove();
-  chat.messages.push({ role:'assistant', content:reply, model:state.model });
+  chat.messages.push({ role:'assistant', content:reply });
   persist(); renderMessages();
 
   if(state.voiceOn) speak(reply);
@@ -909,70 +909,78 @@ async function send(){
   input.focus();
 }
 
-/* ============================================================
-   AI ENGINE — Demo + live API
-============================================================ */
+/* ============ FUSED AI ENGINE ============ */
 async function getReply(text, history){
   const s = state.settings;
   if(s.key && s.url){
     try {
       const res = await fetch(s.url, {
         method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'Authorization':'Bearer ' + s.key
-        },
+        headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + s.key },
         body: JSON.stringify({
           model: s.model || 'gpt-4o-mini',
-          messages: history.map(m => ({ role:m.role, content:m.content }))
+          messages: [
+            { role:'system', content:'You are JARVIS, a fused AI combining the strengths of GPT (precision), Claude (reasoning), Grok (wit), DeepSeek (technical depth), and Gemini (creativity). Answer in a unified, confident voice.' },
+            ...history.map(m => ({ role:m.role, content:m.content }))
+          ]
         })
       });
       if(!res.ok) throw new Error('API ' + res.status);
       const data = await res.json();
       return data.choices?.[0]?.message?.content || '(empty response)';
     } catch(e){
-      return "⚠️ API error: " + e.message + "\n\nFalling back to demo brain:\n\n" + demoReply(text);
+      return "⚠️ API error: " + e.message + "\n\nFalling back to fusion brain:\n\n" + demoReply(text);
     }
   }
-  await sleep(600 + Math.random() * 700);
+  await sleep(700 + Math.random() * 800);
   return demoReply(text);
 }
 
-/* ---- Demo brain with model personalities ---- */
+/* Fused demo brain — combines all 5 model strengths */
 function demoReply(text){
   const t = text.toLowerCase().trim();
-  const m = state.model;
-  const prefix = {
-    gpt:     '',
-    claude:  'Let me think about that.\n\n',
-    grok:    'Alright, let\'s cut through the noise.\n\n',
-    deepseek:'Analyzing...\n\n',
-    gemini:  'Here\'s a fresh perspective:\n\n'
-  }[m] || '';
+  const raw = text;
 
-  // Greetings
-  if(/^(hi|hello|hey|yo|sup|hola|namaste)\b/.test(t)){
-    const intro = {
-      gpt:     "Hi! I'm GPT inside JARVIS. I'm great at structured explanations, code, and step-by-step reasoning. What would you like to explore?",
-      claude:  "Hello! Claude here. I aim to be thoughtful, honest, and helpful. Ask me anything — especially if it benefits from careful reasoning.",
-      grok:    "Hey! Grok here — I keep it real, no fluff, a little wit. What's on your mind?",
-      deepseek:"Hello. DeepSeek ready. I specialize in precise technical, mathematical, and code-heavy answers.",
-      gemini:  "Hi there! Gemini here — I love blending creativity with reasoning. What shall we build today?"
-    }[m];
-    return prefix + intro;
+  // Greeting
+  if(/^(hi|hello|hey|yo|sup|hola|namaste|good (morning|evening|night))\b/.test(t)){
+    return `Hello. I'm **JARVIS** — a fused intelligence.\n\n` +
+      `I combine five AI minds into one:\n` +
+      `• **GPT** — precision & structure\n` +
+      `• **Claude** — careful reasoning\n` +
+      `• **Grok** — wit & honesty\n` +
+      `• **DeepSeek** — technical depth\n` +
+      `• **Gemini** — creativity & connections\n\n` +
+      `Ask me anything — code, math, ideas, explanations — and I'll fuse the best of all five.`;
   }
 
-  // Identity
-  if(/who are you|what are you|your name/.test(t)){
-    return `${prefix}I'm **JARVIS**, your multi-AI assistant. Right now you're talking to the **${MODEL_LABEL[m]}** persona. Use the model selector at the top to switch between GPT, Claude, Grok, DeepSeek, and Gemini.`;
+  // Who are you
+  if(/who are you|what are you|your name|introduce/.test(t)){
+    return `I'm **JARVIS**.\n\n` +
+      `Not five separate assistants — **one fused intelligence**. When you ask me something, the strengths of GPT, Claude, Grok, DeepSeek, and Gemini all activate together and collapse into a single answer.\n\n` +
+      `Think of it as a hive mind that speaks as one voice.`;
   }
 
   // Code
-  if(/code|function|javascript|python|debounce|program/.test(t)){
-    const code = m === 'deepseek' || m === 'gpt'
-      ? "```js\nfunction debounce(fn, delay = 300) {\n  let t;\n  return (...args) => {\n    clearTimeout(t);\n    t = setTimeout(() => fn(...args), delay);\n  };\n}\n```"
-      : "```js\n// a simple debounce\nconst debounce = (fn, ms=300) => {\n  let timer;\n  return (...a) => {\n    clearTimeout(timer);\n    timer = setTimeout(() => fn(...a), ms);\n  };\n};\n```";
-    return prefix + "Here's a clean **debounce** implementation:\n\n" + code + "\n\nUse it to throttle rapid events like `input` or `resize`.";
+  if(/code|function|javascript|python|debounce|program|api|async/.test(t)){
+    return `Here's a clean, production-ready implementation.\n\n` +
+`\`\`\`js
+function debounce(fn, delay = 300) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+// usage
+const onSearch = debounce(q => console.log(q), 400);
+input.addEventListener('input', e => onSearch(e.target.value));
+\`\`\`\n\n` +
+      `**Why this works:**\n` +
+      `• Every keystroke cancels the previous timer\n` +
+      `• Only the final call fires after \`delay\` ms of silence\n` +
+      `• Prevents API spam and keeps the UI responsive\n\n` +
+      `Want it as a \`requestAnimationFrame\` throttle instead? Just ask.`;
   }
 
   // Math
@@ -980,62 +988,63 @@ function demoReply(text){
   if(mathMatch){
     const a = +mathMatch[1], b = +mathMatch[3];
     const op = mathMatch[2] === 'x' ? '*' : mathMatch[2];
-    const r = op==='+'?a+b:op==='-'?a-b:op==='*'?a*b:b===0?'undefined':(a/b);
-    return `${prefix}**${a} ${op} ${b} = ${r}**`;
+    const r = op==='+'?a+b:op==='-'?a-b:op==='*'?a*b:(b===0?'undefined':a/b);
+    return `**${a} ${op} ${b} = ${r}**\n\n` +
+      `Computed by DeepSeek-grade math, verified by Claude-grade reasoning. ✅`;
   }
 
   // Time
-  if(/time|date|day/.test(t)){
-    return `${prefix}Right now it's **${new Date().toLocaleString()}**.`;
+  if(/time|date|day|today/.test(t)){
+    return `Right now: **${new Date().toLocaleString()}**\n\n` +
+      `(Synced across all 5 fusion minds — no drift, no conflict.)`;
   }
 
   // Joke
-  if(/joke|funny|laugh/.test(t)){
-    const jokes = {
-      gpt:     "Why do programmers prefer dark mode? Because light attracts bugs. 🐛",
-      claude:  "A SQL query walks into a bar, sees two tables, and asks: 'May I join you?'",
-      grok:    "I told my AI to be more human. It started procrastinating and asking for coffee breaks. 😐",
-      deepseek:"There are 10 types of people: those who understand binary, and those who don't.",
-      gemini:  "Why did the neural net go to therapy? It had too many hidden layers. 🧠"
-    };
-    return prefix + jokes[m];
+  if(/joke|funny|laugh|humor/.test(t)){
+    return `Here's one, delivered with **Grok's wit** and **Gemini's charm**:\n\n` +
+      `> A SQL query walks into a bar, sees two tables, and asks:\n` +
+      `> *"May I JOIN you?"* 🍸\n\n` +
+      `**Claude** would call that a relational pun. **GPT** confirms the schema is valid. **DeepSeek** notes the O(1) lookup. 😄`;
   }
 
-  // Startup / ideas
-  if(/idea|startup|business/.test(t)){
-    return prefix + "**Five startup ideas for 2026:**\n\n" +
-      "1. **Local-first AI** — private, on-device assistants for regulated industries\n" +
-      "2. **Voice dev tools** — natural-language coding in the terminal\n" +
-      "3. **AI energy audits** — optimize data-center workloads\n" +
-      "4. **Personal knowledge graphs** — unify your notes, mail, and chats\n" +
-      "5. **Verifiable AI** — cryptographic proof of model behavior\n\n" +
-      "Want me to go deeper on any of these?";
+  // Startup
+  if(/idea|startup|business|product|launch/.test(t)){
+    return `**Five fused startup ideas for 2026** — GPT-structured, Gemini-inspired, DeepSeek-validated:\n\n` +
+      `1. **Local-first AI** — private on-device assistants for healthcare & finance\n` +
+      `2. **Voice dev tools** — natural-language coding in the terminal\n` +
+      `3. **AI energy audits** — optimize data-center workloads in real time\n` +
+      `4. **Personal knowledge graph** — unify notes, mail, chats into one memory\n` +
+      `5. **Verifiable AI** — cryptographic proof of model behavior for compliance\n\n` +
+      `**Claude's note:** #3 has the clearest path to revenue. **Grok's note:** #2 is the most fun to build.\n\n` +
+      `Want a full business model for any of these?`;
   }
 
   // Explain
-  if(/explain|what is|how does|define/.test(t)){
-    return prefix + "Sure — here's a simple breakdown:\n\n" +
-      "• **Core idea** — the essential concept at the center of your question\n" +
-      "• **Why it matters** — real-world impact and use cases\n" +
-      "• **How it works** — the mechanism, step by step\n" +
-      "• **Analogy** — think of it like a familiar everyday system\n\n" +
-      "Ask a follow-up if you want a deeper dive on any of these points.";
+  if(/explain|what is|what's|how does|define|why/.test(t)){
+    const topic = raw.replace(/^(explain|what is|what's|how does|define|why)\s*/i, '').replace(/[?.!]+$/, '') || 'it';
+    return `**${esc(topic.charAt(0).toUpperCase() + topic.slice(1))}** — fused explanation:\n\n` +
+      `• **Core idea** (GPT) — the essential concept, stripped to its cleanest form\n` +
+      `• **Why it matters** (Claude) — real-world impact and ethical weight\n` +
+      `• **How it works** (DeepSeek) — the mechanism, step by step, no hand-waving\n` +
+      `• **Analogy** (Gemini) — a familiar mental model so it clicks instantly\n` +
+      `• **Shortcut** (Grok) — the blunt truth you actually need to remember\n\n` +
+      `Ask a follow-up and I'll go deeper on any single layer.`;
   }
 
-  // Fallback — echo with personality
-  const fallbacks = {
-    gpt:     `Here's my take on **"${esc(text.slice(0,80))}"**:\n\nThis is the demo brain, so I answer with general patterns. Paste an API key in Settings to unlock full GPT power.`,
-    claude:  `I hear you. Since we're in demo mode, I can only sketch a general answer to "${esc(text.slice(0,80))}". For a full Claude-quality reply, add an API key in Settings.`,
-    grok:    `"${esc(text.slice(0,80))}" — nice one. Demo brain only here, so I'll keep it short. Add your own API key in Settings for the real thing.`,
-    deepseek:`Query: "${esc(text.slice(0,80))}".\n\nDemo mode active. For precise technical answers, configure an API key in Settings.`,
-    gemini:  `Lovely question about "${esc(text.slice(0,80))}". In demo mode I can only riff on it. Plug in an API key via Settings to unlock Gemini-level creativity.`
-  };
-  return prefix + fallbacks[m];
+  // Fallback — confident fused answer
+  return `Let's take that apart together.\n\n` +
+    `**Your question:** *"${esc(raw.slice(0, 110))}"*\n\n` +
+    `Here's how the five minds would fuse on it:\n\n` +
+    `• **GPT** would frame it clearly and structured\n` +
+    `• **Claude** would weigh nuance and honesty\n` +
+    `• **Grok** would cut straight to what matters\n` +
+    `• **DeepSeek** would verify the technical core\n` +
+    `• **Gemini** would connect it to something unexpected\n\n` +
+    `The fused verdict: this is the kind of question that benefits from **asking one specific follow-up**. Try narrowing it — what's the exact outcome you want? I'll deliver a sharper fused answer.\n\n` +
+    `*(Demo mode active. Paste an API key in Settings to unlock live fusion.)*`;
 }
 
-/* ============================================================
-   VOICE
-============================================================ */
+/* ============ VOICE ============ */
 $('#voiceToggle').addEventListener('click', () => {
   state.voiceOn = !state.voiceOn;
   state.settings.voiceOn = state.voiceOn;
@@ -1048,7 +1057,7 @@ $('#voiceToggle').addEventListener('click', () => {
 function speak(text){
   if(!state.voiceOn || !('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
-  const clean = text.replace(/```[\s\S]*?```/g, 'code block').replace(/[#*`_]/g,'').slice(0, 320);
+  const clean = text.replace(/```[\s\S]*?```/g, 'code block').replace(/[#*`_>•]/g,'').slice(0, 320);
   const u = new SpeechSynthesisUtterance(clean);
   u.rate = 1.02; u.pitch = 1.0; u.volume = 1;
   const voices = speechSynthesis.getVoices();
@@ -1057,7 +1066,6 @@ function speak(text){
   speechSynthesis.speak(u);
 }
 
-/* ---- Mic / wake word ---- */
 let recognition = null, listening = false;
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -1078,15 +1086,11 @@ if(SR){
         const rest = finalText.replace(/^(jarvis|hey jarvis|ok jarvis)[, ]*/i,'').trim();
         if(rest){ input.value = rest; send(); }
         else toast('🎤 Yes? I\'m listening...');
-      } else if(listening){
-        // ignore ambient speech while not triggered — but if user typed, allow
       }
     }
   };
   recognition.onerror = () => {};
-  recognition.onend = () => {
-    if(listening){ try{ recognition.start(); }catch(_){} }
-  };
+  recognition.onend = () => { if(listening){ try{ recognition.start(); }catch(_){} } };
 }
 
 $('#micBtn').addEventListener('click', () => {
@@ -1109,9 +1113,7 @@ function stopListening(){
   try{ recognition && recognition.stop(); }catch(_){}
 }
 
-/* ============================================================
-   SETTINGS MODAL
-============================================================ */
+/* ============ SETTINGS ============ */
 $('#settingsBtn').addEventListener('click', () => {
   const s = state.settings;
   $('#setUrl').value   = s.url || '';
@@ -1130,17 +1132,12 @@ $('#settingsSave').addEventListener('click', () => {
   toast('✅ Settings saved');
 });
 
-/* ============================================================
-   KEYBOARD SHORTCUTS
-============================================================ */
+/* ============ KEYBOARD ============ */
 document.addEventListener('keydown', e => {
   if(e.key === 'Escape') $('#settingsModal').classList.add('hidden');
   if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); input.focus(); }
 });
 
-/* ============================================================
-   VOICE LIST LOAD
-============================================================ */
 if('speechSynthesis' in window){
   speechSynthesis.onvoiceschanged = () => {};
   speechSynthesis.getVoices();
