@@ -345,6 +345,9 @@ body{
   </div>
 </div>
 
+<!-- Load Puter.js for Free AI Access -->
+<script src="https://js.puter.com/v2/"></script>
+
 <script>
 /* ============ STATE ============ */
 let isListening = false;
@@ -494,7 +497,7 @@ function speak(text) {
 
   if (jarvisVoice) currentUtterance.voice = jarvisVoice;
   currentUtterance.rate = 1.0;
-  currentUtterance.pitch = 1.0; 
+  currentUtterance.pitch = 0.8; // Slightly lower pitch for a deeper, more robotic tone
   currentUtterance.volume = 1.0;
 
   // 5. When TTS finishes
@@ -553,34 +556,17 @@ async function handleUserInput(text) {
 }
 
 async function getAIReply(userText) {
-  // Free API integration (Pollinations)
   const messages = [
     { role: 'system', content: 'You are Jarvis, Tony Stark\'s AI assistant. Keep answers concise, highly intelligent, and slightly formal. Limit your response to 2 or 3 short sentences so it can be spoken aloud naturally. Do not use markdown, asterisks, or code blocks.' },
     { role: 'user', content: userText }
   ];
 
   try {
-    const res = await fetch('https://text.pollinations.ai/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages, model: 'openai' })
-    });
-
-    if (!res.ok) throw new Error('API failed');
-    const text = await res.text();
-    
-    // Parse text (handles both plain text and JSON responses)
-    let reply = text.trim();
-    if (reply.startsWith('{') || reply.startsWith('[')) {
-      try {
-        const data = JSON.parse(reply);
-        reply = data.choices?.[0]?.message?.content || data.content || reply;
-      } catch(_) {}
-    }
-    
-    if (!reply) throw new Error('Empty response');
-    return reply;
+    // Using Puter.js for reliable, free AI access
+    const resp = await puter.ai.chat(messages);
+    return resp;
   } catch (err) {
+    console.error("Puter AI Error:", err);
     throw err;
   }
 }
