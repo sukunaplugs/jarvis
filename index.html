@@ -8,18 +8,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --border:rgba(255,255,255,.10);
-  --text:#f2f2f2;
-  --muted:#8a8a8a;
-  --muted2:#5a5a5a;
-}
+:root{--border:rgba(255,255,255,.10);--text:#f2f2f2;--muted:#8a8a8a;--muted2:#5a5a5a}
 html,body{height:100%}
-body{
-  font-family:'Inter',system-ui,-apple-system,sans-serif;
-  background:#000;color:var(--text);overflow:hidden;
-  -webkit-font-smoothing:antialiased;
-}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;color:var(--text);overflow:hidden;-webkit-font-smoothing:antialiased}
 ::-webkit-scrollbar{width:8px;height:8px}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:20px}
 ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.3)}
@@ -35,37 +26,15 @@ body{
 .glow.c{width:380px;height:380px;top:42%;left:55%;animation-delay:-14s;opacity:.5}
 .glow.d{width:300px;height:300px;bottom:15%;left:10%;animation-delay:-5s;opacity:.35}
 @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,-70px) scale(1.15)}66%{transform:translate(-50px,60px) scale(.9)}}
-.gridOverlay{
-  position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);
-  background-size:64px 64px;
-  -webkit-mask-image:radial-gradient(circle at 50% 40%,#000 10%,transparent 75%);
-  mask-image:radial-gradient(circle at 50% 40%,#000 10%,transparent 75%);
-  animation:gridMove 40s linear infinite;
-}
+.gridOverlay{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(circle at 50% 40%,#000 10%,transparent 75%);mask-image:radial-gradient(circle at 50% 40%,#000 10%,transparent 75%);animation:gridMove 40s linear infinite}
 @keyframes gridMove{from{background-position:0 0,0 0}to{background-position:64px 64px,64px 64px}}
 
 /* auth */
 #authScreen{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
-.authCard{
-  position:relative;width:min(430px,100%);padding:36px 32px 32px;border-radius:24px;
-  background:rgba(10,10,10,.86);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border:1px solid var(--border);box-shadow:0 50px 120px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.05) inset;
-  animation:popIn .6s cubic-bezier(.2,.9,.3,1.3);
-}
+.authCard{position:relative;width:min(430px,100%);padding:36px 32px 32px;border-radius:24px;background:rgba(10,10,10,.86);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--border);box-shadow:0 50px 120px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.05) inset;animation:popIn .6s cubic-bezier(.2,.9,.3,1.3)}
 @keyframes popIn{from{opacity:0;transform:translateY(30px) scale(.94)}to{opacity:1;transform:none}}
-.authCard::before{
-  content:'';position:absolute;inset:-1px;border-radius:24px;padding:1px;
-  background:linear-gradient(135deg,rgba(255,255,255,.5),rgba(255,255,255,.05),rgba(255,255,255,.4));
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
-}
-.brandLogo{
-  font-size:36px;font-weight:800;letter-spacing:10px;text-align:center;
-  background:linear-gradient(135deg,#fff 0%,#888 100%);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-  animation:logoPulse 3.4s ease-in-out infinite;
-}
+.authCard::before{content:'';position:absolute;inset:-1px;border-radius:24px;padding:1px;background:linear-gradient(135deg,rgba(255,255,255,.5),rgba(255,255,255,.05),rgba(255,255,255,.4));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.brandLogo{font-size:36px;font-weight:800;letter-spacing:10px;text-align:center;background:linear-gradient(135deg,#fff 0%,#888 100%);-webkit-background-clip:text;background-clip:text;color:transparent;animation:logoPulse 3.4s ease-in-out infinite}
 @keyframes logoPulse{0%,100%{filter:drop-shadow(0 0 18px rgba(255,255,255,.25));opacity:.95}50%{filter:drop-shadow(0 0 34px rgba(255,255,255,.6));opacity:1}}
 .brandSub{text-align:center;color:var(--muted);font-size:11px;margin:10px 0 26px;letter-spacing:3px;text-transform:uppercase}
 .tabs{display:flex;gap:6px;background:rgba(255,255,255,.045);padding:5px;border-radius:14px;margin-bottom:22px}
@@ -119,6 +88,7 @@ body{
 .statusPill{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.4px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted)}
 .dot{width:7px;height:7px;border-radius:50%;background:#ff4d6d}
 .dot.on{background:#fff;animation:pulseDot 1.8s infinite}
+.dot.checking{background:#ffb84d;animation:pulseDot 1s infinite}
 @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
 .iconBtn{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);font-size:15px;cursor:pointer;transition:.24s;display:grid;place-items:center}
 .iconBtn:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);transform:translateY(-1px)}
@@ -148,6 +118,7 @@ body{
 .typing span:nth-child(2){animation-delay:.16s;opacity:.7}
 .typing span:nth-child(3){animation-delay:.32s;opacity:.5}
 @keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-7px);opacity:1}}
+.typingStatus{margin-left:10px;font-size:11px;color:var(--muted);letter-spacing:.5px}
 
 .welcome{max-width:760px;margin:0 auto;padding:30px 24px;text-align:center;animation:bubbleIn .7s}
 .welcome .ring{width:90px;height:90px;margin:0 auto 20px;position:relative}
@@ -169,7 +140,6 @@ body{
 @keyframes chipIn{from{opacity:0;transform:translateY(10px) scale(.9)}to{opacity:1;transform:none}}
 .chip:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.35);color:#fff;transform:translateY(-3px);box-shadow:0 10px 28px rgba(255,255,255,.12)}
 
-/* composer */
 .composerArea{padding:10px 20px 18px;flex-shrink:0}
 .hintBar{max-width:820px;margin:0 auto 8px;height:16px;font-size:11px;color:var(--muted2);letter-spacing:.5px;text-align:center}
 .composer{max-width:820px;margin:0 auto;display:flex;align-items:flex-end;gap:9px;padding:9px 9px 9px 14px;border-radius:19px;background:rgba(14,14,14,.92);backdrop-filter:blur(18px);border:1px solid var(--border);transition:.3s}
@@ -184,7 +154,6 @@ body{
 .micBtn.listening{background:rgba(255,255,255,.2);border-color:#fff;color:#fff;animation:micPulse 1.4s infinite}
 @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.5)}70%{box-shadow:0 0 0 14px rgba(255,255,255,0)}}
 
-/* modal */
 .modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);animation:fadeIn .25s}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modalCard{width:min(500px,100%);padding:28px;border-radius:22px;background:rgba(14,14,14,.98);border:1px solid var(--border);box-shadow:0 50px 120px rgba(0,0,0,.95);animation:popIn .4s cubic-bezier(.2,.9,.3,1.3);max-height:90vh;overflow-y:auto}
@@ -283,7 +252,7 @@ body{
       <button class="menuBtn" id="menuBtn" type="button">☰</button>
       <div class="topTitle">JARVIS</div>
       <div class="topSpacer"></div>
-      <div class="statusPill"><span class="dot on" id="statusDot"></span><span id="statusText">Online</span></div>
+      <div class="statusPill"><span class="dot checking" id="statusDot"></span><span id="statusText">Connecting...</span></div>
       <button class="iconBtn active" id="voiceToggle" title="Voice output" type="button">🔊</button>
     </header>
 
@@ -304,29 +273,20 @@ body{
 <div class="modal hidden" id="settingsModal">
   <div class="modalCard">
     <h3>⚙ Settings</h3>
-    <p class="sub">JARVIS works out of the box using a free AI service — no key needed. Add your own keys below only if you want higher quality or specific models.</p>
-
-    <div class="freeNote">
-      ✅ <b>Free tier is active.</b> You're already connected. Keys below are optional upgrades.
-    </div>
-
-    <label>OpenAI API Key (optional — better quality)</label>
+    <p class="sub">JARVIS works out of the box with a free AI service. Add your own keys below for higher quality.</p>
+    <div class="freeNote">✅ <b>Free mode is active.</b> No key needed to chat.</div>
+    <label>OpenAI API Key (optional)</label>
     <input id="setGptKey" type="password" placeholder="sk-..." />
-
     <label>Anthropic API Key (optional)</label>
     <input id="setClaudeKey" type="password" placeholder="sk-ant-..." />
-
     <label>DeepSeek API Key (optional)</label>
     <input id="setDeepseekKey" type="password" placeholder="sk-..." />
-
     <label>Google Gemini API Key (optional)</label>
     <input id="setGeminiKey" type="password" placeholder="AIza..." />
-
     <div class="switchRow">
       <span>Always listen for "Jarvis"</span>
       <div class="switch on" id="autoListenSwitch"></div>
     </div>
-
     <div class="modalRow">
       <button class="btn btnGhost" id="settingsCancel" type="button">Cancel</button>
       <button class="btn btnPrimary" style="width:auto" id="settingsSave" type="button">Save</button>
@@ -345,8 +305,15 @@ function hash(str){let h=5381;for(let i=0;i<str.length;i++)h=((h<<5)+h)+str.char
 function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400);}
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 
+function fetchWithTimeout(url, options, ms){
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { ...options, signal: controller.signal })
+    .finally(() => clearTimeout(id));
+}
+
 /* ============ STORAGE ============ */
-const K_USERS='jarvis.users.v6', K_SESSION='jarvis.session.v6';
+const K_USERS='jarvis.users.v7', K_SESSION='jarvis.session.v7';
 const db = {
   users:      () => JSON.parse(localStorage.getItem(K_USERS) || '{}'),
   saveUsers:  u  => localStorage.setItem(K_USERS, JSON.stringify(u)),
@@ -469,14 +436,13 @@ function startSession(email){
   $('#userEmail').textContent  = email;
   $('#userAvatar').textContent = (state.name[0] || 'U').toUpperCase();
   $('#voiceToggle').classList.toggle('active', state.voiceOn);
-  $('#statusText').textContent = 'Online';
-  $('#statusDot').classList.add('on');
 
   $('#authScreen').classList.add('hidden');
   $('#app').classList.remove('hidden');
   renderChatList(); renderMessages(); $('#input').focus();
 
   if(state.autoListen) startListening(true);
+  testConnection();
 }
 
 $('#logoutBtn').addEventListener('click', () => {
@@ -493,6 +459,22 @@ $('#logoutBtn').addEventListener('click', () => {
   const s = db.session();
   if(s && db.users()[s]) startSession(s);
 })();
+
+/* ============ CONNECTION CHECK ============ */
+async function testConnection(){
+  $('#statusText').textContent = 'Connecting...';
+  $('#statusDot').className = 'dot checking';
+  try {
+    const res = await fetchWithTimeout('https://text.pollinations.ai/hi', { method:'GET' }, 8000);
+    if(res.ok){
+      $('#statusText').textContent = 'Online';
+      $('#statusDot').className = 'dot on';
+    } else throw new Error();
+  } catch(e){
+    $('#statusText').textContent = 'Offline';
+    $('#statusDot').className = 'dot';
+  }
+}
 
 /* ============ CHAT STATE ============ */
 function makeChat(){ return { id:'c'+Date.now()+Math.random().toString(36).slice(2,6), title:'New Chat', messages:[] }; }
@@ -629,14 +611,24 @@ async function send(){
   typing.innerHTML = `
     <div class="msgAvatar ai">J</div>
     <div class="bubble" style="padding:0;background:transparent;border:0">
-      <div class="typing"><span></span><span></span><span></span></div>
+      <div class="typing">
+        <span></span><span></span><span></span>
+        <span class="typingStatus" id="typingStatus">Jarvis is thinking...</span>
+      </div>
     </div>`;
   box.appendChild(typing);
   box.scrollTop = box.scrollHeight;
 
   let reply;
-  try { reply = await getReply(chat.messages); }
-  catch(err){ reply = "⚠️ " + err.message; }
+  try {
+    reply = await getReply(chat.messages);
+    $('#statusText').textContent = 'Online';
+    $('#statusDot').className = 'dot on';
+  } catch(err){
+    reply = "⚠️ " + err.message;
+    $('#statusText').textContent = 'Offline';
+    $('#statusDot').className = 'dot';
+  }
 
   typing.remove();
   chat.messages.push({ role:'assistant', content: reply });
@@ -652,49 +644,98 @@ async function send(){
 /* ============ AI ENGINE ============ */
 async function getReply(history){
   const s = state.settings;
-
   if(s.gptKey)      return callOpenAI(history, s.gptKey);
   if(s.claudeKey)   return callClaude(history, s.claudeKey);
   if(s.deepseekKey) return callDeepSeek(history, s.deepseekKey);
   if(s.geminiKey)   return callGemini(history, s.geminiKey);
-
   return callFree(history);
 }
 
-/* free, no-key backend — works immediately */
+/* free tier — 3 fallback attempts */
 async function callFree(history){
-  const sys = { role:'system', content:'You are Jarvis, a friendly and helpful AI assistant. Keep answers clear, accurate, and conversational. Use markdown for code and lists.' };
-  const res = await fetch('https://text.pollinations.ai/openai', {
-    method:'POST',
-    headers:{ 'Content-Type':'application/json' },
-    body: JSON.stringify({
-      model: 'openai',
-      messages: [sys, ...history.map(m => ({ role:m.role, content:m.content }))]
-    })
-  });
-  if(!res.ok) throw new Error('AI service error ' + res.status + '. Try again in a moment.');
-  const data = await res.json();
-  const reply = data.choices?.[0]?.message?.content;
-  if(!reply) throw new Error('Empty response. Please try again.');
-  return reply;
+  const messages = [
+    { role: 'system', content: 'You are Jarvis, a friendly and helpful AI assistant. Answer clearly. Use markdown for code and lists. Keep responses concise but complete.' },
+    ...history.map(m => ({ role: m.role, content: m.content }))
+  ];
+
+  const statusEl = $('#typingStatus');
+
+  // Attempt 1: POST to base endpoint (plain text reply)
+  try {
+    if(statusEl) statusEl.textContent = 'Connecting...';
+    const res = await fetchWithTimeout('https://text.pollinations.ai/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, model: 'openai' })
+    }, 30000);
+
+    if(res.ok){
+      const text = await res.text();
+      if(text && text.trim() && !text.trim().startsWith('{') && text.trim().length > 2){
+        return text.trim();
+      }
+      try {
+        const data = JSON.parse(text);
+        const c = data.choices?.[0]?.message?.content;
+        if(c) return c;
+      } catch(_){}
+    }
+  } catch(e){ console.warn('Attempt 1 failed:', e); }
+
+  // Attempt 2: OpenAI-compatible path
+  try {
+    if(statusEl) statusEl.textContent = 'Retrying...';
+    const res = await fetchWithTimeout('https://text.pollinations.ai/openai', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, model: 'openai' })
+    }, 30000);
+
+    if(res.ok){
+      const data = await res.json();
+      const c = data.choices?.[0]?.message?.content;
+      if(c) return c;
+    }
+  } catch(e){ console.warn('Attempt 2 failed:', e); }
+
+  // Attempt 3: GET with encoded prompt (last resort, no history)
+  try {
+    if(statusEl) statusEl.textContent = 'Final attempt...';
+    const lastUser = [...history].reverse().find(m => m.role === 'user');
+    if(lastUser){
+      const prompt = `You are Jarvis, a helpful AI assistant. Answer this: ${lastUser.content}`;
+      const res = await fetchWithTimeout(
+        `https://text.pollinations.ai/${encodeURIComponent(prompt)}`,
+        { method:'GET' },
+        30000
+      );
+      if(res.ok){
+        const text = await res.text();
+        if(text && text.trim()) return text.trim();
+      }
+    }
+  } catch(e){ console.warn('Attempt 3 failed:', e); }
+
+  throw new Error('AI service is unavailable right now. Please check your internet and try again.');
 }
 
+/* key-based providers */
 async function callOpenAI(history, key){
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+  const res = await fetchWithTimeout('https://api.openai.com/v1/chat/completions', {
     method:'POST',
     headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
     body: JSON.stringify({
       model:'gpt-4o-mini',
       messages:[{ role:'system', content:'You are Jarvis, a helpful AI assistant.' }, ...history]
     })
-  });
+  }, 45000);
   if(!res.ok) throw new Error('OpenAI error ' + res.status);
   const data = await res.json();
   return data.choices?.[0]?.message?.content || '';
 }
 
 async function callClaude(history, key){
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await fetchWithTimeout('https://api.anthropic.com/v1/messages', {
     method:'POST',
     headers:{
       'Content-Type':'application/json',
@@ -708,21 +749,21 @@ async function callClaude(history, key){
       system: 'You are Jarvis, a helpful AI assistant.',
       messages: history.map(m => ({ role:m.role, content:m.content }))
     })
-  });
+  }, 45000);
   if(!res.ok) throw new Error('Claude error ' + res.status);
   const data = await res.json();
   return data.content?.[0]?.text || '';
 }
 
 async function callDeepSeek(history, key){
-  const res = await fetch('https://api.deepseek.com/chat/completions', {
+  const res = await fetchWithTimeout('https://api.deepseek.com/chat/completions', {
     method:'POST',
     headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
     body: JSON.stringify({
       model:'deepseek-chat',
       messages:[{ role:'system', content:'You are Jarvis, a helpful AI assistant.' }, ...history]
     })
-  });
+  }, 45000);
   if(!res.ok) throw new Error('DeepSeek error ' + res.status);
   const data = await res.json();
   return data.choices?.[0]?.message?.content || '';
@@ -733,13 +774,14 @@ async function callGemini(history, key){
     role: m.role === 'assistant' ? 'model' : 'user',
     parts: [{ text: m.content }]
   }));
-  const res = await fetch(
+  const res = await fetchWithTimeout(
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key,
     {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
       body: JSON.stringify({ contents })
-    }
+    },
+    45000
   );
   if(!res.ok) throw new Error('Gemini error ' + res.status);
   const data = await res.json();
@@ -784,17 +826,17 @@ if(SR){
     for(let i = e.resultIndex; i < e.results.length; i++){
       if(e.results[i].isFinal) finalText += e.results[i][0].transcript;
     }
-    if(finalText){
-      const low = finalText.toLowerCase().trim();
-      const wakeMatch = low.match(/^(hey |ok |okay )?jarvis[, ]*/);
-      if(wakeMatch){
-        const rest = finalText.slice(wakeMatch[0].length).trim();
-        if(rest){
-          input.value = rest;
-          send();
-        } else {
-          greet();
-        }
+    if(!finalText) return;
+    const low = finalText.toLowerCase().trim();
+    // word-boundary match so "jarvis" isn't picked up inside other words
+    const wakeMatch = low.match(/^(hey\s+|ok(?:ay)?\s+)?jarvis\b[,.\s!]*/i);
+    if(wakeMatch){
+      const rest = finalText.slice(wakeMatch[0].length).trim();
+      if(rest){
+        input.value = rest;
+        send();
+      } else {
+        greet();
       }
     }
   };
@@ -868,6 +910,7 @@ $('#settingsSave').addEventListener('click', () => {
   if(!state.autoListen && listening) stopListening();
 
   $('#settingsModal').classList.add('hidden');
+  testConnection();
   toast('✅ Settings saved');
 });
 
