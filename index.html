@@ -17,7 +17,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
 ::-webkit-scrollbar-track{background:transparent}
 .hidden{display:none !important}
 
-/* background */
 #bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
 .glowLayer{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .glow{position:absolute;border-radius:50%;filter:blur(130px);background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%);animation:drift 24s ease-in-out infinite;will-change:transform}
@@ -29,7 +28,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
 .gridOverlay{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(circle at 50% 40%,#000 10%,transparent 75%);mask-image:radial-gradient(circle at 50% 40%,#000 10%,transparent 75%);animation:gridMove 40s linear infinite}
 @keyframes gridMove{from{background-position:0 0,0 0}to{background-position:64px 64px,64px 64px}}
 
-/* auth */
 #authScreen{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
 .authCard{position:relative;width:min(430px,100%);padding:36px 32px 32px;border-radius:24px;background:rgba(10,10,10,.86);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--border);box-shadow:0 50px 120px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.05) inset;animation:popIn .6s cubic-bezier(.2,.9,.3,1.3)}
 @keyframes popIn{from{opacity:0;transform:translateY(30px) scale(.94)}to{opacity:1;transform:none}}
@@ -54,7 +52,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
 .errBox.ok{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4);color:#fff;font-weight:600}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 
-/* app */
 #app{position:relative;z-index:10;display:flex;height:100vh;width:100%}
 .sidebar{width:270px;flex-shrink:0;display:flex;flex-direction:column;background:rgba(6,6,6,.88);backdrop-filter:blur(22px);border-right:1px solid var(--border);transition:transform .35s cubic-bezier(.4,0,.2,1)}
 .sideTop{padding:20px 16px 12px}
@@ -88,13 +85,12 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
 .statusPill{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.4px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted)}
 .dot{width:7px;height:7px;border-radius:50%;background:#ff4d6d}
 .dot.on{background:#fff;animation:pulseDot 1.8s infinite}
-.dot.checking{background:#ffb84d;animation:pulseDot 1s infinite}
+.dot.thinking{background:#ffb84d;animation:pulseDot 1s infinite}
 @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
 .iconBtn{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);font-size:15px;cursor:pointer;transition:.24s;display:grid;place-items:center}
 .iconBtn:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);transform:translateY(-1px)}
 .iconBtn.active{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4)}
 
-/* messages */
 .messages{flex:1;overflow-y:auto;padding:26px 0 12px;scroll-behavior:smooth}
 .msgWrap{max-width:820px;margin:0 auto 18px;padding:0 20px;display:flex;gap:12px;animation:bubbleIn .45s cubic-bezier(.2,.9,.3,1.3);will-change:transform}
 @keyframes bubbleIn{0%{opacity:0;transform:translateY(14px) scale(.94)}60%{transform:translateY(-2px) scale(1.01)}100%{opacity:1;transform:none}}
@@ -108,6 +104,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
 .msgWrap.ai .bubble:hover{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.07)}
 .msgWrap.user .bubble{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-top-right-radius:5px;color:#fff}
 .msgWrap.user .bubble:hover{background:rgba(255,255,255,.18)}
+.msgWrap.error .bubble{background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.3);color:#ffb0b0}
 .bubble code.inline{background:rgba(255,255,255,.1);color:#fff;padding:2px 6px;border-radius:5px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px}
 .bubble pre.code{position:relative;margin:10px 0;padding:13px 15px;border-radius:11px;overflow-x:auto;background:#0a0a0a;border:1px solid rgba(255,255,255,.14);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.65;color:#d0d0d0}
 .copyBtn{position:absolute;top:8px;right:8px;padding:4px 10px;border-radius:7px;font-size:10.5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#ccc;cursor:pointer;font-family:inherit;transition:.2s}
@@ -199,7 +196,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
 <div class="gridOverlay"></div>
 <canvas id="bgCanvas"></canvas>
 
-<!-- AUTH -->
 <div id="authScreen">
   <div class="authCard">
     <div class="brandLogo">JARVIS</div>
@@ -225,7 +221,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
   </div>
 </div>
 
-<!-- APP -->
 <div id="app" class="hidden">
   <aside class="sidebar" id="sidebar">
     <div class="sideTop">
@@ -252,7 +247,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
       <button class="menuBtn" id="menuBtn" type="button">☰</button>
       <div class="topTitle">JARVIS</div>
       <div class="topSpacer"></div>
-      <div class="statusPill"><span class="dot checking" id="statusDot"></span><span id="statusText">Connecting...</span></div>
+      <div class="statusPill"><span class="dot on" id="statusDot"></span><span id="statusText">Ready</span></div>
       <button class="iconBtn active" id="voiceToggle" title="Voice output" type="button">🔊</button>
     </header>
 
@@ -269,11 +264,10 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
   </main>
 </div>
 
-<!-- SETTINGS -->
 <div class="modal hidden" id="settingsModal">
   <div class="modalCard">
     <h3>⚙ Settings</h3>
-    <p class="sub">JARVIS works out of the box with a free AI service. Add your own keys below for higher quality.</p>
+    <p class="sub">JARVIS works out of the box with a free AI service. Add your own keys for higher quality.</p>
     <div class="freeNote">✅ <b>Free mode is active.</b> No key needed to chat.</div>
     <label>OpenAI API Key (optional)</label>
     <input id="setGptKey" type="password" placeholder="sk-..." />
@@ -312,17 +306,22 @@ function fetchWithTimeout(url, options, ms){
     .finally(() => clearTimeout(id));
 }
 
+function setStatus(text, cls){
+  $('#statusText').textContent = text;
+  $('#statusDot').className = 'dot ' + (cls || '');
+}
+
 /* ============ STORAGE ============ */
-const K_USERS='jarvis.users.v7', K_SESSION='jarvis.session.v7';
+const K_USERS='jarvis.users.v8', K_SESSION='jarvis.session.v8';
 const db = {
   users:      () => JSON.parse(localStorage.getItem(K_USERS) || '{}'),
-  saveUsers:  u  => localStorage.setItem(K_USERS, JSON.stringify(u)),
+  saveUsers:  u  => { try{ localStorage.setItem(K_USERS, JSON.stringify(u)); }catch(_){} },
   session:    () => localStorage.getItem(K_SESSION),
   setSession: e  => e ? localStorage.setItem(K_SESSION, e) : localStorage.removeItem(K_SESSION),
-  chats:      e  => JSON.parse(localStorage.getItem('jarvis.chats.'+e) || '[]'),
-  saveChats:  (e,c) => localStorage.setItem('jarvis.chats.'+e, JSON.stringify(c)),
-  settings:   e  => JSON.parse(localStorage.getItem('jarvis.settings.'+e) || '{}'),
-  saveSettings:(e,s) => localStorage.setItem('jarvis.settings.'+e, JSON.stringify(s))
+  chats:      e  => { try{ return JSON.parse(localStorage.getItem('jarvis.chats.'+e) || '[]'); }catch(_){ return []; } },
+  saveChats:  (e,c) => { try{ localStorage.setItem('jarvis.chats.'+e, JSON.stringify(c)); }catch(_){} },
+  settings:   e  => { try{ return JSON.parse(localStorage.getItem('jarvis.settings.'+e) || '{}'); }catch(_){ return {}; } },
+  saveSettings:(e,s) => { try{ localStorage.setItem('jarvis.settings.'+e, JSON.stringify(s)); }catch(_){} }
 };
 
 let state = { email:null, name:'', chats:[], current:null, voiceOn:true, autoListen:true, settings:{} };
@@ -441,13 +440,13 @@ function startSession(email){
   $('#app').classList.remove('hidden');
   renderChatList(); renderMessages(); $('#input').focus();
 
-  if(state.autoListen) startListening(true);
-  testConnection();
+  setStatus('Ready', 'on');
+  if(state.autoListen) setTimeout(() => startListening(true), 800);
 }
 
 $('#logoutBtn').addEventListener('click', () => {
   stopListening();
-  speechSynthesis.cancel();
+  try{ speechSynthesis.cancel(); }catch(_){}
   db.setSession(null);
   state.email = null;
   $('#app').classList.add('hidden');
@@ -459,22 +458,6 @@ $('#logoutBtn').addEventListener('click', () => {
   const s = db.session();
   if(s && db.users()[s]) startSession(s);
 })();
-
-/* ============ CONNECTION CHECK ============ */
-async function testConnection(){
-  $('#statusText').textContent = 'Connecting...';
-  $('#statusDot').className = 'dot checking';
-  try {
-    const res = await fetchWithTimeout('https://text.pollinations.ai/hi', { method:'GET' }, 8000);
-    if(res.ok){
-      $('#statusText').textContent = 'Online';
-      $('#statusDot').className = 'dot on';
-    } else throw new Error();
-  } catch(e){
-    $('#statusText').textContent = 'Offline';
-    $('#statusDot').className = 'dot';
-  }
-}
 
 /* ============ CHAT STATE ============ */
 function makeChat(){ return { id:'c'+Date.now()+Math.random().toString(36).slice(2,6), title:'New Chat', messages:[] }; }
@@ -531,10 +514,12 @@ function md(text){
 }
 window.copyCode = function(btn){
   const code = btn.parentElement.querySelector('code').textContent;
-  navigator.clipboard.writeText(code).then(() => {
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy', 1400);
-  });
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 1400);
+    }).catch(() => {});
+  }
 };
 
 function renderMessages(){
@@ -560,6 +545,7 @@ function renderMessages(){
         </div>
       </div>`;
     $$('.chip', box).forEach(c => c.addEventListener('click', () => {
+      if(busy) return;
       $('#input').value = c.dataset.prompt;
       send();
     }));
@@ -568,8 +554,9 @@ function renderMessages(){
 
   box.innerHTML = chat.messages.map(m => {
     const isAI = m.role === 'assistant';
+    const isErr = m.error === true;
     return `
-      <div class="msgWrap ${isAI ? 'ai' : 'user'}">
+      <div class="msgWrap ${isAI ? 'ai' : 'user'} ${isErr ? 'error' : ''}">
         <div class="msgAvatar ${isAI ? 'ai' : 'me'}">${isAI ? 'J' : (state.name[0]||'U').toUpperCase()}</div>
         <div><div class="bubble">${md(m.content)}</div></div>
       </div>`;
@@ -591,8 +578,9 @@ $('#sendBtn').addEventListener('click', send);
 let busy = false;
 
 async function send(){
+  if(busy) return;
   const text = input.value.trim();
-  if(!text || busy) return;
+  if(!text) return;
 
   const chat = currentChat();
   if(!chat) return;
@@ -600,6 +588,7 @@ async function send(){
   busy = true;
   input.value = ''; input.style.height = 'auto';
   $('#sendBtn').disabled = true;
+  setStatus('Thinking...', 'thinking');
 
   chat.messages.push({ role:'user', content:text });
   if(chat.title === 'New Chat') chat.title = text.slice(0, 34) + (text.length > 34 ? '…' : '');
@@ -619,22 +608,36 @@ async function send(){
   box.appendChild(typing);
   box.scrollTop = box.scrollHeight;
 
-  let reply;
+  let reply = '';
+  let isError = false;
   try {
     reply = await getReply(chat.messages);
-    $('#statusText').textContent = 'Online';
-    $('#statusDot').className = 'dot on';
+    if(!reply || !reply.trim()){
+      reply = "I couldn't generate a response. Please try again.";
+      isError = true;
+    } else {
+      setStatus('Online', 'on');
+    }
   } catch(err){
-    reply = "⚠️ " + err.message;
-    $('#statusText').textContent = 'Offline';
-    $('#statusDot').className = 'dot';
+    reply = "⚠️ " + (err.message || 'Something went wrong.');
+    isError = true;
+    setStatus('Offline', '');
+    // restore input so user can retry
+    if(!input.value.trim()) input.value = text;
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 170) + 'px';
   }
 
   typing.remove();
-  chat.messages.push({ role:'assistant', content: reply });
-  persist(); renderMessages();
 
-  if(state.voiceOn) speak(reply);
+  // Race condition guard: only push if chat still exists
+  if(state.chats.find(c => c.id === chat.id)){
+    const msg = { role:'assistant', content: reply };
+    if(isError) msg.error = true;
+    chat.messages.push(msg);
+    persist(); renderMessages();
+    if(!isError && state.voiceOn) speak(reply);
+  }
 
   busy = false;
   $('#sendBtn').disabled = false;
@@ -643,6 +646,8 @@ async function send(){
 
 /* ============ AI ENGINE ============ */
 async function getReply(history){
+  if(!navigator.onLine) throw new Error('You appear to be offline. Check your internet connection.');
+
   const s = state.settings;
   if(s.gptKey)      return callOpenAI(history, s.gptKey);
   if(s.claudeKey)   return callClaude(history, s.claudeKey);
@@ -651,18 +656,20 @@ async function getReply(history){
   return callFree(history);
 }
 
-/* free tier — 3 fallback attempts */
+/* free tier — 3 attempts with HTML/JSON detection */
 async function callFree(history){
+  const trimmedHistory = history.slice(-20);
   const messages = [
-    { role: 'system', content: 'You are Jarvis, a friendly and helpful AI assistant. Answer clearly. Use markdown for code and lists. Keep responses concise but complete.' },
-    ...history.map(m => ({ role: m.role, content: m.content }))
+    { role: 'system', content: 'You are Jarvis, a friendly and helpful AI assistant. Answer clearly and concisely. Use markdown for code and lists.' },
+    ...trimmedHistory.map(m => ({ role: m.role, content: m.content }))
   ];
 
-  const statusEl = $('#typingStatus');
+  const statusEl = () => $('#typingStatus');
+  const setMsg = t => { const el = statusEl(); if(el) el.textContent = t; };
 
   // Attempt 1: POST to base endpoint (plain text reply)
   try {
-    if(statusEl) statusEl.textContent = 'Connecting...';
+    setMsg('Connecting...');
     const res = await fetchWithTimeout('https://text.pollinations.ai/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -671,20 +678,14 @@ async function callFree(history){
 
     if(res.ok){
       const text = await res.text();
-      if(text && text.trim() && !text.trim().startsWith('{') && text.trim().length > 2){
-        return text.trim();
-      }
-      try {
-        const data = JSON.parse(text);
-        const c = data.choices?.[0]?.message?.content;
-        if(c) return c;
-      } catch(_){}
+      const result = parseFreeResponse(text);
+      if(result) return result;
     }
-  } catch(e){ console.warn('Attempt 1 failed:', e); }
+  } catch(e){ if(e.name === 'AbortError') console.warn('Attempt 1 timeout'); }
 
-  // Attempt 2: OpenAI-compatible path
+  // Attempt 2: OpenAI-compatible JSON path
   try {
-    if(statusEl) statusEl.textContent = 'Retrying...';
+    setMsg('Retrying...');
     const res = await fetchWithTimeout('https://text.pollinations.ai/openai', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -692,18 +693,18 @@ async function callFree(history){
     }, 30000);
 
     if(res.ok){
-      const data = await res.json();
-      const c = data.choices?.[0]?.message?.content;
-      if(c) return c;
+      const text = await res.text();
+      const result = parseFreeResponse(text);
+      if(result) return result;
     }
-  } catch(e){ console.warn('Attempt 2 failed:', e); }
+  } catch(e){ if(e.name === 'AbortError') console.warn('Attempt 2 timeout'); }
 
-  // Attempt 3: GET with encoded prompt (last resort, no history)
+  // Attempt 3: GET with encoded prompt
   try {
-    if(statusEl) statusEl.textContent = 'Final attempt...';
+    setMsg('Final attempt...');
     const lastUser = [...history].reverse().find(m => m.role === 'user');
     if(lastUser){
-      const prompt = `You are Jarvis, a helpful AI assistant. Answer this: ${lastUser.content}`;
+      const prompt = `You are Jarvis, a helpful AI assistant. Answer: ${lastUser.content}`;
       const res = await fetchWithTimeout(
         `https://text.pollinations.ai/${encodeURIComponent(prompt)}`,
         { method:'GET' },
@@ -711,12 +712,38 @@ async function callFree(history){
       );
       if(res.ok){
         const text = await res.text();
-        if(text && text.trim()) return text.trim();
+        const result = parseFreeResponse(text);
+        if(result) return result;
       }
     }
-  } catch(e){ console.warn('Attempt 3 failed:', e); }
+  } catch(e){ if(e.name === 'AbortError') console.warn('Attempt 3 timeout'); }
 
-  throw new Error('AI service is unavailable right now. Please check your internet and try again.');
+  throw new Error('AI service is unavailable right now. Please try again in a moment.');
+}
+
+function parseFreeResponse(text){
+  if(!text) return null;
+  const trimmed = text.trim();
+  if(!trimmed) return null;
+
+  // Detect HTML error pages
+  if(/^<!DOCTYPE|^<html/i.test(trimmed)) return null;
+
+  // Try JSON parse
+  if(trimmed.startsWith('{') || trimmed.startsWith('[')){
+    try {
+      const data = JSON.parse(trimmed);
+      const c = data.choices?.[0]?.message?.content
+             || data.message?.content
+             || data.content
+             || (typeof data === 'string' ? data : null);
+      if(c && c.trim()) return c.trim();
+    } catch(_){}
+  }
+
+  // Plain text fallback — must be meaningful
+  if(trimmed.length > 2 && !trimmed.startsWith('<')) return trimmed;
+  return null;
 }
 
 /* key-based providers */
@@ -726,7 +753,7 @@ async function callOpenAI(history, key){
     headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
     body: JSON.stringify({
       model:'gpt-4o-mini',
-      messages:[{ role:'system', content:'You are Jarvis, a helpful AI assistant.' }, ...history]
+      messages:[{ role:'system', content:'You are Jarvis, a helpful AI assistant.' }, ...history.slice(-20)]
     })
   }, 45000);
   if(!res.ok) throw new Error('OpenAI error ' + res.status);
@@ -747,7 +774,7 @@ async function callClaude(history, key){
       model:'claude-sonnet-4-5',
       max_tokens: 2048,
       system: 'You are Jarvis, a helpful AI assistant.',
-      messages: history.map(m => ({ role:m.role, content:m.content }))
+      messages: history.slice(-20).map(m => ({ role:m.role, content:m.content }))
     })
   }, 45000);
   if(!res.ok) throw new Error('Claude error ' + res.status);
@@ -761,7 +788,7 @@ async function callDeepSeek(history, key){
     headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
     body: JSON.stringify({
       model:'deepseek-chat',
-      messages:[{ role:'system', content:'You are Jarvis, a helpful AI assistant.' }, ...history]
+      messages:[{ role:'system', content:'You are Jarvis, a helpful AI assistant.' }, ...history.slice(-20)]
     })
   }, 45000);
   if(!res.ok) throw new Error('DeepSeek error ' + res.status);
@@ -770,7 +797,7 @@ async function callDeepSeek(history, key){
 }
 
 async function callGemini(history, key){
-  const contents = history.map(m => ({
+  const contents = history.slice(-20).map(m => ({
     role: m.role === 'assistant' ? 'model' : 'user',
     parts: [{ text: m.content }]
   }));
@@ -794,25 +821,50 @@ $('#voiceToggle').addEventListener('click', () => {
   state.settings.voiceOn = state.voiceOn;
   db.saveSettings(state.email, state.settings);
   $('#voiceToggle').classList.toggle('active', state.voiceOn);
-  if(!state.voiceOn) speechSynthesis.cancel();
+  if(!state.voiceOn){ try{ speechSynthesis.cancel(); }catch(_){} }
   toast(state.voiceOn ? '🔊 Voice on' : '🔇 Voice off');
 });
 
+let speaking = false;
+
 function speak(text){
   if(!state.voiceOn || !('speechSynthesis' in window)) return;
-  speechSynthesis.cancel();
-  const clean = text.replace(/```[\s\S]*?```/g, 'code block').replace(/[#*`_>•]/g,'').slice(0, 320);
+  const clean = text.replace(/```[\s\S]*?```/g, 'code block').replace(/[#*`_>•]/g,'').trim().slice(0, 400);
+  if(!clean) return;
+
+  speaking = true;
+  // CRITICAL: pause mic during TTS to prevent feedback loop
+  pauseRecognition();
+  try{ speechSynthesis.cancel(); }catch(_){}
+
   const u = new SpeechSynthesisUtterance(clean);
   u.rate = 1.02; u.pitch = 1.0; u.volume = 1;
   const voices = speechSynthesis.getVoices();
   const pref = voices.find(v => /Google UK English Male|Daniel|Alex/i.test(v.name)) || voices[0];
   if(pref) u.voice = pref;
-  speechSynthesis.speak(u);
+
+  // Safety timeout: Chrome sometimes doesn't fire onend
+  const estimatedMs = Math.max(2500, clean.length * 75);
+  let safetyTimer = setTimeout(() => { finishSpeak(); }, estimatedMs + 5000);
+
+  function finishSpeak(){
+    if(!speaking) return;
+    speaking = false;
+    clearTimeout(safetyTimer);
+    setTimeout(resumeRecognition, 600);
+  }
+
+  u.onend = finishSpeak;
+  u.onerror = finishSpeak;
+  try{ speechSynthesis.speak(u); } catch(_){ finishSpeak(); }
 }
 
 /* ============ WAKE WORD ============ */
 let recognition = null;
 let listening = false;
+let restartTimer = null;
+let lastGreetTime = 0;
+
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 if(SR){
@@ -827,38 +879,71 @@ if(SR){
       if(e.results[i].isFinal) finalText += e.results[i][0].transcript;
     }
     if(!finalText) return;
+
     const low = finalText.toLowerCase().trim();
-    // word-boundary match so "jarvis" isn't picked up inside other words
-    const wakeMatch = low.match(/^(hey\s+|ok(?:ay)?\s+)?jarvis\b[,.\s!]*/i);
+    // match "jarvis" or "hey jarvis" etc. at the start only
+    const wakeMatch = low.match(/^(hey\s+|ok(?:ay)?\s+|hi\s+)?jarvis\b[,.\s!]*/i);
     if(wakeMatch){
       const rest = finalText.slice(wakeMatch[0].length).trim();
-      if(rest){
+      if(rest && !busy){
         input.value = rest;
         send();
-      } else {
+      } else if(!rest){
         greet();
       }
     }
   };
 
   recognition.onerror = (e) => {
-    if(e.error === 'not-allowed'){
+    if(e.error === 'not-allowed' || e.error === 'service-not-allowed'){
       toast('❌ Microphone permission denied');
       listening = false;
       $('#micBtn').classList.remove('listening');
       $('#hintBar').textContent = '';
     }
+    // 'no-speech' and 'aborted' are benign
   };
 
   recognition.onend = () => {
-    if(listening){ try { recognition.start(); } catch(_) {} }
+    if(listening){
+      clearTimeout(restartTimer);
+      restartTimer = setTimeout(() => {
+        if(listening){
+          try { recognition.start(); } catch(_) {}
+        }
+      }, 500);
+    }
   };
 }
 
+function pauseRecognition(){
+  if(recognition && listening){
+    try{ recognition.abort(); }catch(_){}
+  }
+}
+function resumeRecognition(){
+  if(recognition && listening){
+    try{ recognition.start(); }catch(_){}
+  }
+}
+
 function greet(){
+  if(busy) return;
+  const now = Date.now();
+  if(now - lastGreetTime < 3000) return;
+  lastGreetTime = now;
+
   const chat = currentChat();
   if(!chat) return;
   const greeting = "Hi, I'm Jarvis. How can I help you today?";
+
+  // If last message is already this greeting, don't spam
+  const last = chat.messages[chat.messages.length - 1];
+  if(last && last.role === 'assistant' && last.content === greeting) {
+    speak(greeting);
+    return;
+  }
+
   chat.messages.push({ role:'assistant', content: greeting });
   if(chat.title === 'New Chat') chat.title = 'Greeting';
   persist(); renderChatList(); renderMessages();
@@ -876,12 +961,24 @@ function startListening(auto){
 }
 function stopListening(){
   listening = false;
+  clearTimeout(restartTimer);
   $('#micBtn').classList.remove('listening');
   $('#hintBar').textContent = '';
-  try{ recognition && recognition.stop(); }catch(_){}
+  try{ recognition && recognition.abort(); }catch(_){}
 }
 $('#micBtn').addEventListener('click', () => {
   if(listening) stopListening(); else startListening(false);
+});
+
+// Pause mic when tab hidden, resume when visible
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden){
+    pauseRecognition();
+    try{ speechSynthesis.pause(); }catch(_){}
+  } else {
+    if(listening) resumeRecognition();
+    try{ speechSynthesis.resume(); }catch(_){}
+  }
 });
 
 /* ============ SETTINGS ============ */
@@ -910,7 +1007,6 @@ $('#settingsSave').addEventListener('click', () => {
   if(!state.autoListen && listening) stopListening();
 
   $('#settingsModal').classList.add('hidden');
-  testConnection();
   toast('✅ Settings saved');
 });
 
@@ -920,8 +1016,9 @@ document.addEventListener('keydown', e => {
 });
 
 if('speechSynthesis' in window){
-  speechSynthesis.onvoiceschanged = () => {};
+  // Preload voices
   speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = () => { speechSynthesis.getVoices(); };
 }
 </script>
 </body>
