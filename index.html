@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>JARVIS — Fused Multi-AI Intelligence</title>
+<title>JARVIS — Live Advanced AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -11,11 +11,12 @@
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
   --bg:#000;
-  --panel:rgba(10,10,10,.78);
+  --panel:rgba(10,10,10,.80);
   --border:rgba(255,255,255,.10);
   --text:#f2f2f2;
   --muted:#8a8a8a;
   --muted2:#5a5a5a;
+  --think:#aaa;
 }
 html,body{height:100%}
 body{
@@ -34,7 +35,7 @@ body{
 .glowLayer{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .glow{
   position:absolute;border-radius:50%;filter:blur(130px);
-  background:radial-gradient(circle,rgba(255,255,255,.2),transparent 70%);
+  background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%);
   animation:drift 24s ease-in-out infinite;will-change:transform;
 }
 .glow.a{width:520px;height:520px;top:-180px;left:-160px}
@@ -66,7 +67,7 @@ body{
 .authCard{
   position:relative;width:min(430px,100%);
   padding:36px 32px 32px;border-radius:24px;
-  background:rgba(10,10,10,.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  background:rgba(10,10,10,.86);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
   border:1px solid var(--border);
   box-shadow:0 50px 120px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.05) inset;
   animation:popIn .6s cubic-bezier(.2,.9,.3,1.3);
@@ -88,20 +89,18 @@ body{
   0%,100%{filter:drop-shadow(0 0 18px rgba(255,255,255,.25));opacity:.95}
   50%{filter:drop-shadow(0 0 34px rgba(255,255,255,.6));opacity:1}
 }
-.brandSub{text-align:center;color:var(--muted);font-size:11px;margin:10px 0 26px;letter-spacing:2.4px;text-transform:uppercase}
-.fusionBadges{
-  display:flex;justify-content:center;gap:7px;margin-bottom:22px;flex-wrap:wrap;
+.brandSub{text-align:center;color:var(--muted);font-size:11px;margin:10px 0 18px;letter-spacing:2.4px;text-transform:uppercase}
+.liveBadge{
+  display:flex;justify-content:center;gap:8px;margin-bottom:22px;
 }
-.fusionBadges span{
-  font-size:9.5px;font-weight:600;letter-spacing:.5px;padding:4px 9px;border-radius:20px;
+.liveBadge span{
+  font-size:9.5px;font-weight:600;letter-spacing:.5px;padding:4px 10px;border-radius:20px;
   background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#aaa;
   animation:badgeIn .5s backwards;
 }
-.fusionBadges span:nth-child(1){animation-delay:.15s}
-.fusionBadges span:nth-child(2){animation-delay:.25s}
-.fusionBadges span:nth-child(3){animation-delay:.35s}
-.fusionBadges span:nth-child(4){animation-delay:.45s}
-.fusionBadges span:nth-child(5){animation-delay:.55s}
+.liveBadge span:nth-child(1){animation-delay:.1s}
+.liveBadge span:nth-child(2){animation-delay:.2s}
+.liveBadge span:nth-child(3){animation-delay:.3s}
 @keyframes badgeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
 .tabs{display:flex;gap:6px;background:rgba(255,255,255,.045);padding:5px;border-radius:14px;margin-bottom:22px}
@@ -204,7 +203,7 @@ body{
 
 .main{flex:1;display:flex;flex-direction:column;min-width:0}
 .topbar{
-  height:62px;flex-shrink:0;display:flex;align-items:center;gap:14px;padding:0 18px;
+  height:62px;flex-shrink:0;display:flex;align-items:center;gap:10px;padding:0 18px;
   border-bottom:1px solid var(--border);background:rgba(6,6,6,.6);backdrop-filter:blur(16px);
 }
 .menuBtn{
@@ -216,22 +215,6 @@ body{
   background:linear-gradient(135deg,#fff,#888);
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
-.fusionChip{
-  display:flex;align-items:center;gap:8px;padding:6px 12px 6px 10px;border-radius:20px;
-  background:rgba(255,255,255,.05);border:1px solid var(--border);
-  font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.4px;
-}
-.fusionChip .dots{display:flex;gap:3px}
-.fusionChip .dots i{
-  width:6px;height:6px;border-radius:50%;background:#fff;display:block;
-  animation:dotPulse 2s ease-in-out infinite;
-}
-.fusionChip .dots i:nth-child(1){animation-delay:0s;opacity:.9}
-.fusionChip .dots i:nth-child(2){animation-delay:.15s;opacity:.75}
-.fusionChip .dots i:nth-child(3){animation-delay:.3s;opacity:.6}
-.fusionChip .dots i:nth-child(4){animation-delay:.45s;opacity:.45}
-.fusionChip .dots i:nth-child(5){animation-delay:.6s;opacity:.35}
-@keyframes dotPulse{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.5);opacity:1}}
 .topSpacer{flex:1}
 .statusPill{
   display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:20px;
@@ -249,6 +232,32 @@ body{
 .iconBtn:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);transform:translateY(-1px)}
 .iconBtn.active{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4)}
 
+/* think toggle */
+.thinkToggle{
+  display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;transition:.25s;
+  user-select:none;
+}
+.thinkToggle.on{
+  background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.45);color:#fff;
+}
+.thinkToggle .thinkDot{
+  width:6px;height:6px;border-radius:50%;background:#666;transition:.25s;
+}
+.thinkToggle.on .thinkDot{background:#fff;box-shadow:0 0 8px rgba(255,255,255,.8)}
+
+/* search toggle */
+.searchToggle{
+  display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;transition:.25s;
+  user-select:none;
+}
+.searchToggle.on{
+  background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.45);color:#fff;
+}
+
 /* messages */
 .messages{flex:1;overflow-y:auto;padding:26px 0 12px;scroll-behavior:smooth}
 .msgWrap{max-width:820px;margin:0 auto 18px;padding:0 20px;display:flex;gap:12px;
@@ -261,7 +270,7 @@ body{
 .msgWrap.user{flex-direction:row-reverse}
 .msgAvatar{
   width:32px;height:32px;border-radius:10px;flex-shrink:0;display:grid;place-items:center;
-  font-size:13px;font-weight:800;position:relative;
+  font-size:13px;font-weight:800;
 }
 .msgAvatar.ai{
   background:linear-gradient(135deg,#fff,#888);color:#000;
@@ -287,6 +296,42 @@ body{
   border-top-right-radius:5px;color:#fff;
 }
 .msgWrap.user .bubble:hover{background:rgba(255,255,255,.18)}
+
+/* thinking block */
+.thinkBlock{
+  margin-bottom:10px;padding:10px 14px;border-radius:12px;
+  background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.18);
+  font-size:12.5px;line-height:1.65;color:var(--think);
+  animation:thinkIn .5s;
+}
+@keyframes thinkIn{from{opacity:0;max-height:0;padding:0 14px}to{opacity:1;max-height:600px;padding:10px 14px}}
+.thinkBlock .thinkHead{
+  display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:6px;
+}
+.thinkBlock .thinkHead .spin{
+  width:9px;height:9px;border:1.5px solid #555;border-top-color:#fff;
+  border-radius:50%;animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.thinkBlock.streaming .thinkHead .spin{display:inline-block}
+
+/* search results */
+.searchBlock{
+  margin-bottom:10px;padding:10px 14px;border-radius:12px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.12);
+  font-size:12.5px;line-height:1.6;
+}
+.searchBlock .searchHead{
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  color:#777;margin-bottom:6px;display:flex;align-items:center;gap:6px;
+}
+.searchBlock .searchHead .sDot{width:6px;height:6px;border-radius:50%;background:#888}
+.searchBlock a{color:#ccc;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.2)}
+.searchBlock a:hover{color:#fff;border-bottom-color:#fff}
+.searchBlock .src{display:block;margin-bottom:4px;font-size:11px;color:#999}
+.searchBlock .src b{color:#ccc;font-weight:600}
+
 .msgMeta{
   font-size:9.5px;color:var(--muted2);margin-top:7px;letter-spacing:.6px;
   display:flex;align-items:center;gap:8px;text-transform:uppercase;font-weight:600;
@@ -313,7 +358,7 @@ body{
 .copyBtn:hover{background:rgba(255,255,255,.22);color:#fff}
 
 /* typing */
-.typing{display:flex;gap:6px;padding:18px 20px;align-items:center}
+.typing{display:flex;gap:6px;padding:16px 20px;align-items:center}
 .typing span{
   width:7px;height:7px;border-radius:50%;background:#fff;
   animation:bounce 1.3s infinite ease-in-out;
@@ -328,10 +373,8 @@ body{
 @keyframes labelFade{0%,100%{opacity:.5}50%{opacity:1}}
 
 /* welcome */
-.welcome{max-width:760px;margin:0 auto;padding:34px 24px;text-align:center;animation:bubbleIn .7s}
-.welcome .fusionRing{
-  width:90px;height:90px;margin:0 auto 22px;position:relative;
-}
+.welcome{max-width:760px;margin:0 auto;padding:30px 24px;text-align:center;animation:bubbleIn .7s}
+.welcome .fusionRing{width:90px;height:90px;margin:0 auto 20px;position:relative}
 .welcome .fusionRing .orbit{
   position:absolute;inset:0;border-radius:50%;border:1.5px dashed rgba(255,255,255,.18);
   animation:spin 18s linear infinite;
@@ -344,7 +387,6 @@ body{
   box-shadow:0 0 30px rgba(255,255,255,.55);
   animation:corePulse 2.4s ease-in-out infinite;
 }
-@keyframes spin{to{transform:rotate(360deg)}}
 @keyframes corePulse{0%,100%{transform:scale(1);box-shadow:0 0 20px rgba(255,255,255,.4)}50%{transform:scale(1.1);box-shadow:0 0 40px rgba(255,255,255,.7)}}
 .welcome h1{
   font-size:clamp(26px,4.6vw,40px);font-weight:800;letter-spacing:-.5px;margin-bottom:10px;
@@ -353,7 +395,7 @@ body{
   animation:logoPulse 3.5s ease-in-out infinite;
 }
 .welcome p{color:var(--muted);font-size:13.5px;margin-bottom:8px;line-height:1.6}
-.welcome .subline{color:var(--muted2);font-size:11.5px;margin-bottom:26px;letter-spacing:.4px}
+.welcome .subline{color:var(--muted2);font-size:11.5px;margin-bottom:24px;letter-spacing:.4px}
 .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
 .chip{
   padding:11px 17px;border-radius:12px;font-size:12.5px;cursor:pointer;transition:.3s;
@@ -423,6 +465,7 @@ body{
   width:min(470px,100%);padding:28px;border-radius:22px;
   background:rgba(14,14,14,.98);border:1px solid var(--border);
   box-shadow:0 50px 120px rgba(0,0,0,.95);animation:popIn .4s cubic-bezier(.2,.9,.3,1.3);
+  max-height:90vh;overflow-y:auto;
 }
 .modalCard h3{font-size:17px;margin-bottom:6px;color:#fff}
 .modalCard .sub{font-size:12.5px;color:var(--muted);margin-bottom:20px;line-height:1.6}
@@ -437,6 +480,21 @@ body{
 .modalRow .btn{flex:1;padding:12px}
 .btnGhost{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text)}
 .btnGhost:hover{background:rgba(255,255,255,.13)}
+.switchRow{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);
+}
+.switchRow span{font-size:12.5px;color:#ccc}
+.switch{
+  width:38px;height:22px;border-radius:20px;background:rgba(255,255,255,.12);
+  position:relative;cursor:pointer;transition:.25s;flex-shrink:0;
+}
+.switch::after{
+  content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;
+  background:#888;transition:.25s;
+}
+.switch.on{background:#fff}
+.switch.on::after{left:19px;background:#000}
 
 /* toast */
 .toast{
@@ -452,7 +510,7 @@ body{
   .sidebar.open{transform:translateX(0)}
   .menuBtn{display:grid;place-items:center}
   .bubble{max-width:88%}
-  .fusionChip{display:none}
+  .thinkToggle, .searchToggle{display:none}
   .messages{padding-top:16px}
 }
 @media (max-width:560px){
@@ -478,9 +536,9 @@ body{
 <div id="authScreen">
   <div class="authCard">
     <div class="brandLogo">JARVIS</div>
-    <div class="brandSub">Fused Multi-AI Intelligence</div>
-    <div class="fusionBadges">
-      <span>GPT</span><span>Claude</span><span>Grok</span><span>DeepSeek</span><span>Gemini</span>
+    <div class="brandSub">Live Advanced AI</div>
+    <div class="liveBadge">
+      <span>🎙️ Voice</span><span>🧠 Deep Think</span><span>🌐 Web Search</span>
     </div>
 
     <div class="tabs">
@@ -511,7 +569,7 @@ body{
   <aside class="sidebar" id="sidebar">
     <div class="sideTop">
       <div class="sideBrand">JARVIS</div>
-      <div class="sideBrandSub">FUSED AI ENGINE</div>
+      <div class="sideBrandSub">LIVE ENGINE</div>
       <button class="newChatBtn" id="newChatBtn" type="button">＋ New Conversation</button>
     </div>
     <div class="chatList" id="chatList"></div>
@@ -532,12 +590,16 @@ body{
     <header class="topbar">
       <button class="menuBtn" id="menuBtn" type="button">☰</button>
       <div class="topTitle">JARVIS</div>
-      <div class="fusionChip">
-        <div class="dots"><i></i><i></i><i></i><i></i><i></i></div>
-        <span>5 models fused</span>
+
+      <div class="thinkToggle" id="thinkToggle" title="Deep Think reasoning">
+        <span class="thinkDot"></span><span>Think</span>
       </div>
+      <div class="searchToggle" id="searchToggle" title="Live web search">
+        <span>🌐</span><span>Search</span>
+      </div>
+
       <div class="topSpacer"></div>
-      <div class="statusPill"><span class="dot on" id="statusDot"></span><span id="statusText">Fused · Demo</span></div>
+      <div class="statusPill"><span class="dot on" id="statusDot"></span><span id="statusText">Live</span></div>
       <button class="iconBtn active" id="voiceToggle" title="Voice output" type="button">🔊</button>
     </header>
 
@@ -558,13 +620,26 @@ body{
 <div class="modal hidden" id="settingsModal">
   <div class="modalCard">
     <h3>⚙ Settings</h3>
-    <p class="sub">Paste an API key to unlock live reasoning. Leave empty to use the built-in fusion brain (offline, works everywhere).</p>
+    <p class="sub">Paste an API key to unlock live reasoning. Leave empty to use the built-in demo brain (offline, works everywhere).</p>
+
     <label>API Endpoint</label>
     <input id="setUrl" placeholder="https://api.openai.com/v1/chat/completions" />
     <label>API Key</label>
     <input id="setKey" type="password" placeholder="sk-..." />
     <label>Model name</label>
     <input id="setModel" placeholder="gpt-4o-mini" />
+    <label>Web Search API Key (Tavily — optional)</label>
+    <input id="setSearchKey" type="password" placeholder="tvly-..." />
+
+    <div class="switchRow">
+      <span>Deep Think mode by default</span>
+      <div class="switch" id="defThinkSwitch"></div>
+    </div>
+    <div class="switchRow">
+      <span>Web Search by default</span>
+      <div class="switch" id="defSearchSwitch"></div>
+    </div>
+
     <div class="modalRow">
       <button class="btn btnGhost" id="settingsCancel" type="button">Cancel</button>
       <button class="btn btnPrimary" style="width:auto" id="settingsSave" type="button">Save</button>
@@ -584,7 +659,7 @@ function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show'
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 
 /* ============ STORAGE ============ */
-const K_USERS='jarvis.users.v3', K_SESSION='jarvis.session.v3';
+const K_USERS='jarvis.users.v4', K_SESSION='jarvis.session.v4';
 const db = {
   users:      () => JSON.parse(localStorage.getItem(K_USERS) || '{}'),
   saveUsers:  u  => localStorage.setItem(K_USERS, JSON.stringify(u)),
@@ -596,7 +671,14 @@ const db = {
   saveSettings:(e,s) => localStorage.setItem('jarvis.settings.'+e, JSON.stringify(s))
 };
 
-let state = { email:null, name:'', chats:[], current:null, voiceOn:true, settings:{} };
+let state = {
+  email:null, name:'',
+  chats:[], current:null,
+  voiceOn:true,
+  thinkMode:false,
+  searchMode:false,
+  settings:{}
+};
 
 /* ============ PARTICLE BG ============ */
 (function particles(){
@@ -666,7 +748,7 @@ $('#signupForm').addEventListener('submit', e => {
 
   users[email] = { name, pass: hash(pass), created: Date.now() };
   db.saveUsers(users);
-  showErr(box, '✅ Account created! Loading your fused JARVIS...', true);
+  showErr(box, '✅ Account created! Loading live JARVIS...', true);
 
   setTimeout(() => { $('#signupForm').reset(); startSession(email); }, 700);
 });
@@ -697,7 +779,9 @@ function startSession(email){
   db.setSession(email);
 
   state.settings = db.settings(email);
-  state.voiceOn  = state.settings.voiceOn !== false;
+  state.voiceOn   = state.settings.voiceOn !== false;
+  state.thinkMode = state.settings.thinkMode === true;
+  state.searchMode= state.settings.searchMode === true;
 
   state.chats = db.chats(email);
   if(!state.chats.length) state.chats = [makeChat()];
@@ -707,6 +791,8 @@ function startSession(email){
   $('#userEmail').textContent  = email;
   $('#userAvatar').textContent = (state.name[0] || 'U').toUpperCase();
   $('#voiceToggle').classList.toggle('active', state.voiceOn);
+  $('#thinkToggle').classList.toggle('on', state.thinkMode);
+  $('#searchToggle').classList.toggle('on', state.searchMode);
 
   updateStatus();
   $('#authScreen').classList.add('hidden');
@@ -743,9 +829,25 @@ $('#newChatBtn').addEventListener('click', () => {
 
 $('#menuBtn').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
 
+/* think & search toggles */
+$('#thinkToggle').addEventListener('click', () => {
+  state.thinkMode = !state.thinkMode;
+  state.settings.thinkMode = state.thinkMode;
+  db.saveSettings(state.email, state.settings);
+  $('#thinkToggle').classList.toggle('on', state.thinkMode);
+  toast(state.thinkMode ? '🧠 Deep Think ON' : '🧠 Deep Think OFF');
+});
+$('#searchToggle').addEventListener('click', () => {
+  state.searchMode = !state.searchMode;
+  state.settings.searchMode = state.searchMode;
+  db.saveSettings(state.email, state.settings);
+  $('#searchToggle').classList.toggle('on', state.searchMode);
+  toast(state.searchMode ? '🌐 Web Search ON' : '🌐 Web Search OFF');
+});
+
 function updateStatus(){
   const real = !!(state.settings.key && state.settings.url);
-  $('#statusText').textContent = real ? 'Fused · Live' : 'Fused · Demo';
+  $('#statusText').textContent = real ? 'Live' : 'Demo';
   $('#statusDot').classList.add('on');
 }
 
@@ -804,19 +906,17 @@ function renderMessages(){
     box.innerHTML = `
       <div class="welcome">
         <div class="fusionRing">
-          <div class="orbit"></div>
-          <div class="orbit"></div>
-          <div class="orbit"></div>
+          <div class="orbit"></div><div class="orbit"></div><div class="orbit"></div>
           <div class="core"></div>
         </div>
         <h1>Hello, ${esc(state.name.split(' ')[0])} 👋</h1>
-        <p>I am JARVIS — a fused intelligence built from GPT, Claude, Grok, DeepSeek &amp; Gemini.</p>
-        <div class="subline">ONE assistant · FIVE minds · FUSED for you</div>
+        <p>I'm JARVIS — now with live voice, Deep Think reasoning, and real-time web search.</p>
+        <div class="subline">ONE assistant · LIVE · ADVANCED</div>
         <div class="chips">
+          <button class="chip" data-prompt="What's the latest news about AI?">📰 Latest AI news</button>
           <button class="chip" data-prompt="Explain quantum computing like I'm 10">🧠 Explain quantum computing</button>
           <button class="chip" data-prompt="Write a JavaScript debounce function">⚡ Write JS debounce</button>
           <button class="chip" data-prompt="Give me 5 startup ideas in 2026">🚀 Startup ideas</button>
-          <button class="chip" data-prompt="Tell me a witty joke">😏 Tell me a joke</button>
         </div>
       </div>`;
     $$('.chip', box).forEach(c => c.addEventListener('click', () => {
@@ -828,22 +928,23 @@ function renderMessages(){
 
   box.innerHTML = chat.messages.map(m => {
     const isAI = m.role === 'assistant';
+    let html = '';
+    if(isAI && m.think) html += `<div class="thinkBlock"><div class="thinkHead"><span class="spin"></span> Reasoning</div>${esc(m.think)}</div>`;
+    if(isAI && m.search) html += `<div class="searchBlock"><div class="searchHead"><span class="sDot"></span> Web results</div>${m.search}</div>`;
+    html += `<div class="bubble">${md(m.content)}</div>`;
     return `
       <div class="msgWrap ${isAI ? 'ai' : 'user'}">
         <div class="msgAvatar ${isAI ? 'ai' : 'me'}">${isAI ? 'J' : (state.name[0]||'U').toUpperCase()}</div>
-        <div>
-          <div class="bubble">${md(m.content)}</div>
-          ${isAI ? `<div class="msgMeta">
-              <span>FUSED</span>
-              <div class="pills"><i>GPT</i><i>Claude</i><i>Grok</i><i>DS</i><i>Gemini</i></div>
-            </div>` : ''}
+        <div>${html}
+          ${isAI ? `<div class="msgMeta"><span>LIVE</span>
+            <div class="pills"><i>GPT</i><i>Claude</i><i>Grok</i><i>DS</i><i>Gemini</i></div></div>` : ''}
         </div>
       </div>`;
   }).join('');
   box.scrollTop = box.scrollHeight;
 }
 
-/* ============ SEND ============ */
+/* ============ SEND FLOW ============ */
 const input = $('#input');
 input.addEventListener('input', () => {
   input.style.height = 'auto';
@@ -871,6 +972,7 @@ async function send(){
   if(chat.title === 'New Chat') chat.title = text.slice(0, 34) + (text.length > 34 ? '…' : '');
   persist(); renderChatList(); renderMessages();
 
+  // typing indicator
   const box = $('#messages');
   const typing = document.createElement('div');
   typing.className = 'msgWrap ai';
@@ -879,90 +981,216 @@ async function send(){
     <div class="bubble" style="padding:0;background:transparent;border:0">
       <div class="typing">
         <span></span><span></span><span></span>
-        <span class="typingLabel" id="typingLabel">Fusing 5 models...</span>
+        <span class="typingLabel" id="typingLabel">Thinking...</span>
       </div>
     </div>`;
   box.appendChild(typing);
   box.scrollTop = box.scrollHeight;
 
-  // cycle fusion labels
-  const labels = ['GPT analyzing...','Claude reasoning...','Grok checking...','DeepSeek computing...','Gemini creating...','Fusing intelligence...'];
+  // cycle labels
+  const labels = state.thinkMode
+    ? ['Analyzing...','Reasoning step 1...','Reasoning step 2...','Verifying...','Finalizing...']
+    : ['Processing...','Generating...','Almost there...'];
   let li = 0;
   const cycle = setInterval(() => {
     const el = $('#typingLabel');
     if(el){ el.textContent = labels[li % labels.length]; li++; }
-  }, 420);
+  }, 500);
 
-  let reply;
-  try { reply = await getReply(text, chat.messages); }
-  catch(err){ reply = "⚠️ Something went wrong: " + err.message; }
+  let result;
+  try {
+    result = await getReply(text, chat.messages);
+  } catch(err){
+    result = { content: "⚠️ Something went wrong: " + err.message };
+  }
 
   clearInterval(cycle);
   typing.remove();
-  chat.messages.push({ role:'assistant', content:reply });
+
+  const msg = { role:'assistant', content: result.content };
+  if(result.think) msg.think = result.think;
+  if(result.search) msg.search = result.search;
+  chat.messages.push(msg);
   persist(); renderMessages();
 
-  if(state.voiceOn) speak(reply);
+  if(state.voiceOn) speak(result.content);
 
   busy = false;
   $('#sendBtn').disabled = false;
   input.focus();
 }
 
-/* ============ FUSED AI ENGINE ============ */
+/* ============ AI ENGINE ============ */
 async function getReply(text, history){
   const s = state.settings;
+
+  // --- Web search (if enabled) ---
+  let searchContext = '';
+  let searchHtml = '';
+  if(state.searchMode && s.searchKey){
+    try {
+      const sr = await webSearch(text, s.searchKey);
+      if(sr.results.length){
+        searchContext = sr.results.map(r => `- ${r.title}: ${r.snippet}`).join('\n');
+        searchHtml = sr.results.slice(0, 4).map(r =>
+          `<div class="src"><b>${esc(r.title)}</b><br>${esc(r.snippet)}<br><a href="${esc(r.url)}" target="_blank">${esc(r.url)}</a></div>`
+        ).join('');
+      }
+    } catch(_) {}
+  }
+
+  // --- Live API ---
   if(s.key && s.url){
     try {
+      const body = {
+        model: s.model || 'gpt-4o-mini',
+        messages: [
+          { role:'system', content: buildSystemPrompt(searchContext) },
+          ...history.map(m => ({ role:m.role, content:m.content }))
+        ],
+        stream: true
+      };
+
+      // DeepSeek-specific: enable thinking mode
+      if(/deepseek/i.test(s.model) || state.thinkMode){
+        body.thinking = { type: 'enabled' };
+        body.reasoning_effort = 'high';
+      }
+
       const res = await fetch(s.url, {
         method:'POST',
         headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + s.key },
-        body: JSON.stringify({
-          model: s.model || 'gpt-4o-mini',
-          messages: [
-            { role:'system', content:'You are JARVIS, a fused AI combining the strengths of GPT (precision), Claude (reasoning), Grok (wit), DeepSeek (technical depth), and Gemini (creativity). Answer in a unified, confident voice.' },
-            ...history.map(m => ({ role:m.role, content:m.content }))
-          ]
-        })
+        body: JSON.stringify(body)
       });
       if(!res.ok) throw new Error('API ' + res.status);
+
+      // Handle streaming
+      if(body.stream){
+        const { content, reasoning } = await readStream(res);
+        return {
+          content: content || '(empty)',
+          think: reasoning || undefined,
+          search: searchHtml || undefined
+        };
+      }
+
+      // Non-stream fallback
       const data = await res.json();
-      return data.choices?.[0]?.message?.content || '(empty response)';
+      const msg = data.choices?.[0]?.message;
+      return {
+        content: msg?.content || '(empty)',
+        think: msg?.reasoning_content || msg?.reasoning || undefined,
+        search: searchHtml || undefined
+      };
     } catch(e){
-      return "⚠️ API error: " + e.message + "\n\nFalling back to fusion brain:\n\n" + demoReply(text);
+      return {
+        content: "⚠️ API error: " + e.message + "\n\nFalling back to demo brain:\n\n" + demoReply(text).content,
+        think: demoReply(text).think,
+        search: searchHtml || undefined
+      };
     }
   }
+
+  // --- Demo brain ---
   await sleep(700 + Math.random() * 800);
   return demoReply(text);
 }
 
-/* Fused demo brain — combines all 5 model strengths */
+function buildSystemPrompt(searchContext){
+  let p = 'You are JARVIS, a live advanced AI assistant. ';
+  p += 'You combine the strengths of GPT (precision), Claude (reasoning), Grok (wit), DeepSeek (technical depth), and Gemini (creativity). ';
+  p += 'Answer in a unified, confident voice. ';
+  if(state.thinkMode) p += 'Show your reasoning step by step before the final answer. ';
+  if(searchContext) p += '\n\nUse these web search results to inform your answer:\n' + searchContext + '\n\n';
+  return p;
+}
+
+/* ---------- streaming reader ---------- */
+async function readStream(res){
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder('utf-8');
+  let content = '', reasoning = '', buf = '';
+
+  while(true){
+    const { done, value } = await reader.read();
+    if(done) break;
+    buf += decoder.decode(value, { stream:true });
+    const lines = buf.split('\n');
+    buf = lines.pop(); // keep partial
+
+    for(const line of lines){
+      const trimmed = line.trim();
+      if(!trimmed.startsWith('data: ')) continue;
+      const data = trimmed.slice(6);
+      if(data === '[DONE]') continue;
+      try {
+        const json = JSON.parse(data);
+        const delta = json.choices?.[0]?.delta || {};
+        if(delta.content) content += delta.content;
+        if(delta.reasoning_content) reasoning += delta.reasoning_content;
+        if(delta.reasoning) reasoning += delta.reasoning;
+      } catch(_) {}
+    }
+  }
+  return { content, reasoning };
+}
+
+/* ---------- web search ---------- */
+async function webSearch(query, apiKey){
+  // Tavily search API (free tier)
+  const res = await fetch('https://api.tavily.com/search', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    body: JSON.stringify({
+      api_key: apiKey,
+      query: query,
+      search_depth: 'basic',
+      max_results: 5
+    })
+  });
+  if(!res.ok) throw new Error('Search ' + res.status);
+  const data = await res.json();
+  const results = (data.results || []).map(r => ({
+    title: r.title,
+    snippet: r.content?.slice(0, 200) || '',
+    url: r.url
+  }));
+  return { results };
+}
+
+/* ---------- demo brain ---------- */
 function demoReply(text){
   const t = text.toLowerCase().trim();
-  const raw = text;
 
-  // Greeting
+  // greeting
   if(/^(hi|hello|hey|yo|sup|hola|namaste|good (morning|evening|night))\b/.test(t)){
-    return `Hello. I'm **JARVIS** — a fused intelligence.\n\n` +
-      `I combine five AI minds into one:\n` +
-      `• **GPT** — precision & structure\n` +
-      `• **Claude** — careful reasoning\n` +
-      `• **Grok** — wit & honesty\n` +
-      `• **DeepSeek** — technical depth\n` +
-      `• **Gemini** — creativity & connections\n\n` +
-      `Ask me anything — code, math, ideas, explanations — and I'll fuse the best of all five.`;
+    return {
+      think: state.thinkMode ? 'User is greeting me. I should introduce myself and highlight my new live features.' : undefined,
+      content: `Hello. I'm **JARVIS** — now a **live advanced** AI.\n\n` +
+        `New capabilities:\n` +
+        `• 🎙️ **Live voice** — say "Jarvis" and speak naturally\n` +
+        `• 🧠 **Deep Think** — toggle reasoning for step-by-step answers\n` +
+        `• 🌐 **Web Search** — fetch real-time info (add a Tavily key in Settings)\n\n` +
+        `Ask me anything.`
+    };
   }
 
-  // Who are you
+  // who are you
   if(/who are you|what are you|your name|introduce/.test(t)){
-    return `I'm **JARVIS**.\n\n` +
-      `Not five separate assistants — **one fused intelligence**. When you ask me something, the strengths of GPT, Claude, Grok, DeepSeek, and Gemini all activate together and collapse into a single answer.\n\n` +
-      `Think of it as a hive mind that speaks as one voice.`;
+    return {
+      think: 'User wants identity. Explain fusion + live features.',
+      content: `I'm **JARVIS** — a fused, live AI.\n\n` +
+        `I blend GPT, Claude, Grok, DeepSeek, and Gemini into one voice. ` +
+        `With **Deep Think** on, I reason before answering. ` +
+        `With **Web Search** on, I pull live results.`
+    };
   }
 
-  // Code
+  // code
   if(/code|function|javascript|python|debounce|program|api|async/.test(t)){
-    return `Here's a clean, production-ready implementation.\n\n` +
+    return {
+      think: 'Request is code-related. Provide a clean debounce function with explanation.',
+      content: `Here's a production-ready **debounce**:\n\n` +
 `\`\`\`js
 function debounce(fn, delay = 300) {
   let timer;
@@ -972,76 +1200,88 @@ function debounce(fn, delay = 300) {
   };
 }
 
-// usage
 const onSearch = debounce(q => console.log(q), 400);
 input.addEventListener('input', e => onSearch(e.target.value));
 \`\`\`\n\n` +
-      `**Why this works:**\n` +
-      `• Every keystroke cancels the previous timer\n` +
-      `• Only the final call fires after \`delay\` ms of silence\n` +
-      `• Prevents API spam and keeps the UI responsive\n\n` +
-      `Want it as a \`requestAnimationFrame\` throttle instead? Just ask.`;
+        `**Why it works:**\n` +
+        `• Every keystroke cancels the previous timer\n` +
+        `• Only the final call fires after \`delay\` ms of silence\n` +
+        `• Prevents API spam and keeps the UI responsive`
+    };
   }
 
-  // Math
+  // math
   const mathMatch = t.match(/(-?\d+(?:\.\d+)?)\s*([+\-*/x])\s*(-?\d+(?:\.\d+)?)/);
   if(mathMatch){
     const a = +mathMatch[1], b = +mathMatch[3];
     const op = mathMatch[2] === 'x' ? '*' : mathMatch[2];
     const r = op==='+'?a+b:op==='-'?a-b:op==='*'?a*b:(b===0?'undefined':a/b);
-    return `**${a} ${op} ${b} = ${r}**\n\n` +
-      `Computed by DeepSeek-grade math, verified by Claude-grade reasoning. ✅`;
+    return {
+      think: `Computing ${a} ${op} ${b}...`,
+      content: `**${a} ${op} ${b} = ${r}**`
+    };
   }
 
-  // Time
+  // time
   if(/time|date|day|today/.test(t)){
-    return `Right now: **${new Date().toLocaleString()}**\n\n` +
-      `(Synced across all 5 fusion minds — no drift, no conflict.)`;
+    return {
+      think: 'Fetching current system time.',
+      content: `Right now: **${new Date().toLocaleString()}**`
+    };
   }
 
-  // Joke
+  // joke
   if(/joke|funny|laugh|humor/.test(t)){
-    return `Here's one, delivered with **Grok's wit** and **Gemini's charm**:\n\n` +
-      `> A SQL query walks into a bar, sees two tables, and asks:\n` +
-      `> *"May I JOIN you?"* 🍸\n\n` +
-      `**Claude** would call that a relational pun. **GPT** confirms the schema is valid. **DeepSeek** notes the O(1) lookup. 😄`;
+    return {
+      think: 'Selecting a witty joke.',
+      content: `Here's one:\n\n` +
+        `> A SQL query walks into a bar, sees two tables, and asks:\n` +
+        `> *"May I JOIN you?"* 🍸\n\n` +
+        `Relational humor — valid schema, O(1) punchline. 😄`
+    };
   }
 
-  // Startup
+  // startup
   if(/idea|startup|business|product|launch/.test(t)){
-    return `**Five fused startup ideas for 2026** — GPT-structured, Gemini-inspired, DeepSeek-validated:\n\n` +
-      `1. **Local-first AI** — private on-device assistants for healthcare & finance\n` +
-      `2. **Voice dev tools** — natural-language coding in the terminal\n` +
-      `3. **AI energy audits** — optimize data-center workloads in real time\n` +
-      `4. **Personal knowledge graph** — unify notes, mail, chats into one memory\n` +
-      `5. **Verifiable AI** — cryptographic proof of model behavior for compliance\n\n` +
-      `**Claude's note:** #3 has the clearest path to revenue. **Grok's note:** #2 is the most fun to build.\n\n` +
-      `Want a full business model for any of these?`;
+    return {
+      think: 'Brainstorming startup ideas. Structuring into a list.',
+      content: `**Five startup ideas for 2026:**\n\n` +
+        `1. **Local-first AI** — private on-device assistants for regulated industries\n` +
+        `2. **Voice dev tools** — natural-language coding in the terminal\n` +
+        `3. **AI energy audits** — optimize data-center workloads\n` +
+        `4. **Personal knowledge graph** — unify notes, mail, chats into one memory\n` +
+        `5. **Verifiable AI** — cryptographic proof of model behavior\n\n` +
+        `Want a business model for any of these?`
+    };
   }
 
-  // Explain
+  // explain
   if(/explain|what is|what's|how does|define|why/.test(t)){
-    const topic = raw.replace(/^(explain|what is|what's|how does|define|why)\s*/i, '').replace(/[?.!]+$/, '') || 'it';
-    return `**${esc(topic.charAt(0).toUpperCase() + topic.slice(1))}** — fused explanation:\n\n` +
-      `• **Core idea** (GPT) — the essential concept, stripped to its cleanest form\n` +
-      `• **Why it matters** (Claude) — real-world impact and ethical weight\n` +
-      `• **How it works** (DeepSeek) — the mechanism, step by step, no hand-waving\n` +
-      `• **Analogy** (Gemini) — a familiar mental model so it clicks instantly\n` +
-      `• **Shortcut** (Grok) — the blunt truth you actually need to remember\n\n` +
-      `Ask a follow-up and I'll go deeper on any single layer.`;
+    const topic = text.replace(/^(explain|what is|what's|how does|define|why)\s*/i, '').replace(/[?.!]+$/, '') || 'it';
+    return {
+      think: `Analyzing "${topic}". Breaking it into core idea, importance, mechanism, and analogy.`,
+      content: `**${esc(topic.charAt(0).toUpperCase() + topic.slice(1))}** — fused explanation:\n\n` +
+        `• **Core idea** — the essential concept, stripped to its cleanest form\n` +
+        `• **Why it matters** — real-world impact\n` +
+        `• **How it works** — the mechanism, step by step\n` +
+        `• **Analogy** — a familiar mental model so it clicks instantly\n\n` +
+        `Ask a follow-up and I'll go deeper.`
+    };
   }
 
-  // Fallback — confident fused answer
-  return `Let's take that apart together.\n\n` +
-    `**Your question:** *"${esc(raw.slice(0, 110))}"*\n\n` +
-    `Here's how the five minds would fuse on it:\n\n` +
-    `• **GPT** would frame it clearly and structured\n` +
-    `• **Claude** would weigh nuance and honesty\n` +
-    `• **Grok** would cut straight to what matters\n` +
-    `• **DeepSeek** would verify the technical core\n` +
-    `• **Gemini** would connect it to something unexpected\n\n` +
-    `The fused verdict: this is the kind of question that benefits from **asking one specific follow-up**. Try narrowing it — what's the exact outcome you want? I'll deliver a sharper fused answer.\n\n` +
-    `*(Demo mode active. Paste an API key in Settings to unlock live fusion.)*`;
+  // fallback
+  return {
+    think: state.thinkMode ? 'No exact match. I\'ll give a general but helpful response.' : undefined,
+    content: `Let's take that apart.\n\n` +
+      `**Your question:** *"${esc(text.slice(0, 100))}"*\n\n` +
+      `Here's how I'd approach it:\n\n` +
+      `1. **Clarify the goal** — what outcome do you want?\n` +
+      `2. **Break it down** — smaller sub-questions\n` +
+      `3. **Find the core** — the one thing that matters most\n` +
+      `4. **Act** — a concrete next step\n\n` +
+      `Try narrowing it — what's the exact result you're after? I'll deliver a sharper answer.\n\n` +
+      `*(Demo mode. Add an API key in Settings for full live power.)*`
+  };
 }
 
 /* ============ VOICE ============ */
@@ -1119,14 +1359,34 @@ $('#settingsBtn').addEventListener('click', () => {
   $('#setUrl').value   = s.url || '';
   $('#setKey').value   = s.key || '';
   $('#setModel').value = s.model || '';
+  $('#setSearchKey').value = s.searchKey || '';
+  $('#defThinkSwitch').classList.toggle('on', s.thinkMode === true);
+  $('#defSearchSwitch').classList.toggle('on', s.searchMode === true);
   $('#settingsModal').classList.remove('hidden');
 });
 $('#settingsCancel').addEventListener('click', () => $('#settingsModal').classList.add('hidden'));
+
+$('#defThinkSwitch').addEventListener('click', function(){
+  this.classList.toggle('on');
+});
+$('#defSearchSwitch').addEventListener('click', function(){
+  this.classList.toggle('on');
+});
+
 $('#settingsSave').addEventListener('click', () => {
   state.settings.url   = $('#setUrl').value.trim();
   state.settings.key   = $('#setKey').value.trim();
   state.settings.model = $('#setModel').value.trim();
+  state.settings.searchKey = $('#setSearchKey').value.trim();
+  state.settings.thinkMode = $('#defThinkSwitch').classList.contains('on');
+  state.settings.searchMode = $('#defSearchSwitch').classList.contains('on');
   db.saveSettings(state.email, state.settings);
+
+  state.thinkMode = state.settings.thinkMode;
+  state.searchMode = state.settings.searchMode;
+  $('#thinkToggle').classList.toggle('on', state.thinkMode);
+  $('#searchToggle').classList.toggle('on', state.searchMode);
+
   $('#settingsModal').classList.add('hidden');
   updateStatus();
   toast('✅ Settings saved');
