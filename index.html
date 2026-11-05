@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>JARVIS — Live Advanced AI</title>
+<title>JARVIS — Full Live AI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -16,7 +16,6 @@
   --text:#f2f2f2;
   --muted:#8a8a8a;
   --muted2:#5a5a5a;
-  --think:#aaa;
 }
 html,body{height:100%}
 body{
@@ -215,6 +214,26 @@ body{
   background:linear-gradient(135deg,#fff,#888);
   -webkit-background-clip:text;background-clip:text;color:transparent;
 }
+.modelSelector{
+  display:flex;gap:4px;padding:3px;border-radius:12px;
+  background:rgba(255,255,255,.045);border:1px solid var(--border);
+}
+.modelBtn{
+  padding:6px 10px;border-radius:8px;border:0;background:transparent;
+  color:var(--muted);font-family:inherit;font-size:10.5px;font-weight:600;
+  cursor:pointer;transition:.24s;display:flex;align-items:center;gap:4px;
+  white-space:nowrap;
+}
+.modelBtn:hover{color:#ccc}
+.modelBtn.active{background:#fff;color:#000}
+.modelDot{
+  width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;
+}
+.modelBtn.gpt .modelDot{background:#10a37f}
+.modelBtn.claude .modelDot{background:#cc785c}
+.modelBtn.deepseek .modelDot{background:#4d6bfe}
+.modelBtn.gemini .modelDot{background:#4285f4}
+.modelBtn.active .modelDot{background:currentColor}
 .topSpacer{flex:1}
 .statusPill{
   display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:20px;
@@ -231,32 +250,6 @@ body{
 }
 .iconBtn:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);transform:translateY(-1px)}
 .iconBtn.active{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4)}
-
-/* think toggle */
-.thinkToggle{
-  display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;
-  background:rgba(255,255,255,.05);border:1px solid var(--border);
-  font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;transition:.25s;
-  user-select:none;
-}
-.thinkToggle.on{
-  background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.45);color:#fff;
-}
-.thinkToggle .thinkDot{
-  width:6px;height:6px;border-radius:50%;background:#666;transition:.25s;
-}
-.thinkToggle.on .thinkDot{background:#fff;box-shadow:0 0 8px rgba(255,255,255,.8)}
-
-/* search toggle */
-.searchToggle{
-  display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;
-  background:rgba(255,255,255,.05);border:1px solid var(--border);
-  font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;transition:.25s;
-  user-select:none;
-}
-.searchToggle.on{
-  background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.45);color:#fff;
-}
 
 /* messages */
 .messages{flex:1;overflow-y:auto;padding:26px 0 12px;scroll-behavior:smooth}
@@ -296,42 +289,6 @@ body{
   border-top-right-radius:5px;color:#fff;
 }
 .msgWrap.user .bubble:hover{background:rgba(255,255,255,.18)}
-
-/* thinking block */
-.thinkBlock{
-  margin-bottom:10px;padding:10px 14px;border-radius:12px;
-  background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.18);
-  font-size:12.5px;line-height:1.65;color:var(--think);
-  animation:thinkIn .5s;
-}
-@keyframes thinkIn{from{opacity:0;max-height:0;padding:0 14px}to{opacity:1;max-height:600px;padding:10px 14px}}
-.thinkBlock .thinkHead{
-  display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;
-  letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:6px;
-}
-.thinkBlock .thinkHead .spin{
-  width:9px;height:9px;border:1.5px solid #555;border-top-color:#fff;
-  border-radius:50%;animation:spin .7s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-.thinkBlock.streaming .thinkHead .spin{display:inline-block}
-
-/* search results */
-.searchBlock{
-  margin-bottom:10px;padding:10px 14px;border-radius:12px;
-  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.12);
-  font-size:12.5px;line-height:1.6;
-}
-.searchBlock .searchHead{
-  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
-  color:#777;margin-bottom:6px;display:flex;align-items:center;gap:6px;
-}
-.searchBlock .searchHead .sDot{width:6px;height:6px;border-radius:50%;background:#888}
-.searchBlock a{color:#ccc;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.2)}
-.searchBlock a:hover{color:#fff;border-bottom-color:#fff}
-.searchBlock .src{display:block;margin-bottom:4px;font-size:11px;color:#999}
-.searchBlock .src b{color:#ccc;font-weight:600}
-
 .msgMeta{
   font-size:9.5px;color:var(--muted2);margin-top:7px;letter-spacing:.6px;
   display:flex;align-items:center;gap:8px;text-transform:uppercase;font-weight:600;
@@ -387,6 +344,7 @@ body{
   box-shadow:0 0 30px rgba(255,255,255,.55);
   animation:corePulse 2.4s ease-in-out infinite;
 }
+@keyframes spin{to{transform:rotate(360deg)}}
 @keyframes corePulse{0%,100%{transform:scale(1);box-shadow:0 0 20px rgba(255,255,255,.4)}50%{transform:scale(1.1);box-shadow:0 0 40px rgba(255,255,255,.7)}}
 .welcome h1{
   font-size:clamp(26px,4.6vw,40px);font-weight:800;letter-spacing:-.5px;margin-bottom:10px;
@@ -462,7 +420,7 @@ body{
 }
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modalCard{
-  width:min(470px,100%);padding:28px;border-radius:22px;
+  width:min(500px,100%);padding:28px;border-radius:22px;
   background:rgba(14,14,14,.98);border:1px solid var(--border);
   box-shadow:0 50px 120px rgba(0,0,0,.95);animation:popIn .4s cubic-bezier(.2,.9,.3,1.3);
   max-height:90vh;overflow-y:auto;
@@ -510,7 +468,7 @@ body{
   .sidebar.open{transform:translateX(0)}
   .menuBtn{display:grid;place-items:center}
   .bubble{max-width:88%}
-  .thinkToggle, .searchToggle{display:none}
+  .modelSelector{display:none}
   .messages{padding-top:16px}
 }
 @media (max-width:560px){
@@ -536,9 +494,9 @@ body{
 <div id="authScreen">
   <div class="authCard">
     <div class="brandLogo">JARVIS</div>
-    <div class="brandSub">Live Advanced AI</div>
+    <div class="brandSub">Full Live AI</div>
     <div class="liveBadge">
-      <span>🎙️ Voice</span><span>🧠 Deep Think</span><span>🌐 Web Search</span>
+      <span>🎙️ Wake Word</span><span>🧠 Multi-Model</span><span>⚡ Streaming</span>
     </div>
 
     <div class="tabs">
@@ -581,7 +539,7 @@ body{
           <small id="userEmail">user@mail.com</small>
         </div>
       </div>
-      <button class="sideBtn" id="settingsBtn" type="button">⚙ &nbsp;Settings &amp; API</button>
+      <button class="sideBtn" id="settingsBtn" type="button">⚙ &nbsp;Settings &amp; API Keys</button>
       <button class="sideBtn" id="logoutBtn" type="button">⏻ &nbsp;Logout</button>
     </div>
   </aside>
@@ -591,11 +549,11 @@ body{
       <button class="menuBtn" id="menuBtn" type="button">☰</button>
       <div class="topTitle">JARVIS</div>
 
-      <div class="thinkToggle" id="thinkToggle" title="Deep Think reasoning">
-        <span class="thinkDot"></span><span>Think</span>
-      </div>
-      <div class="searchToggle" id="searchToggle" title="Live web search">
-        <span>🌐</span><span>Search</span>
+      <div class="modelSelector" id="modelSelector">
+        <button class="modelBtn gpt active" data-model="gpt" type="button"><span class="modelDot"></span>GPT</button>
+        <button class="modelBtn claude" data-model="claude" type="button"><span class="modelDot"></span>Claude</button>
+        <button class="modelBtn deepseek" data-model="deepseek" type="button"><span class="modelDot"></span>DeepSeek</button>
+        <button class="modelBtn gemini" data-model="gemini" type="button"><span class="modelDot"></span>Gemini</button>
       </div>
 
       <div class="topSpacer"></div>
@@ -619,30 +577,29 @@ body{
 <!-- SETTINGS -->
 <div class="modal hidden" id="settingsModal">
   <div class="modalCard">
-    <h3>⚙ Settings</h3>
-    <p class="sub">Paste an API key to unlock live reasoning. Leave empty to use the built-in demo brain (offline, works everywhere).</p>
+    <h3>⚙ Settings & API Keys</h3>
+    <p class="sub">Enter your API keys below to power JARVIS. All keys are stored locally in your browser and never sent to any server except the official API providers.</p>
 
-    <label>API Endpoint</label>
-    <input id="setUrl" placeholder="https://api.openai.com/v1/chat/completions" />
-    <label>API Key</label>
-    <input id="setKey" type="password" placeholder="sk-..." />
-    <label>Model name</label>
-    <input id="setModel" placeholder="gpt-4o-mini" />
-    <label>Web Search API Key (Tavily — optional)</label>
-    <input id="setSearchKey" type="password" placeholder="tvly-..." />
+    <label>OpenAI API Key (GPT)</label>
+    <input id="setGptKey" type="password" placeholder="sk-..." />
+
+    <label>Anthropic API Key (Claude)</label>
+    <input id="setClaudeKey" type="password" placeholder="sk-ant-..." />
+
+    <label>DeepSeek API Key</label>
+    <input id="setDeepseekKey" type="password" placeholder="sk-..." />
+
+    <label>Google Gemini API Key</label>
+    <input id="setGeminiKey" type="password" placeholder="AIza..." />
 
     <div class="switchRow">
-      <span>Deep Think mode by default</span>
-      <div class="switch" id="defThinkSwitch"></div>
-    </div>
-    <div class="switchRow">
-      <span>Web Search by default</span>
-      <div class="switch" id="defSearchSwitch"></div>
+      <span>Auto-start wake word (always listening)</span>
+      <div class="switch on" id="autoListenSwitch"></div>
     </div>
 
     <div class="modalRow">
       <button class="btn btnGhost" id="settingsCancel" type="button">Cancel</button>
-      <button class="btn btnPrimary" style="width:auto" id="settingsSave" type="button">Save</button>
+      <button class="btn btnPrimary" style="width:auto" id="settingsSave" type="button">Save Keys</button>
     </div>
   </div>
 </div>
@@ -659,7 +616,7 @@ function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show'
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 
 /* ============ STORAGE ============ */
-const K_USERS='jarvis.users.v4', K_SESSION='jarvis.session.v4';
+const K_USERS='jarvis.users.v5', K_SESSION='jarvis.session.v5';
 const db = {
   users:      () => JSON.parse(localStorage.getItem(K_USERS) || '{}'),
   saveUsers:  u  => localStorage.setItem(K_USERS, JSON.stringify(u)),
@@ -675,8 +632,7 @@ let state = {
   email:null, name:'',
   chats:[], current:null,
   voiceOn:true,
-  thinkMode:false,
-  searchMode:false,
+  model:'gpt',
   settings:{}
 };
 
@@ -780,8 +736,8 @@ function startSession(email){
 
   state.settings = db.settings(email);
   state.voiceOn   = state.settings.voiceOn !== false;
-  state.thinkMode = state.settings.thinkMode === true;
-  state.searchMode= state.settings.searchMode === true;
+  state.model     = state.settings.model || 'gpt';
+  state.autoListen = state.settings.autoListen !== false;
 
   state.chats = db.chats(email);
   if(!state.chats.length) state.chats = [makeChat()];
@@ -791,17 +747,20 @@ function startSession(email){
   $('#userEmail').textContent  = email;
   $('#userAvatar').textContent = (state.name[0] || 'U').toUpperCase();
   $('#voiceToggle').classList.toggle('active', state.voiceOn);
-  $('#thinkToggle').classList.toggle('on', state.thinkMode);
-  $('#searchToggle').classList.toggle('on', state.searchMode);
+  $$('.modelBtn').forEach(b => b.classList.toggle('active', b.dataset.model === state.model));
 
   updateStatus();
   $('#authScreen').classList.add('hidden');
   $('#app').classList.remove('hidden');
   renderChatList(); renderMessages(); $('#input').focus();
+
+  // AUTO-START WAKE WORD LISTENER
+  if(state.autoListen) startListening(true);
 }
 
 $('#logoutBtn').addEventListener('click', () => {
-  stopListening(); speechSynthesis.cancel();
+  stopListening();
+  speechSynthesis.cancel();
   db.setSession(null);
   state.email = null;
   $('#app').classList.add('hidden');
@@ -829,26 +788,27 @@ $('#newChatBtn').addEventListener('click', () => {
 
 $('#menuBtn').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
 
-/* think & search toggles */
-$('#thinkToggle').addEventListener('click', () => {
-  state.thinkMode = !state.thinkMode;
-  state.settings.thinkMode = state.thinkMode;
+/* model selection */
+$('#modelSelector').addEventListener('click', e => {
+  const btn = e.target.closest('.modelBtn');
+  if(!btn) return;
+  state.model = btn.dataset.model;
+  $$('.modelBtn').forEach(b => b.classList.toggle('active', b === btn));
+  state.settings.model = state.model;
   db.saveSettings(state.email, state.settings);
-  $('#thinkToggle').classList.toggle('on', state.thinkMode);
-  toast(state.thinkMode ? '🧠 Deep Think ON' : '🧠 Deep Think OFF');
-});
-$('#searchToggle').addEventListener('click', () => {
-  state.searchMode = !state.searchMode;
-  state.settings.searchMode = state.searchMode;
-  db.saveSettings(state.email, state.settings);
-  $('#searchToggle').classList.toggle('on', state.searchMode);
-  toast(state.searchMode ? '🌐 Web Search ON' : '🌐 Web Search OFF');
+  updateStatus();
+  toast('Switched to ' + btn.textContent.trim());
 });
 
 function updateStatus(){
-  const real = !!(state.settings.key && state.settings.url);
-  $('#statusText').textContent = real ? 'Live' : 'Demo';
-  $('#statusDot').classList.add('on');
+  const keys = state.settings;
+  let live = false;
+  if(state.model === 'gpt' && keys.gptKey) live = true;
+  if(state.model === 'claude' && keys.claudeKey) live = true;
+  if(state.model === 'deepseek' && keys.deepseekKey) live = true;
+  if(state.model === 'gemini' && keys.geminiKey) live = true;
+  $('#statusText').textContent = live ? 'Live' : 'No Key';
+  $('#statusDot').classList.toggle('on', live);
 }
 
 function renderChatList(){
@@ -897,6 +857,8 @@ window.copyCode = function(btn){
   });
 };
 
+const MODEL_LABEL = { gpt:'GPT', claude:'Claude', deepseek:'DeepSeek', gemini:'Gemini' };
+
 function renderMessages(){
   const box = $('#messages');
   const chat = currentChat();
@@ -910,8 +872,8 @@ function renderMessages(){
           <div class="core"></div>
         </div>
         <h1>Hello, ${esc(state.name.split(' ')[0])} 👋</h1>
-        <p>I'm JARVIS — now with live voice, Deep Think reasoning, and real-time web search.</p>
-        <div class="subline">ONE assistant · LIVE · ADVANCED</div>
+        <p>I'm JARVIS — now fully live. Say "Jarvis" and speak naturally, or type below.</p>
+        <div class="subline">WAKE WORD ACTIVE · MULTI-MODEL · STREAMING</div>
         <div class="chips">
           <button class="chip" data-prompt="What's the latest news about AI?">📰 Latest AI news</button>
           <button class="chip" data-prompt="Explain quantum computing like I'm 10">🧠 Explain quantum computing</button>
@@ -928,16 +890,12 @@ function renderMessages(){
 
   box.innerHTML = chat.messages.map(m => {
     const isAI = m.role === 'assistant';
-    let html = '';
-    if(isAI && m.think) html += `<div class="thinkBlock"><div class="thinkHead"><span class="spin"></span> Reasoning</div>${esc(m.think)}</div>`;
-    if(isAI && m.search) html += `<div class="searchBlock"><div class="searchHead"><span class="sDot"></span> Web results</div>${m.search}</div>`;
-    html += `<div class="bubble">${md(m.content)}</div>`;
     return `
       <div class="msgWrap ${isAI ? 'ai' : 'user'}">
         <div class="msgAvatar ${isAI ? 'ai' : 'me'}">${isAI ? 'J' : (state.name[0]||'U').toUpperCase()}</div>
-        <div>${html}
-          ${isAI ? `<div class="msgMeta"><span>LIVE</span>
-            <div class="pills"><i>GPT</i><i>Claude</i><i>Grok</i><i>DS</i><i>Gemini</i></div></div>` : ''}
+        <div>
+          <div class="bubble">${md(m.content)}</div>
+          ${isAI ? `<div class="msgMeta">${MODEL_LABEL[m.model || state.model]}</div>` : ''}
         </div>
       </div>`;
   }).join('');
@@ -981,35 +939,21 @@ async function send(){
     <div class="bubble" style="padding:0;background:transparent;border:0">
       <div class="typing">
         <span></span><span></span><span></span>
-        <span class="typingLabel" id="typingLabel">Thinking...</span>
+        <span class="typingLabel" id="typingLabel">Connecting to ${MODEL_LABEL[state.model]}...</span>
       </div>
     </div>`;
   box.appendChild(typing);
   box.scrollTop = box.scrollHeight;
 
-  // cycle labels
-  const labels = state.thinkMode
-    ? ['Analyzing...','Reasoning step 1...','Reasoning step 2...','Verifying...','Finalizing...']
-    : ['Processing...','Generating...','Almost there...'];
-  let li = 0;
-  const cycle = setInterval(() => {
-    const el = $('#typingLabel');
-    if(el){ el.textContent = labels[li % labels.length]; li++; }
-  }, 500);
-
   let result;
   try {
     result = await getReply(text, chat.messages);
   } catch(err){
-    result = { content: "⚠️ Something went wrong: " + err.message };
+    result = { content: "⚠️ Error: " + err.message };
   }
 
-  clearInterval(cycle);
   typing.remove();
-
   const msg = { role:'assistant', content: result.content };
-  if(result.think) msg.think = result.think;
-  if(result.search) msg.search = result.search;
   chat.messages.push(msg);
   persist(); renderMessages();
 
@@ -1024,99 +968,103 @@ async function send(){
 async function getReply(text, history){
   const s = state.settings;
 
-  // --- Web search (if enabled) ---
-  let searchContext = '';
-  let searchHtml = '';
-  if(state.searchMode && s.searchKey){
-    try {
-      const sr = await webSearch(text, s.searchKey);
-      if(sr.results.length){
-        searchContext = sr.results.map(r => `- ${r.title}: ${r.snippet}`).join('\n');
-        searchHtml = sr.results.slice(0, 4).map(r =>
-          `<div class="src"><b>${esc(r.title)}</b><br>${esc(r.snippet)}<br><a href="${esc(r.url)}" target="_blank">${esc(r.url)}</a></div>`
-        ).join('');
-      }
-    } catch(_) {}
-  }
+  // Route to correct API
+  if(state.model === 'gpt' && s.gptKey) return callOpenAI(text, history, s.gptKey);
+  if(state.model === 'claude' && s.claudeKey) return callClaude(text, history, s.claudeKey);
+  if(state.model === 'deepseek' && s.deepseekKey) return callDeepSeek(text, history, s.deepseekKey);
+  if(state.model === 'gemini' && s.geminiKey) return callGemini(text, history, s.geminiKey);
 
-  // --- Live API ---
-  if(s.key && s.url){
-    try {
-      const body = {
-        model: s.model || 'gpt-4o-mini',
-        messages: [
-          { role:'system', content: buildSystemPrompt(searchContext) },
-          ...history.map(m => ({ role:m.role, content:m.content }))
-        ],
-        stream: true
-      };
+  throw new Error('No API key configured for ' + MODEL_LABEL[state.model] + '. Open Settings to add your key.');
+}
 
-      // DeepSeek-specific: enable thinking mode
-      if(/deepseek/i.test(s.model) || state.thinkMode){
-        body.thinking = { type: 'enabled' };
-        body.reasoning_effort = 'high';
-      }
+/* ---------- OpenAI (GPT) ---------- */
+async function callOpenAI(text, history, key){
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      stream: true,
+      messages: history.map(m => ({ role:m.role, content:m.content }))
+    })
+  });
+  if(!res.ok) throw new Error('OpenAI API ' + res.status + ': ' + (await res.text()).slice(0,200));
+  return { content: await readOpenAIStream(res) };
+}
 
-      const res = await fetch(s.url, {
-        method:'POST',
-        headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + s.key },
-        body: JSON.stringify(body)
-      });
-      if(!res.ok) throw new Error('API ' + res.status);
+/* ---------- Claude (Anthropic) ---------- */
+async function callClaude(text, history, key){
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2048,
+      stream: true,
+      messages: history.map(m => ({ role:m.role, content:m.content }))
+    })
+  });
+  if(!res.ok) throw new Error('Claude API ' + res.status + ': ' + (await res.text()).slice(0,200));
+  return { content: await readClaudeStream(res) };
+}
 
-      // Handle streaming
-      if(body.stream){
-        const { content, reasoning } = await readStream(res);
-        return {
-          content: content || '(empty)',
-          think: reasoning || undefined,
-          search: searchHtml || undefined
-        };
-      }
+/* ---------- DeepSeek ---------- */
+async function callDeepSeek(text, history, key){
+  const res = await fetch('https://api.deepseek.com/chat/completions', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
+    body: JSON.stringify({
+      model: 'deepseek-chat',
+      stream: true,
+      messages: history.map(m => ({ role:m.role, content:m.content }))
+    })
+  });
+  if(!res.ok) throw new Error('DeepSeek API ' + res.status + ': ' + (await res.text()).slice(0,200));
+  return { content: await readDeepSeekStream(res) };
+}
 
-      // Non-stream fallback
-      const data = await res.json();
-      const msg = data.choices?.[0]?.message;
-      return {
-        content: msg?.content || '(empty)',
-        think: msg?.reasoning_content || msg?.reasoning || undefined,
-        search: searchHtml || undefined
-      };
-    } catch(e){
-      return {
-        content: "⚠️ API error: " + e.message + "\n\nFalling back to demo brain:\n\n" + demoReply(text).content,
-        think: demoReply(text).think,
-        search: searchHtml || undefined
-      };
+/* ---------- Gemini (Google) ---------- */
+async function callGemini(text, history, key){
+  const contents = history.map(m => ({
+    role: m.role === 'assistant' ? 'model' : 'user',
+    parts: [{ text: m.content }]
+  }));
+
+  const res = await fetch(
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?alt=sse',
+    {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'x-goog-api-key': key },
+      body: JSON.stringify({ contents })
     }
-  }
-
-  // --- Demo brain ---
-  await sleep(700 + Math.random() * 800);
-  return demoReply(text);
+  );
+  if(!res.ok) throw new Error('Gemini API ' + res.status + ': ' + (await res.text()).slice(0,200));
+  return { content: await readGeminiStream(res) };
 }
 
-function buildSystemPrompt(searchContext){
-  let p = 'You are JARVIS, a live advanced AI assistant. ';
-  p += 'You combine the strengths of GPT (precision), Claude (reasoning), Grok (wit), DeepSeek (technical depth), and Gemini (creativity). ';
-  p += 'Answer in a unified, confident voice. ';
-  if(state.thinkMode) p += 'Show your reasoning step by step before the final answer. ';
-  if(searchContext) p += '\n\nUse these web search results to inform your answer:\n' + searchContext + '\n\n';
-  return p;
+/* ---------- STREAM READERS ---------- */
+async function readOpenAIStream(res){
+  return readGenericSSE(res, json => {
+    return json.choices?.[0]?.delta?.content || '';
+  });
 }
 
-/* ---------- streaming reader ---------- */
-async function readStream(res){
+async function readClaudeStream(res){
+  let full = '';
   const reader = res.body.getReader();
-  const decoder = new TextDecoder('utf-8');
-  let content = '', reasoning = '', buf = '';
+  const decoder = new TextDecoder();
+  let buf = '';
 
   while(true){
     const { done, value } = await reader.read();
     if(done) break;
     buf += decoder.decode(value, { stream:true });
     const lines = buf.split('\n');
-    buf = lines.pop(); // keep partial
+    buf = lines.pop();
 
     for(const line of lines){
       const trimmed = line.trim();
@@ -1125,163 +1073,97 @@ async function readStream(res){
       if(data === '[DONE]') continue;
       try {
         const json = JSON.parse(data);
-        const delta = json.choices?.[0]?.delta || {};
-        if(delta.content) content += delta.content;
-        if(delta.reasoning_content) reasoning += delta.reasoning_content;
-        if(delta.reasoning) reasoning += delta.reasoning;
+        if(json.type === 'content_block_delta' && json.delta?.text){
+          full += json.delta.text;
+        }
       } catch(_) {}
     }
   }
-  return { content, reasoning };
+  return full;
 }
 
-/* ---------- web search ---------- */
-async function webSearch(query, apiKey){
-  // Tavily search API (free tier)
-  const res = await fetch('https://api.tavily.com/search', {
-    method:'POST',
-    headers:{ 'Content-Type':'application/json' },
-    body: JSON.stringify({
-      api_key: apiKey,
-      query: query,
-      search_depth: 'basic',
-      max_results: 5
-    })
-  });
-  if(!res.ok) throw new Error('Search ' + res.status);
-  const data = await res.json();
-  const results = (data.results || []).map(r => ({
-    title: r.title,
-    snippet: r.content?.slice(0, 200) || '',
-    url: r.url
-  }));
-  return { results };
+async function readDeepSeekStream(res){
+  let content = '';
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = '';
+
+  while(true){
+    const { done, value } = await reader.read();
+    if(done) break;
+    buf += decoder.decode(value, { stream:true });
+    const lines = buf.split('\n');
+    buf = lines.pop();
+
+    for(const line of lines){
+      const trimmed = line.trim();
+      if(!trimmed.startsWith('data: ')) continue;
+      const data = trimmed.slice(6);
+      if(data === '[DONE]') continue;
+      try {
+        const json = JSON.parse(data);
+        const delta = json.choices?.[0]?.delta;
+        if(delta?.content) content += delta.content;
+      } catch(_) {}
+    }
+  }
+  return content;
 }
 
-/* ---------- demo brain ---------- */
-function demoReply(text){
-  const t = text.toLowerCase().trim();
+async function readGeminiStream(res){
+  let full = '';
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = '';
 
-  // greeting
-  if(/^(hi|hello|hey|yo|sup|hola|namaste|good (morning|evening|night))\b/.test(t)){
-    return {
-      think: state.thinkMode ? 'User is greeting me. I should introduce myself and highlight my new live features.' : undefined,
-      content: `Hello. I'm **JARVIS** — now a **live advanced** AI.\n\n` +
-        `New capabilities:\n` +
-        `• 🎙️ **Live voice** — say "Jarvis" and speak naturally\n` +
-        `• 🧠 **Deep Think** — toggle reasoning for step-by-step answers\n` +
-        `• 🌐 **Web Search** — fetch real-time info (add a Tavily key in Settings)\n\n` +
-        `Ask me anything.`
-    };
+  while(true){
+    const { done, value } = await reader.read();
+    if(done) break;
+    buf += decoder.decode(value, { stream:true });
+    const lines = buf.split('\n');
+    buf = lines.pop();
+
+    for(const line of lines){
+      const trimmed = line.trim();
+      if(!trimmed.startsWith('data: ')) continue;
+      const data = trimmed.slice(6);
+      if(data === '[DONE]') continue;
+      try {
+        const json = JSON.parse(data);
+        const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
+        if(text) full += text;
+      } catch(_) {}
+    }
   }
-
-  // who are you
-  if(/who are you|what are you|your name|introduce/.test(t)){
-    return {
-      think: 'User wants identity. Explain fusion + live features.',
-      content: `I'm **JARVIS** — a fused, live AI.\n\n` +
-        `I blend GPT, Claude, Grok, DeepSeek, and Gemini into one voice. ` +
-        `With **Deep Think** on, I reason before answering. ` +
-        `With **Web Search** on, I pull live results.`
-    };
-  }
-
-  // code
-  if(/code|function|javascript|python|debounce|program|api|async/.test(t)){
-    return {
-      think: 'Request is code-related. Provide a clean debounce function with explanation.',
-      content: `Here's a production-ready **debounce**:\n\n` +
-`\`\`\`js
-function debounce(fn, delay = 300) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), delay);
-  };
+  return full;
 }
 
-const onSearch = debounce(q => console.log(q), 400);
-input.addEventListener('input', e => onSearch(e.target.value));
-\`\`\`\n\n` +
-        `**Why it works:**\n` +
-        `• Every keystroke cancels the previous timer\n` +
-        `• Only the final call fires after \`delay\` ms of silence\n` +
-        `• Prevents API spam and keeps the UI responsive`
-    };
-  }
+async function readGenericSSE(res, extractFn){
+  let full = '';
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = '';
 
-  // math
-  const mathMatch = t.match(/(-?\d+(?:\.\d+)?)\s*([+\-*/x])\s*(-?\d+(?:\.\d+)?)/);
-  if(mathMatch){
-    const a = +mathMatch[1], b = +mathMatch[3];
-    const op = mathMatch[2] === 'x' ? '*' : mathMatch[2];
-    const r = op==='+'?a+b:op==='-'?a-b:op==='*'?a*b:(b===0?'undefined':a/b);
-    return {
-      think: `Computing ${a} ${op} ${b}...`,
-      content: `**${a} ${op} ${b} = ${r}**`
-    };
-  }
+  while(true){
+    const { done, value } = await reader.read();
+    if(done) break;
+    buf += decoder.decode(value, { stream:true });
+    const lines = buf.split('\n');
+    buf = lines.pop();
 
-  // time
-  if(/time|date|day|today/.test(t)){
-    return {
-      think: 'Fetching current system time.',
-      content: `Right now: **${new Date().toLocaleString()}**`
-    };
+    for(const line of lines){
+      const trimmed = line.trim();
+      if(!trimmed.startsWith('data: ')) continue;
+      const data = trimmed.slice(6);
+      if(data === '[DONE]') continue;
+      try {
+        const json = JSON.parse(data);
+        const chunk = extractFn(json);
+        if(chunk) full += chunk;
+      } catch(_) {}
+    }
   }
-
-  // joke
-  if(/joke|funny|laugh|humor/.test(t)){
-    return {
-      think: 'Selecting a witty joke.',
-      content: `Here's one:\n\n` +
-        `> A SQL query walks into a bar, sees two tables, and asks:\n` +
-        `> *"May I JOIN you?"* 🍸\n\n` +
-        `Relational humor — valid schema, O(1) punchline. 😄`
-    };
-  }
-
-  // startup
-  if(/idea|startup|business|product|launch/.test(t)){
-    return {
-      think: 'Brainstorming startup ideas. Structuring into a list.',
-      content: `**Five startup ideas for 2026:**\n\n` +
-        `1. **Local-first AI** — private on-device assistants for regulated industries\n` +
-        `2. **Voice dev tools** — natural-language coding in the terminal\n` +
-        `3. **AI energy audits** — optimize data-center workloads\n` +
-        `4. **Personal knowledge graph** — unify notes, mail, chats into one memory\n` +
-        `5. **Verifiable AI** — cryptographic proof of model behavior\n\n` +
-        `Want a business model for any of these?`
-    };
-  }
-
-  // explain
-  if(/explain|what is|what's|how does|define|why/.test(t)){
-    const topic = text.replace(/^(explain|what is|what's|how does|define|why)\s*/i, '').replace(/[?.!]+$/, '') || 'it';
-    return {
-      think: `Analyzing "${topic}". Breaking it into core idea, importance, mechanism, and analogy.`,
-      content: `**${esc(topic.charAt(0).toUpperCase() + topic.slice(1))}** — fused explanation:\n\n` +
-        `• **Core idea** — the essential concept, stripped to its cleanest form\n` +
-        `• **Why it matters** — real-world impact\n` +
-        `• **How it works** — the mechanism, step by step\n` +
-        `• **Analogy** — a familiar mental model so it clicks instantly\n\n` +
-        `Ask a follow-up and I'll go deeper.`
-    };
-  }
-
-  // fallback
-  return {
-    think: state.thinkMode ? 'No exact match. I\'ll give a general but helpful response.' : undefined,
-    content: `Let's take that apart.\n\n` +
-      `**Your question:** *"${esc(text.slice(0, 100))}"*\n\n` +
-      `Here's how I'd approach it:\n\n` +
-      `1. **Clarify the goal** — what outcome do you want?\n` +
-      `2. **Break it down** — smaller sub-questions\n` +
-      `3. **Find the core** — the one thing that matters most\n` +
-      `4. **Act** — a concrete next step\n\n` +
-      `Try narrowing it — what's the exact result you're after? I'll deliver a sharper answer.\n\n` +
-      `*(Demo mode. Add an API key in Settings for full live power.)*`
-  };
+  return full;
 }
 
 /* ============ VOICE ============ */
@@ -1306,7 +1188,10 @@ function speak(text){
   speechSynthesis.speak(u);
 }
 
-let recognition = null, listening = false;
+/* ============ WAKE WORD (AUTO LISTEN) ============ */
+let recognition = null;
+let listening = false;
+let autoStarted = false;
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 if(SR){
@@ -1324,28 +1209,46 @@ if(SR){
       const low = finalText.toLowerCase();
       if(/^(jarvis|hey jarvis|ok jarvis)[, ]*/i.test(low)){
         const rest = finalText.replace(/^(jarvis|hey jarvis|ok jarvis)[, ]*/i,'').trim();
-        if(rest){ input.value = rest; send(); }
-        else toast('🎤 Yes? I\'m listening...');
+        if(rest){
+          input.value = rest;
+          send();
+        } else {
+          toast('🎤 Yes? I\'m listening...');
+        }
       }
     }
   };
-  recognition.onerror = () => {};
-  recognition.onend = () => { if(listening){ try{ recognition.start(); }catch(_){} } };
+
+  recognition.onerror = (e) => {
+    if(e.error === 'not-allowed'){
+      toast('❌ Microphone permission denied');
+      listening = false;
+      $('#micBtn').classList.remove('listening');
+      $('#hintBar').textContent = '';
+    }
+  };
+
+  recognition.onend = () => {
+    if(listening){
+      try { recognition.start(); } catch(_) {}
+    }
+  };
 }
 
-$('#micBtn').addEventListener('click', () => {
-  if(!SR){ toast('❌ Voice not supported in this browser'); return; }
-  if(listening) stopListening(); else startListening();
-});
-
-function startListening(){
+function startListening(auto){
+  if(!SR){
+    if(!auto) toast('❌ Voice not supported in this browser');
+    return;
+  }
   try{
     recognition.start();
     listening = true;
+    autoStarted = true;
     $('#micBtn').classList.add('listening');
-    $('#hintBar').textContent = '🎤 Listening... say "Jarvis" followed by your question';
+    $('#hintBar').textContent = '🎤 Wake word active — say "Jarvis" followed by your question';
   }catch(_){}
 }
+
 function stopListening(){
   listening = false;
   $('#micBtn').classList.remove('listening');
@@ -1353,43 +1256,41 @@ function stopListening(){
   try{ recognition && recognition.stop(); }catch(_){}
 }
 
+$('#micBtn').addEventListener('click', () => {
+  if(listening) stopListening(); else startListening(false);
+});
+
 /* ============ SETTINGS ============ */
 $('#settingsBtn').addEventListener('click', () => {
   const s = state.settings;
-  $('#setUrl').value   = s.url || '';
-  $('#setKey').value   = s.key || '';
-  $('#setModel').value = s.model || '';
-  $('#setSearchKey').value = s.searchKey || '';
-  $('#defThinkSwitch').classList.toggle('on', s.thinkMode === true);
-  $('#defSearchSwitch').classList.toggle('on', s.searchMode === true);
+  $('#setGptKey').value = s.gptKey || '';
+  $('#setClaudeKey').value = s.claudeKey || '';
+  $('#setDeepseekKey').value = s.deepseekKey || '';
+  $('#setGeminiKey').value = s.geminiKey || '';
+  $('#autoListenSwitch').classList.toggle('on', s.autoListen !== false);
   $('#settingsModal').classList.remove('hidden');
 });
 $('#settingsCancel').addEventListener('click', () => $('#settingsModal').classList.add('hidden'));
 
-$('#defThinkSwitch').addEventListener('click', function(){
-  this.classList.toggle('on');
-});
-$('#defSearchSwitch').addEventListener('click', function(){
+$('#autoListenSwitch').addEventListener('click', function(){
   this.classList.toggle('on');
 });
 
 $('#settingsSave').addEventListener('click', () => {
-  state.settings.url   = $('#setUrl').value.trim();
-  state.settings.key   = $('#setKey').value.trim();
-  state.settings.model = $('#setModel').value.trim();
-  state.settings.searchKey = $('#setSearchKey').value.trim();
-  state.settings.thinkMode = $('#defThinkSwitch').classList.contains('on');
-  state.settings.searchMode = $('#defSearchSwitch').classList.contains('on');
+  state.settings.gptKey = $('#setGptKey').value.trim();
+  state.settings.claudeKey = $('#setClaudeKey').value.trim();
+  state.settings.deepseekKey = $('#setDeepseekKey').value.trim();
+  state.settings.geminiKey = $('#setGeminiKey').value.trim();
+  state.settings.autoListen = $('#autoListenSwitch').classList.contains('on');
   db.saveSettings(state.email, state.settings);
 
-  state.thinkMode = state.settings.thinkMode;
-  state.searchMode = state.settings.searchMode;
-  $('#thinkToggle').classList.toggle('on', state.thinkMode);
-  $('#searchToggle').classList.toggle('on', state.searchMode);
+  state.autoListen = state.settings.autoListen;
+  if(state.autoListen && !listening) startListening(true);
+  if(!state.autoListen && listening) stopListening();
 
   $('#settingsModal').classList.add('hidden');
   updateStatus();
-  toast('✅ Settings saved');
+  toast('✅ API keys saved');
 });
 
 /* ============ KEYBOARD ============ */
