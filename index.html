@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>JARVIS — AI Assistant</title>
+<title>JARVIS — Advanced AI Assistant</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -17,6 +17,28 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
 ::-webkit-scrollbar-track{background:transparent}
 .hidden{display:none !important}
 
+/* ============ ARC REACTOR LOGO ============ */
+.arcReactor{
+  display:inline-block;
+  vertical-align:middle;
+  filter:drop-shadow(0 0 12px rgba(255,255,255,.5));
+}
+.arcReactor .ring1{transform-origin:50px 50px;animation:spin 12s linear infinite}
+.arcReactor .ring2{transform-origin:50px 50px;animation:spin 18s linear infinite reverse}
+.arcReactor .ring3{transform-origin:50px 50px;animation:spin 8s linear infinite}
+.arcReactor .core{transform-origin:50px 50px;animation:coreGlow 2.4s ease-in-out infinite}
+.arcReactor .pulse{transform-origin:50px 50px;animation:pulseRing 2.4s ease-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes coreGlow{
+  0%,100%{opacity:.9;filter:drop-shadow(0 0 6px #fff)}
+  50%{opacity:1;filter:drop-shadow(0 0 18px #fff)}
+}
+@keyframes pulseRing{
+  0%{transform:scale(.8);opacity:.8}
+  100%{transform:scale(1.6);opacity:0}
+}
+
+/* background */
 #bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
 .glowLayer{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .glow{position:absolute;border-radius:50%;filter:blur(130px);background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%);animation:drift 24s ease-in-out infinite;will-change:transform}
@@ -28,13 +50,15 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
 .gridOverlay{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(circle at 50% 40%,#000 10%,transparent 75%);mask-image:radial-gradient(circle at 50% 40%,#000 10%,transparent 75%);animation:gridMove 40s linear infinite}
 @keyframes gridMove{from{background-position:0 0,0 0}to{background-position:64px 64px,64px 64px}}
 
+/* auth */
 #authScreen{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}
 .authCard{position:relative;width:min(430px,100%);padding:36px 32px 32px;border-radius:24px;background:rgba(10,10,10,.86);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--border);box-shadow:0 50px 120px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.05) inset;animation:popIn .6s cubic-bezier(.2,.9,.3,1.3)}
 @keyframes popIn{from{opacity:0;transform:translateY(30px) scale(.94)}to{opacity:1;transform:none}}
 .authCard::before{content:'';position:absolute;inset:-1px;border-radius:24px;padding:1px;background:linear-gradient(135deg,rgba(255,255,255,.5),rgba(255,255,255,.05),rgba(255,255,255,.4));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
-.brandLogo{font-size:36px;font-weight:800;letter-spacing:10px;text-align:center;background:linear-gradient(135deg,#fff 0%,#888 100%);-webkit-background-clip:text;background-clip:text;color:transparent;animation:logoPulse 3.4s ease-in-out infinite}
-@keyframes logoPulse{0%,100%{filter:drop-shadow(0 0 18px rgba(255,255,255,.25));opacity:.95}50%{filter:drop-shadow(0 0 34px rgba(255,255,255,.6));opacity:1}}
-.brandSub{text-align:center;color:var(--muted);font-size:11px;margin:10px 0 26px;letter-spacing:3px;text-transform:uppercase}
+.authLogo{text-align:center;margin-bottom:14px}
+.brandLogo{font-size:32px;font-weight:800;letter-spacing:10px;text-align:center;background:linear-gradient(135deg,#fff 0%,#888 100%);-webkit-background-clip:text;background-clip:text;color:transparent;margin-top:12px;animation:logoPulse 3.4s ease-in-out infinite}
+@keyframes logoPulse{0%,100%{filter:drop-shadow(0 0 12px rgba(255,255,255,.25));opacity:.95}50%{filter:drop-shadow(0 0 24px rgba(255,255,255,.6));opacity:1}}
+.brandSub{text-align:center;color:var(--muted);font-size:11px;margin:8px 0 26px;letter-spacing:3px;text-transform:uppercase}
 .tabs{display:flex;gap:6px;background:rgba(255,255,255,.045);padding:5px;border-radius:14px;margin-bottom:22px}
 .tab{flex:1;padding:11px;border:0;border-radius:10px;background:transparent;color:var(--muted);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:.3s;letter-spacing:.3px}
 .tab.active{background:#fff;color:#000;box-shadow:0 6px 22px rgba(255,255,255,.25)}
@@ -52,15 +76,21 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
 .errBox.ok{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4);color:#fff;font-weight:600}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 
+/* app */
 #app{position:relative;z-index:10;display:flex;height:100vh;width:100%}
-.sidebar{width:270px;flex-shrink:0;display:flex;flex-direction:column;background:rgba(6,6,6,.88);backdrop-filter:blur(22px);border-right:1px solid var(--border);transition:transform .35s cubic-bezier(.4,0,.2,1)}
-.sideTop{padding:20px 16px 12px}
-.sideBrand{font-size:18px;font-weight:800;letter-spacing:6px;background:linear-gradient(135deg,#fff,#777);-webkit-background-clip:text;background-clip:text;color:transparent}
-.sideBrandSub{font-size:9px;color:var(--muted2);letter-spacing:2px;margin-top:3px}
-.newChatBtn{width:100%;margin-top:16px;padding:12px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:.28s}
+.sidebar{width:280px;flex-shrink:0;display:flex;flex-direction:column;background:rgba(6,6,6,.88);backdrop-filter:blur(22px);border-right:1px solid var(--border);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.sideTop{padding:20px 16px 12px;border-bottom:1px solid rgba(255,255,255,.05)}
+.sideHeader{display:flex;align-items:center;gap:10px}
+.sideBrand{font-size:16px;font-weight:800;letter-spacing:4px;background:linear-gradient(135deg,#fff,#777);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sideBrandSub{font-size:9px;color:var(--muted2);letter-spacing:2px;margin-top:2px}
+.newChatBtn{width:100%;margin-top:14px;padding:11px;border-radius:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:.28s;display:flex;align-items:center;gap:8px;justify-content:center}
 .newChatBtn:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.3);transform:translateY(-2px)}
+.searchBox{width:100%;margin-top:10px;position:relative}
+.searchBox input{width:100%;padding:9px 12px 9px 32px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12px;outline:none;transition:.22s}
+.searchBox input:focus{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.07)}
+.searchBox::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:11px;opacity:.6}
 .chatList{flex:1;overflow-y:auto;padding:8px 10px}
-.chatItem{display:flex;align-items:center;gap:8px;padding:11px 12px;border-radius:11px;color:var(--muted);font-size:12.5px;cursor:pointer;transition:.22s;margin-bottom:4px;border:1px solid transparent;white-space:nowrap;overflow:hidden;animation:slideIn .4s cubic-bezier(.2,.9,.3,1.2)}
+.chatItem{display:flex;align-items:center;gap:8px;padding:10px 11px;border-radius:10px;color:var(--muted);font-size:12.5px;cursor:pointer;transition:.22s;margin-bottom:3px;border:1px solid transparent;white-space:nowrap;overflow:hidden;animation:slideIn .4s cubic-bezier(.2,.9,.3,1.2)}
 @keyframes slideIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
 .chatItem span{flex:1;overflow:hidden;text-overflow:ellipsis}
 .chatItem:hover{background:rgba(255,255,255,.06);color:#fff;transform:translateX(2px)}
@@ -68,38 +98,41 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
 .chatItem .del{opacity:0;font-size:16px;padding:0 3px;border-radius:5px;transition:.22s;color:#888}
 .chatItem:hover .del{opacity:.7}
 .chatItem .del:hover{opacity:1;background:rgba(255,255,255,.15);color:#fff}
-.sideBottom{padding:12px;border-top:1px solid var(--border)}
-.userChip{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:12px;background:rgba(255,255,255,.04);margin-bottom:9px}
-.avatar{width:34px;height:34px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,#fff,#888);display:grid;place-items:center;font-weight:800;font-size:13px;color:#000}
+.sideBottom{padding:10px;border-top:1px solid var(--border)}
+.userChip{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:11px;background:rgba(255,255,255,.04);margin-bottom:8px}
+.avatar{width:32px;height:32px;border-radius:9px;flex-shrink:0;background:linear-gradient(135deg,#fff,#888);display:grid;place-items:center;font-weight:800;font-size:12px;color:#000}
 .userInfo{overflow:hidden}
 .userInfo b{display:block;font-size:12.5px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .userInfo small{font-size:10.5px;color:var(--muted);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sideBtn{width:100%;padding:10px;margin-top:6px;border-radius:11px;text-align:left;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;transition:.22s}
+.sideBtn{width:100%;padding:9px;margin-top:4px;border-radius:10px;text-align:left;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:inherit;font-size:11.5px;font-weight:500;cursor:pointer;transition:.22s;display:flex;align-items:center;gap:8px}
 .sideBtn:hover{background:rgba(255,255,255,.06);color:#fff;border-color:rgba(255,255,255,.2)}
 
 .main{flex:1;display:flex;flex-direction:column;min-width:0}
-.topbar{height:62px;flex-shrink:0;display:flex;align-items:center;gap:12px;padding:0 18px;border-bottom:1px solid var(--border);background:rgba(6,6,6,.6);backdrop-filter:blur(16px)}
+.topbar{height:60px;flex-shrink:0;display:flex;align-items:center;gap:12px;padding:0 18px;border-bottom:1px solid var(--border);background:rgba(6,6,6,.6);backdrop-filter:blur(16px)}
 .menuBtn{display:none;width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);font-size:16px;cursor:pointer}
-.topTitle{font-weight:700;font-size:15px;letter-spacing:3px;background:linear-gradient(135deg,#fff,#888);-webkit-background-clip:text;background-clip:text;color:transparent}
+.topLogo{display:flex;align-items:center;gap:10px}
+.topTitle{font-weight:700;font-size:14px;letter-spacing:3px;background:linear-gradient(135deg,#fff,#888);-webkit-background-clip:text;background-clip:text;color:transparent}
+.topSub{font-size:9px;color:var(--muted2);letter-spacing:1.5px;display:block;margin-top:1px}
 .topSpacer{flex:1}
-.statusPill{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.4px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted)}
-.dot{width:7px;height:7px;border-radius:50%;background:#ff4d6d}
+.statusPill{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;font-size:10.5px;font-weight:600;letter-spacing:.4px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--muted)}
+.dot{width:6px;height:6px;border-radius:50%;background:#ff4d6d}
 .dot.on{background:#fff;animation:pulseDot 1.8s infinite}
 .dot.thinking{background:#ffb84d;animation:pulseDot 1s infinite}
 @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
-.iconBtn{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);font-size:15px;cursor:pointer;transition:.24s;display:grid;place-items:center}
+.iconBtn{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);font-size:14px;cursor:pointer;transition:.24s;display:grid;place-items:center;position:relative}
 .iconBtn:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3);transform:translateY(-1px)}
 .iconBtn.active{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4)}
 
+/* messages */
 .messages{flex:1;overflow-y:auto;padding:26px 0 12px;scroll-behavior:smooth}
-.msgWrap{max-width:820px;margin:0 auto 18px;padding:0 20px;display:flex;gap:12px;animation:bubbleIn .45s cubic-bezier(.2,.9,.3,1.3);will-change:transform}
+.msgWrap{max-width:820px;margin:0 auto 18px;padding:0 20px;display:flex;gap:12px;animation:bubbleIn .45s cubic-bezier(.2,.9,.3,1.3);will-change:transform;position:relative}
 @keyframes bubbleIn{0%{opacity:0;transform:translateY(14px) scale(.94)}60%{transform:translateY(-2px) scale(1.01)}100%{opacity:1;transform:none}}
 .msgWrap.user{flex-direction:row-reverse}
 .msgAvatar{width:32px;height:32px;border-radius:10px;flex-shrink:0;display:grid;place-items:center;font-size:13px;font-weight:800}
-.msgAvatar.ai{background:linear-gradient(135deg,#fff,#888);color:#000;animation:avatarGlow 3s ease-in-out infinite}
-@keyframes avatarGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.3)}50%{box-shadow:0 0 18px 2px rgba(255,255,255,.4)}}
+.msgAvatar.ai{background:linear-gradient(135deg,#fff,#888);color:#000}
 .msgAvatar.me{background:rgba(255,255,255,.1);border:1px solid var(--border);color:var(--muted)}
-.bubble{max-width:min(680px,82%);padding:12px 16px;border-radius:15px;font-size:14px;line-height:1.7;word-wrap:break-word;overflow-wrap:anywhere;transition:.28s}
+.msgBody{display:flex;flex-direction:column;max-width:min(680px,82%)}
+.bubble{padding:12px 16px;border-radius:15px;font-size:14px;line-height:1.7;word-wrap:break-word;overflow-wrap:anywhere;transition:.28s}
 .msgWrap.ai .bubble{background:rgba(255,255,255,.045);border:1px solid var(--border);border-top-left-radius:5px;color:#e5e5e5}
 .msgWrap.ai .bubble:hover{border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.07)}
 .msgWrap.user .bubble{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);border-top-right-radius:5px;color:#fff}
@@ -109,6 +142,14 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
 .bubble pre.code{position:relative;margin:10px 0;padding:13px 15px;border-radius:11px;overflow-x:auto;background:#0a0a0a;border:1px solid rgba(255,255,255,.14);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.65;color:#d0d0d0}
 .copyBtn{position:absolute;top:8px;right:8px;padding:4px 10px;border-radius:7px;font-size:10.5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#ccc;cursor:pointer;font-family:inherit;transition:.2s}
 .copyBtn:hover{background:rgba(255,255,255,.22);color:#fff}
+.attachment{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid var(--border);font-size:11.5px;margin-bottom:8px;color:#ccc}
+.attachment img{max-width:100%;max-height:200px;border-radius:8px;display:block}
+.msgActions{display:flex;gap:4px;margin-top:6px;opacity:0;transition:.2s;align-self:flex-start}
+.msgWrap:hover .msgActions{opacity:1}
+.msgWrap.user .msgActions{align-self:flex-end}
+.msgAction{padding:4px 8px;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:10.5px;cursor:pointer;font-family:inherit;transition:.18s}
+.msgAction:hover{background:rgba(255,255,255,.13);color:#fff;border-color:rgba(255,255,255,.25)}
+.editArea{width:100%;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.25);color:#fff;font-family:inherit;font-size:13.5px;line-height:1.6;resize:vertical;min-height:60px;outline:none}
 
 .typing{display:flex;gap:6px;padding:16px 20px;align-items:center}
 .typing span{width:7px;height:7px;border-radius:50%;background:#fff;animation:bounce 1.3s infinite ease-in-out}
@@ -118,18 +159,11 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
 .typingStatus{margin-left:10px;font-size:11px;color:var(--muted);letter-spacing:.5px}
 
 .welcome{max-width:760px;margin:0 auto;padding:30px 24px;text-align:center;animation:bubbleIn .7s}
-.welcome .ring{width:90px;height:90px;margin:0 auto 20px;position:relative}
-.welcome .ring .orbit{position:absolute;inset:0;border-radius:50%;border:1.5px dashed rgba(255,255,255,.18);animation:spin 18s linear infinite}
-.welcome .ring .orbit:nth-child(2){inset:12px;animation-duration:12s;animation-direction:reverse;border-style:solid;border-color:rgba(255,255,255,.12)}
-.welcome .ring .orbit:nth-child(3){inset:24px;animation-duration:8s;border-color:rgba(255,255,255,.25)}
-.welcome .ring .core{position:absolute;inset:32px;border-radius:50%;background:radial-gradient(circle,#fff,#888);box-shadow:0 0 30px rgba(255,255,255,.55);animation:corePulse 2.4s ease-in-out infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes corePulse{0%,100%{transform:scale(1);box-shadow:0 0 20px rgba(255,255,255,.4)}50%{transform:scale(1.1);box-shadow:0 0 40px rgba(255,255,255,.7)}}
-.welcome h1{font-size:clamp(26px,4.6vw,40px);font-weight:800;letter-spacing:-.5px;margin-bottom:10px;background:linear-gradient(135deg,#fff 0%,#666 100%);-webkit-background-clip:text;background-clip:text;color:transparent;animation:logoPulse 3.5s ease-in-out infinite}
+.welcome h1{font-size:clamp(24px,4.4vw,38px);font-weight:800;letter-spacing:-.5px;margin:20px 0 10px;background:linear-gradient(135deg,#fff 0%,#666 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .welcome p{color:var(--muted);font-size:13.5px;margin-bottom:8px;line-height:1.6}
 .welcome .subline{color:var(--muted2);font-size:11.5px;margin-bottom:24px;letter-spacing:.6px}
-.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-.chip{padding:11px 17px;border-radius:12px;font-size:12.5px;cursor:pointer;transition:.3s;background:rgba(255,255,255,.045);border:1px solid var(--border);color:#b0b0b0;font-family:inherit;font-weight:500;animation:chipIn .6s backwards}
+.chips{display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
+.chip{padding:10px 16px;border-radius:11px;font-size:12px;cursor:pointer;transition:.3s;background:rgba(255,255,255,.045);border:1px solid var(--border);color:#b0b0b0;font-family:inherit;font-weight:500;animation:chipIn .6s backwards}
 .chip:nth-child(1){animation-delay:.1s}
 .chip:nth-child(2){animation-delay:.2s}
 .chip:nth-child(3){animation-delay:.3s}
@@ -137,69 +171,116 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
 @keyframes chipIn{from{opacity:0;transform:translateY(10px) scale(.9)}to{opacity:1;transform:none}}
 .chip:hover{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.35);color:#fff;transform:translateY(-3px);box-shadow:0 10px 28px rgba(255,255,255,.12)}
 
+/* composer */
 .composerArea{padding:10px 20px 18px;flex-shrink:0}
 .hintBar{max-width:820px;margin:0 auto 8px;height:16px;font-size:11px;color:var(--muted2);letter-spacing:.5px;text-align:center}
-.composer{max-width:820px;margin:0 auto;display:flex;align-items:flex-end;gap:9px;padding:9px 9px 9px 14px;border-radius:19px;background:rgba(14,14,14,.92);backdrop-filter:blur(18px);border:1px solid var(--border);transition:.3s}
+.attachments{max-width:820px;margin:0 auto 6px;display:flex;flex-wrap:wrap;gap:6px}
+.attachChip{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--border);font-size:11px;color:#ccc}
+.attachChip button{background:none;border:0;color:#888;cursor:pointer;font-size:13px;padding:0 2px}
+.attachChip button:hover{color:#fff}
+.composer{max-width:820px;margin:0 auto;display:flex;align-items:flex-end;gap:6px;padding:8px 8px 8px 12px;border-radius:19px;background:rgba(14,14,14,.92);backdrop-filter:blur(18px);border:1px solid var(--border);transition:.3s}
 .composer:focus-within{border-color:rgba(255,255,255,.45);box-shadow:0 0 0 4px rgba(255,255,255,.06),0 12px 44px rgba(0,0,0,.6)}
 .composer textarea{flex:1;resize:none;border:0;outline:none;background:transparent;color:var(--text);font-family:inherit;font-size:14px;line-height:1.6;padding:9px 0;max-height:170px}
 .composer textarea::placeholder{color:var(--muted2)}
+.attachBtn{width:36px;height:36px;border-radius:10px;flex-shrink:0;cursor:pointer;background:transparent;border:1px solid transparent;color:var(--muted);font-size:15px;display:grid;place-items:center;transition:.24s}
+.attachBtn:hover{color:#fff;background:rgba(255,255,255,.06);border-color:var(--border)}
 .sendBtn{width:42px;height:42px;border-radius:13px;flex-shrink:0;border:0;cursor:pointer;background:#fff;color:#000;font-size:16px;display:grid;place-items:center;transition:.28s;box-shadow:0 6px 22px rgba(255,255,255,.22)}
 .sendBtn:hover{transform:scale(1.07) rotate(-6deg);box-shadow:0 10px 32px rgba(255,255,255,.4)}
 .sendBtn:disabled{opacity:.35;cursor:not-allowed;transform:none}
-.micBtn{width:42px;height:42px;border-radius:13px;flex-shrink:0;cursor:pointer;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);font-size:16px;display:grid;place-items:center;transition:.28s}
-.micBtn:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3)}
+.micBtn{width:36px;height:36px;border-radius:10px;flex-shrink:0;cursor:pointer;background:transparent;border:1px solid transparent;color:var(--muted);font-size:15px;display:grid;place-items:center;transition:.24s}
+.micBtn:hover{color:#fff;background:rgba(255,255,255,.06);border-color:var(--border)}
 .micBtn.listening{background:rgba(255,255,255,.2);border-color:#fff;color:#fff;animation:micPulse 1.4s infinite}
 @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.5)}70%{box-shadow:0 0 0 14px rgba(255,255,255,0)}}
 
+/* modal */
 .modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);animation:fadeIn .25s}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modalCard{width:min(500px,100%);padding:28px;border-radius:22px;background:rgba(14,14,14,.98);border:1px solid var(--border);box-shadow:0 50px 120px rgba(0,0,0,.95);animation:popIn .4s cubic-bezier(.2,.9,.3,1.3);max-height:90vh;overflow-y:auto}
-.modalCard h3{font-size:17px;margin-bottom:6px;color:#fff}
-.modalCard .sub{font-size:12.5px;color:var(--muted);margin-bottom:20px;line-height:1.6}
-.modalCard .freeNote{padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);font-size:11.5px;color:#bbb;line-height:1.6;margin-bottom:16px}
-.modalCard label{display:block;font-size:11.5px;color:var(--muted);margin:14px 0 6px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
-.modalCard input{width:100%;padding:12px 14px;border-radius:11px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:13px;outline:none;transition:.22s}
-.modalCard input:focus{border-color:rgba(255,255,255,.5);box-shadow:0 0 0 3px rgba(255,255,255,.06)}
-.modalRow{display:flex;gap:10px;margin-top:22px}
-.modalRow .btn{flex:1;padding:12px}
+.modalCard{width:min(520px,100%);padding:26px;border-radius:22px;background:rgba(14,14,14,.98);border:1px solid var(--border);box-shadow:0 50px 120px rgba(0,0,0,.95);animation:popIn .4s cubic-bezier(.2,.9,.3,1.3);max-height:90vh;overflow-y:auto}
+.modalCard h3{font-size:16px;margin-bottom:4px;color:#fff;display:flex;align-items:center;gap:8px}
+.modalCard .sub{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.modalCard label{display:block;font-size:10.5px;color:var(--muted);margin:14px 0 5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.modalCard input,.modalCard textarea,.modalCard select{width:100%;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:12.5px;outline:none;transition:.22s}
+.modalCard textarea{resize:vertical;min-height:70px;line-height:1.55}
+.modalCard input:focus,.modalCard textarea:focus,.modalCard select:focus{border-color:rgba(255,255,255,.5);box-shadow:0 0 0 3px rgba(255,255,255,.06)}
+.modalRow{display:flex;gap:8px;margin-top:20px}
+.modalRow .btn{flex:1;padding:11px;font-size:13px}
 .btnGhost{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text)}
 .btnGhost:hover{background:rgba(255,255,255,.13)}
-.switchRow{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
-.switchRow span{font-size:12.5px;color:#ccc}
-.switch{width:38px;height:22px;border-radius:20px;background:rgba(255,255,255,.12);position:relative;cursor:pointer;transition:.25s;flex-shrink:0}
-.switch::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#888;transition:.25s}
+.tabsMini{display:flex;gap:4px;margin-bottom:16px;background:rgba(255,255,255,.04);padding:3px;border-radius:10px}
+.tabsMini button{flex:1;padding:7px;border:0;background:transparent;color:var(--muted);font-family:inherit;font-size:11px;font-weight:600;border-radius:7px;cursor:pointer;transition:.2s}
+.tabsMini button.active{background:#fff;color:#000}
+.switchRow{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.switchRow span{font-size:12px;color:#ccc}
+.switch{width:36px;height:20px;border-radius:20px;background:rgba(255,255,255,.12);position:relative;cursor:pointer;transition:.25s;flex-shrink:0}
+.switch::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#888;transition:.25s}
 .switch.on{background:#fff}
 .switch.on::after{left:19px;background:#000}
 
-.toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,90px);padding:12px 22px;border-radius:13px;font-size:13px;font-weight:600;z-index:99;background:rgba(20,20,20,.98);border:1px solid rgba(255,255,255,.35);color:#fff;box-shadow:0 14px 44px rgba(0,0,0,.75);opacity:0;transition:.4s cubic-bezier(.2,.9,.3,1.3)}
+.toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,90px);padding:11px 20px;border-radius:12px;font-size:12.5px;font-weight:600;z-index:99;background:rgba(20,20,20,.98);border:1px solid rgba(255,255,255,.35);color:#fff;box-shadow:0 14px 44px rgba(0,0,0,.75);opacity:0;transition:.4s cubic-bezier(.2,.9,.3,1.3)}
 .toast.show{transform:translate(-50%,0);opacity:1}
+
+.kbdList{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.kbdRow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px;color:#ccc}
+.kbdRow kbd{padding:3px 8px;border-radius:5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font-family:ui-monospace,monospace;font-size:10.5px;color:#fff}
 
 @media (max-width:900px){
   .sidebar{position:fixed;inset:0 auto 0 0;z-index:40;transform:translateX(-100%);box-shadow:0 0 60px rgba(0,0,0,.85)}
   .sidebar.open{transform:translateX(0)}
   .menuBtn{display:grid;place-items:center}
-  .bubble{max-width:88%}
+  .msgBody{max-width:88%}
   .messages{padding-top:16px}
+  .topSub{display:none}
 }
 @media (max-width:560px){
-  .authCard{padding:28px 22px 24px}
-  .brandLogo{font-size:28px;letter-spacing:6px}
+  .authCard{padding:26px 20px 22px}
+  .brandLogo{font-size:26px;letter-spacing:6px}
   .composerArea{padding:8px 10px 14px}
   .msgWrap{padding:0 12px}
-  .topTitle{font-size:13px;letter-spacing:2px}
+  .topTitle{font-size:12px;letter-spacing:2px}
 }
 </style>
 </head>
 <body>
 
+<!-- SVG DEFS for arc reactor -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="rg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff"/>
+      <stop offset="100%" stop-color="#888"/>
+    </linearGradient>
+    <radialGradient id="rc1">
+      <stop offset="0%" stop-color="#fff"/>
+      <stop offset="100%" stop-color="#555"/>
+    </radialGradient>
+  </defs>
+</svg>
+
 <div class="glowLayer"><div class="glow a"></div><div class="glow b"></div><div class="glow c"></div><div class="glow d"></div></div>
 <div class="gridOverlay"></div>
 <canvas id="bgCanvas"></canvas>
 
+<!-- ============ AUTH ============ -->
 <div id="authScreen">
   <div class="authCard">
-    <div class="brandLogo">JARVIS</div>
-    <div class="brandSub">AI Assistant</div>
+    <div class="authLogo">
+      <svg class="arcReactor" width="72" height="72" viewBox="0 0 100 100">
+        <g class="ring1">
+          <polygon points="50,10 86,70 14,70" fill="none" stroke="url(#rg1)" stroke-width="1.2"/>
+        </g>
+        <g class="ring2">
+          <polygon points="50,90 14,30 86,30" fill="none" stroke="url(#rg1)" stroke-width="1.2"/>
+        </g>
+        <circle cx="50" cy="50" r="38" fill="none" stroke="url(#rg1)" stroke-width="1" opacity=".4"/>
+        <circle cx="50" cy="50" r="26" fill="none" stroke="url(#rg1)" stroke-width="1.5"/>
+        <circle cx="50" cy="50" r="16" fill="none" stroke="url(#rg1)" stroke-width="1.2" opacity=".7"/>
+        <circle class="core" cx="50" cy="50" r="10" fill="url(#rc1)"/>
+        <circle cx="50" cy="50" r="5" fill="#fff"/>
+      </svg>
+      <div class="brandLogo">JARVIS</div>
+    </div>
+    <div class="brandSub">Advanced AI Assistant</div>
+
     <div class="tabs">
       <button class="tab active" data-tab="login" type="button">Login</button>
       <button class="tab" data-tab="signup" type="button">Create Account</button>
@@ -221,12 +302,27 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
   </div>
 </div>
 
+<!-- ============ APP ============ -->
 <div id="app" class="hidden">
   <aside class="sidebar" id="sidebar">
     <div class="sideTop">
-      <div class="sideBrand">JARVIS</div>
-      <div class="sideBrandSub">AI ASSISTANT</div>
+      <div class="sideHeader">
+        <svg class="arcReactor" width="32" height="32" viewBox="0 0 100 100">
+          <g class="ring1"><polygon points="50,10 86,70 14,70" fill="none" stroke="url(#rg1)" stroke-width="2"/></g>
+          <g class="ring2"><polygon points="50,90 14,30 86,30" fill="none" stroke="url(#rg1)" stroke-width="2"/></g>
+          <circle cx="50" cy="50" r="26" fill="none" stroke="url(#rg1)" stroke-width="2"/>
+          <circle class="core" cx="50" cy="50" r="10" fill="url(#rc1)"/>
+          <circle cx="50" cy="50" r="5" fill="#fff"/>
+        </svg>
+        <div>
+          <div class="sideBrand">JARVIS</div>
+          <div class="sideBrandSub">AI ASSISTANT</div>
+        </div>
+      </div>
       <button class="newChatBtn" id="newChatBtn" type="button">＋ New Conversation</button>
+      <div class="searchBox">
+        <input type="text" id="chatSearch" placeholder="Search chats..." />
+      </div>
     </div>
     <div class="chatList" id="chatList"></div>
     <div class="sideBottom">
@@ -237,15 +333,29 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
           <small id="userEmail">user@mail.com</small>
         </div>
       </div>
-      <button class="sideBtn" id="settingsBtn" type="button">⚙ &nbsp;Settings</button>
-      <button class="sideBtn" id="logoutBtn" type="button">⏻ &nbsp;Logout</button>
+      <button class="sideBtn" id="settingsBtn" type="button">⚙ Settings</button>
+      <button class="sideBtn" id="exportBtn" type="button">📥 Export Chat</button>
+      <button class="sideBtn" id="shortcutsBtn" type="button">⌨ Shortcuts</button>
+      <button class="sideBtn" id="logoutBtn" type="button">⏻ Logout</button>
     </div>
   </aside>
 
   <main class="main">
     <header class="topbar">
       <button class="menuBtn" id="menuBtn" type="button">☰</button>
-      <div class="topTitle">JARVIS</div>
+      <div class="topLogo">
+        <svg class="arcReactor" width="28" height="28" viewBox="0 0 100 100">
+          <g class="ring1"><polygon points="50,10 86,70 14,70" fill="none" stroke="url(#rg1)" stroke-width="2"/></g>
+          <g class="ring2"><polygon points="50,90 14,30 86,30" fill="none" stroke="url(#rg1)" stroke-width="2"/></g>
+          <circle cx="50" cy="50" r="26" fill="none" stroke="url(#rg1)" stroke-width="2"/>
+          <circle class="core" cx="50" cy="50" r="10" fill="url(#rc1)"/>
+          <circle cx="50" cy="50" r="5" fill="#fff"/>
+        </svg>
+        <div>
+          <div class="topTitle">JARVIS</div>
+          <span class="topSub">ADVANCED ASSISTANT</span>
+        </div>
+      </div>
       <div class="topSpacer"></div>
       <div class="statusPill"><span class="dot on" id="statusDot"></span><span id="statusText">Ready</span></div>
       <button class="iconBtn active" id="voiceToggle" title="Voice output" type="button">🔊</button>
@@ -255,35 +365,92 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:#000;colo
 
     <div class="composerArea">
       <div class="hintBar" id="hintBar"></div>
+      <div class="attachments" id="attachments"></div>
       <div class="composer">
+        <button class="attachBtn" id="attachBtn" title="Attach file" type="button">📎</button>
         <textarea id="input" rows="1" placeholder="Ask Jarvis anything..."></textarea>
         <button class="micBtn" id="micBtn" title="Voice input" type="button">🎤</button>
         <button class="sendBtn" id="sendBtn" title="Send" type="button">➤</button>
       </div>
+      <input type="file" id="fileInput" style="display:none" multiple accept="image/*,.txt,.md,.json,.csv,.js,.py,.html,.css" />
     </div>
   </main>
 </div>
 
+<!-- ============ SETTINGS MODAL ============ -->
 <div class="modal hidden" id="settingsModal">
   <div class="modalCard">
     <h3>⚙ Settings</h3>
-    <p class="sub">JARVIS works out of the box with a free AI service. Add your own keys for higher quality.</p>
-    <div class="freeNote">✅ <b>Free mode is active.</b> No key needed to chat.</div>
-    <label>OpenAI API Key (optional)</label>
-    <input id="setGptKey" type="password" placeholder="sk-..." />
-    <label>Anthropic API Key (optional)</label>
-    <input id="setClaudeKey" type="password" placeholder="sk-ant-..." />
-    <label>DeepSeek API Key (optional)</label>
-    <input id="setDeepseekKey" type="password" placeholder="sk-..." />
-    <label>Google Gemini API Key (optional)</label>
-    <input id="setGeminiKey" type="password" placeholder="AIza..." />
-    <div class="switchRow">
-      <span>Always listen for "Jarvis"</span>
-      <div class="switch on" id="autoListenSwitch"></div>
+    <p class="sub">JARVIS works out of the box with a free AI service. Add keys for higher quality.</p>
+    <div class="tabsMini" id="settingsTabs">
+      <button class="active" data-tab="keys" type="button">API Keys</button>
+      <button data-tab="voice" type="button">Voice</button>
+      <button data-tab="advanced" type="button">Advanced</button>
     </div>
+
+    <div id="tabKeys">
+      <label>OpenAI API Key (optional)</label>
+      <input id="setGptKey" type="password" placeholder="sk-..." />
+      <label>Anthropic API Key (optional)</label>
+      <input id="setClaudeKey" type="password" placeholder="sk-ant-..." />
+      <label>DeepSeek API Key (optional)</label>
+      <input id="setDeepseekKey" type="password" placeholder="sk-..." />
+      <label>Google Gemini API Key (optional)</label>
+      <input id="setGeminiKey" type="password" placeholder="AIza..." />
+    </div>
+
+    <div id="tabVoice" class="hidden">
+      <label>Voice</label>
+      <select id="setVoice">
+        <option value="">Default</option>
+      </select>
+      <label>Speech rate — <span id="rateVal">1.0</span></label>
+      <input type="range" id="setRate" min="0.5" max="2" step="0.1" value="1" style="padding:0" />
+      <label>Pitch — <span id="pitchVal">1.0</span></label>
+      <input type="range" id="setPitch" min="0" max="2" step="0.1" value="1" style="padding:0" />
+      <div class="switchRow" style="margin-top:14px">
+        <span>Always listen for "Jarvis"</span>
+        <div class="switch on" id="autoListenSwitch"></div>
+      </div>
+    </div>
+
+    <div id="tabAdvanced" class="hidden">
+      <label>System Prompt (how JARVIS behaves)</label>
+      <textarea id="setSystem" placeholder="You are Jarvis, a helpful AI assistant..."></textarea>
+      <label>Temperature (0 = precise, 2 = creative)</label>
+      <input type="number" id="setTemp" min="0" max="2" step="0.1" value="0.7" />
+      <div class="switchRow" style="margin-top:14px">
+        <span>Auto-scroll on new message</span>
+        <div class="switch on" id="autoScrollSwitch"></div>
+      </div>
+      <div class="switchRow">
+        <span>Stream responses live</span>
+        <div class="switch on" id="streamSwitch"></div>
+      </div>
+    </div>
+
     <div class="modalRow">
       <button class="btn btnGhost" id="settingsCancel" type="button">Cancel</button>
       <button class="btn btnPrimary" style="width:auto" id="settingsSave" type="button">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SHORTCUTS MODAL ============ -->
+<div class="modal hidden" id="shortcutsModal">
+  <div class="modalCard">
+    <h3>⌨ Keyboard Shortcuts</h3>
+    <p class="sub">Speed up your workflow</p>
+    <div class="kbdList">
+      <div class="kbdRow"><span>Focus input</span><kbd>Ctrl / Cmd + K</kbd></div>
+      <div class="kbdRow"><span>Send message</span><kbd>Enter</kbd></div>
+      <div class="kbdRow"><span>New line</span><kbd>Shift + Enter</kbd></div>
+      <div class="kbdRow"><span>New conversation</span><kbd>Ctrl / Cmd + N</kbd></div>
+      <div class="kbdRow"><span>Toggle voice</span><kbd>Ctrl / Cmd + M</kbd></div>
+      <div class="kbdRow"><span>Close modal</span><kbd>Esc</kbd></div>
+    </div>
+    <div class="modalRow">
+      <button class="btn btnPrimary" id="shortcutsClose" type="button">Got it</button>
     </div>
   </div>
 </div>
@@ -302,8 +469,7 @@ const sleep = ms => new Promise(r=>setTimeout(r,ms));
 function fetchWithTimeout(url, options, ms){
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), ms);
-  return fetch(url, { ...options, signal: controller.signal })
-    .finally(() => clearTimeout(id));
+  return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(id));
 }
 
 function setStatus(text, cls){
@@ -312,7 +478,7 @@ function setStatus(text, cls){
 }
 
 /* ============ STORAGE ============ */
-const K_USERS='jarvis.users.v8', K_SESSION='jarvis.session.v8';
+const K_USERS='jarvis.users.v9', K_SESSION='jarvis.session.v9';
 const db = {
   users:      () => JSON.parse(localStorage.getItem(K_USERS) || '{}'),
   saveUsers:  u  => { try{ localStorage.setItem(K_USERS, JSON.stringify(u)); }catch(_){} },
@@ -324,7 +490,11 @@ const db = {
   saveSettings:(e,s) => { try{ localStorage.setItem('jarvis.settings.'+e, JSON.stringify(s)); }catch(_){} }
 };
 
-let state = { email:null, name:'', chats:[], current:null, voiceOn:true, autoListen:true, settings:{} };
+let state = {
+  email:null, name:'', chats:[], current:null,
+  voiceOn:true, autoListen:true, autoScroll:true, stream:true,
+  settings:{}, attachments:[]
+};
 
 /* ============ PARTICLE BG ============ */
 (function particles(){
@@ -360,9 +530,10 @@ let state = { email:null, name:'', chats:[], current:null, voiceOn:true, autoLis
 })();
 
 /* ============ AUTH ============ */
-$$('.tab').forEach(tab => {
+$$('.tab[data-tab]').forEach(tab => {
   tab.addEventListener('click', () => {
-    $$('.tab').forEach(t=>t.classList.remove('active'));
+    if(tab.closest('#settingsTabs')) return;
+    $$('.tab[data-tab]').forEach(t=>t.classList.remove('active'));
     tab.classList.add('active');
     const isLogin = tab.dataset.tab === 'login';
     $('#loginForm').classList.toggle('hidden', !isLogin);
@@ -426,6 +597,8 @@ function startSession(email){
   state.settings = db.settings(email);
   state.voiceOn   = state.settings.voiceOn !== false;
   state.autoListen = state.settings.autoListen !== false;
+  state.autoScroll = state.settings.autoScroll !== false;
+  state.stream     = state.settings.stream !== false;
 
   state.chats = db.chats(email);
   if(!state.chats.length) state.chats = [makeChat()];
@@ -473,6 +646,13 @@ $('#newChatBtn').addEventListener('click', () => {
 });
 
 $('#menuBtn').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
+
+$('#chatSearch').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase();
+  $$('.chatItem').forEach(el => {
+    el.style.display = el.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+});
 
 function renderChatList(){
   $('#chatList').innerHTML = state.chats.map(c => `
@@ -530,12 +710,17 @@ function renderMessages(){
   if(!chat.messages.length){
     box.innerHTML = `
       <div class="welcome">
-        <div class="ring">
-          <div class="orbit"></div><div class="orbit"></div><div class="orbit"></div>
-          <div class="core"></div>
-        </div>
+        <svg class="arcReactor" width="100" height="100" viewBox="0 0 100 100">
+          <g class="ring1"><polygon points="50,10 86,70 14,70" fill="none" stroke="url(#rg1)" stroke-width="1.2"/></g>
+          <g class="ring2"><polygon points="50,90 14,30 86,30" fill="none" stroke="url(#rg1)" stroke-width="1.2"/></g>
+          <circle class="pulse" cx="50" cy="50" r="34" fill="none" stroke="url(#rg1)" stroke-width="1" opacity=".5"/>
+          <circle cx="50" cy="50" r="26" fill="none" stroke="url(#rg1)" stroke-width="1.5"/>
+          <circle cx="50" cy="50" r="16" fill="none" stroke="url(#rg1)" stroke-width="1.2" opacity=".7"/>
+          <circle class="core" cx="50" cy="50" r="10" fill="url(#rc1)"/>
+          <circle cx="50" cy="50" r="5" fill="#fff"/>
+        </svg>
         <h1>Hi, I'm Jarvis</h1>
-        <p>Your personal AI assistant. Ask me anything, or just say "Jarvis" to wake me.</p>
+        <p>Your advanced AI assistant. Ask me anything, or just say "Jarvis" to wake me.</p>
         <div class="subline">ALWAYS LISTENING · READY TO HELP</div>
         <div class="chips">
           <button class="chip" data-prompt="What can you do?">💡 What can you do?</button>
@@ -552,17 +737,127 @@ function renderMessages(){
     return;
   }
 
-  box.innerHTML = chat.messages.map(m => {
+  box.innerHTML = chat.messages.map((m, i) => {
     const isAI = m.role === 'assistant';
     const isErr = m.error === true;
+    let attachHtml = '';
+    if(m.attachments && m.attachments.length){
+      attachHtml = m.attachments.map(a => {
+        if(a.type && a.type.startsWith('image/')){
+          return `<div class="attachment"><img src="${a.data}" alt="${esc(a.name)}"/></div>`;
+        }
+        return `<div class="attachment">📄 ${esc(a.name)}</div>`;
+      }).join('');
+    }
     return `
-      <div class="msgWrap ${isAI ? 'ai' : 'user'} ${isErr ? 'error' : ''}">
+      <div class="msgWrap ${isAI ? 'ai' : 'user'} ${isErr ? 'error' : ''}" data-idx="${i}">
         <div class="msgAvatar ${isAI ? 'ai' : 'me'}">${isAI ? 'J' : (state.name[0]||'U').toUpperCase()}</div>
-        <div><div class="bubble">${md(m.content)}</div></div>
+        <div class="msgBody">
+          ${attachHtml ? `<div>${attachHtml}</div>` : ''}
+          <div class="bubble">${md(m.content)}</div>
+          <div class="msgActions">
+            <button class="msgAction" onclick="copyMsg(${i})">Copy</button>
+            ${isAI ? `<button class="msgAction" onclick="regenerate(${i})">Regenerate</button>` : `<button class="msgAction" onclick="editMsg(${i})">Edit</button>`}
+          </div>
+        </div>
       </div>`;
   }).join('');
-  box.scrollTop = box.scrollHeight;
+
+  if(state.autoScroll) box.scrollTop = box.scrollHeight;
 }
+
+window.copyMsg = function(idx){
+  const chat = currentChat();
+  if(!chat || !chat.messages[idx]) return;
+  navigator.clipboard.writeText(chat.messages[idx].content).then(() => toast('Copied'));
+};
+
+window.regenerate = async function(idx){
+  if(busy) return;
+  const chat = currentChat();
+  if(!chat) return;
+  // remove the AI msg at idx and the user msg before it, resend
+  const aiMsg = chat.messages[idx];
+  if(!aiMsg || aiMsg.role !== 'assistant') return;
+  const userMsgIdx = idx - 1;
+  const userMsg = chat.messages[userMsgIdx];
+  if(!userMsg || userMsg.role !== 'user') return;
+  // truncate history up to and including the user message
+  chat.messages = chat.messages.slice(0, idx);
+  persist(); renderMessages();
+  input.value = userMsg.content;
+  state.attachments = userMsg.attachments || [];
+  // remove the last user msg and re-send
+  chat.messages.pop();
+  await send();
+};
+
+window.editMsg = function(idx){
+  const chat = currentChat();
+  if(!chat || !chat.messages[idx]) return;
+  const msg = chat.messages[idx];
+  if(msg.role !== 'user') return;
+
+  // replace bubble with textarea
+  const wrap = document.querySelector(`.msgWrap[data-idx="${idx}"]`);
+  if(!wrap) return;
+  const body = wrap.querySelector('.msgBody');
+  if(!body) return;
+
+  body.innerHTML = `
+    <textarea class="editArea" id="editArea">${esc(msg.content)}</textarea>
+    <div style="display:flex;gap:6px;margin-top:6px">
+      <button class="msgAction" onclick="saveEdit(${idx})">Save & Resend</button>
+      <button class="msgAction" onclick="renderMessages()">Cancel</button>
+    </div>`;
+  $('#editArea').focus();
+};
+
+window.saveEdit = async function(idx){
+  const chat = currentChat();
+  if(!chat || !chat.messages[idx]) return;
+  const ta = $('#editArea');
+  if(!ta) return;
+  const newText = ta.value.trim();
+  if(!newText) return;
+  chat.messages = chat.messages.slice(0, idx);
+  persist();
+  input.value = newText;
+  await send();
+};
+
+/* ============ ATTACHMENTS ============ */
+$('#attachBtn').addEventListener('click', () => $('#fileInput').click());
+$('#fileInput').addEventListener('change', async e => {
+  const files = [...e.target.files];
+  for(const file of files){
+    if(file.size > 4 * 1024 * 1024){ toast('❌ File too large (max 4MB): ' + file.name); continue; }
+    const data = await new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.onerror = rej;
+      if(file.type.startsWith('image/')) r.readAsDataURL(file);
+      else r.readAsText(file);
+    });
+    state.attachments.push({ name: file.name, type: file.type, data });
+  }
+  e.target.value = '';
+  renderAttachments();
+});
+
+function renderAttachments(){
+  const wrap = $('#attachments');
+  if(!state.attachments.length){ wrap.innerHTML = ''; return; }
+  wrap.innerHTML = state.attachments.map((a, i) => `
+    <div class="attachChip">
+      ${a.type && a.type.startsWith('image/') ? '🖼' : '📄'} ${esc(a.name)}
+      <button onclick="removeAttach(${i})">×</button>
+    </div>`).join('');
+}
+window.removeAttach = function(i){
+  state.attachments.splice(i, 1);
+  renderAttachments();
+};
 
 /* ============ SEND ============ */
 const input = $('#input');
@@ -580,7 +875,7 @@ let busy = false;
 async function send(){
   if(busy) return;
   const text = input.value.trim();
-  if(!text) return;
+  if(!text && !state.attachments.length) return;
 
   const chat = currentChat();
   if(!chat) return;
@@ -590,8 +885,13 @@ async function send(){
   $('#sendBtn').disabled = true;
   setStatus('Thinking...', 'thinking');
 
-  chat.messages.push({ role:'user', content:text });
-  if(chat.title === 'New Chat') chat.title = text.slice(0, 34) + (text.length > 34 ? '…' : '');
+  const userMsg = { role:'user', content: text || '(attachment)' };
+  if(state.attachments.length) userMsg.attachments = [...state.attachments];
+  const attachForSend = [...state.attachments];
+  state.attachments = []; renderAttachments();
+
+  chat.messages.push(userMsg);
+  if(chat.title === 'New Chat') chat.title = (text || 'Attachment').slice(0, 34) + ((text||'').length > 34 ? '…' : '');
   persist(); renderChatList(); renderMessages();
 
   const box = $('#messages');
@@ -599,10 +899,12 @@ async function send(){
   typing.className = 'msgWrap ai';
   typing.innerHTML = `
     <div class="msgAvatar ai">J</div>
-    <div class="bubble" style="padding:0;background:transparent;border:0">
-      <div class="typing">
-        <span></span><span></span><span></span>
-        <span class="typingStatus" id="typingStatus">Jarvis is thinking...</span>
+    <div class="msgBody">
+      <div class="bubble" style="padding:0;background:transparent;border:0">
+        <div class="typing">
+          <span></span><span></span><span></span>
+          <span class="typingStatus" id="typingStatus">Jarvis is thinking...</span>
+        </div>
       </div>
     </div>`;
   box.appendChild(typing);
@@ -611,26 +913,39 @@ async function send(){
   let reply = '';
   let isError = false;
   try {
-    reply = await getReply(chat.messages);
-    if(!reply || !reply.trim()){
-      reply = "I couldn't generate a response. Please try again.";
-      isError = true;
+    const result = await getReply(chat.messages, attachForSend);
+    if(result && result.streaming){
+      // live streaming placeholder
+      typing.remove();
+      const streamWrap = document.createElement('div');
+      streamWrap.className = 'msgWrap ai';
+      streamWrap.innerHTML = `
+        <div class="msgAvatar ai">J</div>
+        <div class="msgBody"><div class="bubble" id="streamBubble"></div></div>`;
+      box.appendChild(streamWrap);
+      let accumulated = '';
+      const streamBubble = $('#streamBubble');
+      await result.stream(chunk => {
+        accumulated += chunk;
+        streamBubble.innerHTML = md(accumulated);
+        if(state.autoScroll) box.scrollTop = box.scrollHeight;
+      });
+      reply = accumulated;
+      if(!reply.trim()){ reply = 'No response.'; isError = true; }
     } else {
-      setStatus('Online', 'on');
+      reply = result;
+      if(!reply || !reply.trim()){ reply = "I couldn't generate a response."; isError = true; }
     }
+    setStatus('Online', 'on');
   } catch(err){
     reply = "⚠️ " + (err.message || 'Something went wrong.');
     isError = true;
     setStatus('Offline', '');
-    // restore input so user can retry
     if(!input.value.trim()) input.value = text;
-    input.style.height = 'auto';
-    input.style.height = Math.min(input.scrollHeight, 170) + 'px';
   }
 
-  typing.remove();
+  try{ typing.remove(); }catch(_){}
 
-  // Race condition guard: only push if chat still exists
   if(state.chats.find(c => c.id === chat.id)){
     const msg = { role:'assistant', content: reply };
     if(isError) msg.error = true;
@@ -645,29 +960,45 @@ async function send(){
 }
 
 /* ============ AI ENGINE ============ */
-async function getReply(history){
-  if(!navigator.onLine) throw new Error('You appear to be offline. Check your internet connection.');
+async function getReply(history, attachments){
+  if(!navigator.onLine) throw new Error('You appear to be offline. Check your internet.');
 
   const s = state.settings;
-  if(s.gptKey)      return callOpenAI(history, s.gptKey);
-  if(s.claudeKey)   return callClaude(history, s.claudeKey);
+  if(s.gptKey)      return callOpenAI(history, s.gptKey, attachments);
+  if(s.claudeKey)   return callClaude(history, s.claudeKey, attachments);
   if(s.deepseekKey) return callDeepSeek(history, s.deepseekKey);
-  if(s.geminiKey)   return callGemini(history, s.geminiKey);
-  return callFree(history);
+  if(s.geminiKey)   return callGemini(history, s.geminiKey, attachments);
+  return callFree(history, attachments);
 }
 
-/* free tier — 3 attempts with HTML/JSON detection */
-async function callFree(history){
-  const trimmedHistory = history.slice(-20);
-  const messages = [
-    { role: 'system', content: 'You are Jarvis, a friendly and helpful AI assistant. Answer clearly and concisely. Use markdown for code and lists.' },
-    ...trimmedHistory.map(m => ({ role: m.role, content: m.content }))
-  ];
+function buildSystemPrompt(){
+  return state.settings.system || 'You are Jarvis, a helpful AI assistant. Answer clearly. Use markdown for code and lists.';
+}
 
-  const statusEl = () => $('#typingStatus');
-  const setMsg = t => { const el = statusEl(); if(el) el.textContent = t; };
+async function callFree(history, attachments){
+  const trimmed = history.slice(-20);
+  const messages = [{ role:'system', content: buildSystemPrompt() }];
 
-  // Attempt 1: POST to base endpoint (plain text reply)
+  for(const m of trimmed){
+    if(m.role === 'user' && m.attachments && m.attachments.length){
+      // flatten attachments to text
+      const parts = [];
+      if(m.content) parts.push(m.content);
+      for(const a of m.attachments){
+        if(a.type && a.type.startsWith('image/')){
+          parts.push(`[Image attached: ${a.name}]`);
+        } else {
+          parts.push(`[File ${a.name}]:\n${String(a.data).slice(0, 2000)}`);
+        }
+      }
+      messages.push({ role:'user', content: parts.join('\n\n') });
+    } else {
+      messages.push({ role: m.role, content: m.content });
+    }
+  }
+
+  const setMsg = t => { const el = $('#typingStatus'); if(el) el.textContent = t; };
+
   try {
     setMsg('Connecting...');
     const res = await fetchWithTimeout('https://text.pollinations.ai/', {
@@ -675,15 +1006,13 @@ async function callFree(history){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages, model: 'openai' })
     }, 30000);
-
     if(res.ok){
       const text = await res.text();
-      const result = parseFreeResponse(text);
-      if(result) return result;
+      const r = parseFreeResponse(text);
+      if(r) return r;
     }
-  } catch(e){ if(e.name === 'AbortError') console.warn('Attempt 1 timeout'); }
+  } catch(_){}
 
-  // Attempt 2: OpenAI-compatible JSON path
   try {
     setMsg('Retrying...');
     const res = await fetchWithTimeout('https://text.pollinations.ai/openai', {
@@ -691,15 +1020,13 @@ async function callFree(history){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages, model: 'openai' })
     }, 30000);
-
     if(res.ok){
       const text = await res.text();
-      const result = parseFreeResponse(text);
-      if(result) return result;
+      const r = parseFreeResponse(text);
+      if(r) return r;
     }
-  } catch(e){ if(e.name === 'AbortError') console.warn('Attempt 2 timeout'); }
+  } catch(_){}
 
-  // Attempt 3: GET with encoded prompt
   try {
     setMsg('Final attempt...');
     const lastUser = [...history].reverse().find(m => m.role === 'user');
@@ -707,61 +1034,123 @@ async function callFree(history){
       const prompt = `You are Jarvis, a helpful AI assistant. Answer: ${lastUser.content}`;
       const res = await fetchWithTimeout(
         `https://text.pollinations.ai/${encodeURIComponent(prompt)}`,
-        { method:'GET' },
-        30000
+        { method:'GET' }, 30000
       );
       if(res.ok){
         const text = await res.text();
-        const result = parseFreeResponse(text);
-        if(result) return result;
+        const r = parseFreeResponse(text);
+        if(r) return r;
       }
     }
-  } catch(e){ if(e.name === 'AbortError') console.warn('Attempt 3 timeout'); }
+  } catch(_){}
 
-  throw new Error('AI service is unavailable right now. Please try again in a moment.');
+  throw new Error('AI service is unavailable right now. Please try again.');
 }
 
 function parseFreeResponse(text){
   if(!text) return null;
   const trimmed = text.trim();
   if(!trimmed) return null;
-
-  // Detect HTML error pages
   if(/^<!DOCTYPE|^<html/i.test(trimmed)) return null;
-
-  // Try JSON parse
   if(trimmed.startsWith('{') || trimmed.startsWith('[')){
     try {
       const data = JSON.parse(trimmed);
       const c = data.choices?.[0]?.message?.content
              || data.message?.content
-             || data.content
-             || (typeof data === 'string' ? data : null);
+             || data.content;
       if(c && c.trim()) return c.trim();
     } catch(_){}
   }
-
-  // Plain text fallback — must be meaningful
   if(trimmed.length > 2 && !trimmed.startsWith('<')) return trimmed;
   return null;
 }
 
-/* key-based providers */
-async function callOpenAI(history, key){
+/* ---- streaming helper for key-based APIs ---- */
+async function streamSSE(res, extractFn, onChunk){
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buf = '', full = '';
+  while(true){
+    const { done, value } = await reader.read();
+    if(done) break;
+    buf += decoder.decode(value, { stream:true });
+    const lines = buf.split('\n');
+    buf = lines.pop();
+    for(const line of lines){
+      const t = line.trim();
+      if(!t.startsWith('data: ')) continue;
+      const d = t.slice(6);
+      if(d === '[DONE]') continue;
+      try {
+        const chunk = extractFn(JSON.parse(d));
+        if(chunk){ full += chunk; onChunk(chunk); }
+      } catch(_){}
+    }
+  }
+  return full;
+}
+
+async function callOpenAI(history, key, attachments){
+  const messages = [{ role:'system', content: buildSystemPrompt() }];
+  for(const m of history.slice(-20)){
+    if(m.role === 'user' && m.attachments && m.attachments.length){
+      const parts = [];
+      if(m.content) parts.push({ type:'text', text: m.content });
+      for(const a of m.attachments){
+        if(a.type && a.type.startsWith('image/')){
+          parts.push({ type:'image_url', image_url:{ url: a.data } });
+        } else {
+          parts.push({ type:'text', text: `[${a.name}]:\n${String(a.data).slice(0, 3000)}` });
+        }
+      }
+      messages.push({ role:'user', content: parts });
+    } else {
+      messages.push({ role: m.role, content: m.content });
+    }
+  }
+
+  const body = {
+    model:'gpt-4o-mini',
+    messages,
+    temperature: parseFloat(state.settings.temp) || 0.7,
+    stream: state.stream
+  };
+
   const res = await fetchWithTimeout('https://api.openai.com/v1/chat/completions', {
     method:'POST',
     headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
-    body: JSON.stringify({
-      model:'gpt-4o-mini',
-      messages:[{ role:'system', content:'You are Jarvis, a helpful AI assistant.' }, ...history.slice(-20)]
-    })
-  }, 45000);
+    body: JSON.stringify(body)
+  }, 60000);
   if(!res.ok) throw new Error('OpenAI error ' + res.status);
+
+  if(state.stream){
+    return { streaming: true, stream: async (onChunk) => {
+      await streamSSE(res, j => j.choices?.[0]?.delta?.content || '', onChunk);
+    }};
+  }
   const data = await res.json();
   return data.choices?.[0]?.message?.content || '';
 }
 
-async function callClaude(history, key){
+async function callClaude(history, key, attachments){
+  const messages = history.slice(-20).map(m => {
+    if(m.role === 'user' && m.attachments && m.attachments.length){
+      const parts = [];
+      if(m.content) parts.push({ type:'text', text: m.content });
+      for(const a of m.attachments){
+        if(a.type && a.type.startsWith('image/')){
+          const base64 = a.data.split(',')[1] || '';
+          const mediaType = a.type;
+          parts.push({ type:'image', source:{ type:'base64', media_type: mediaType, data: base64 } });
+        } else {
+          parts.push({ type:'text', text: `[${a.name}]:\n${String(a.data).slice(0, 3000)}` });
+        }
+      }
+      return { role:'user', content: parts };
+    }
+    return { role:m.role, content:m.content };
+  });
+
   const res = await fetchWithTimeout('https://api.anthropic.com/v1/messages', {
     method:'POST',
     headers:{
@@ -773,10 +1162,10 @@ async function callClaude(history, key){
     body: JSON.stringify({
       model:'claude-sonnet-4-5',
       max_tokens: 2048,
-      system: 'You are Jarvis, a helpful AI assistant.',
-      messages: history.slice(-20).map(m => ({ role:m.role, content:m.content }))
+      system: buildSystemPrompt(),
+      messages
     })
-  }, 45000);
+  }, 60000);
   if(!res.ok) throw new Error('Claude error ' + res.status);
   const data = await res.json();
   return data.content?.[0]?.text || '';
@@ -788,27 +1177,39 @@ async function callDeepSeek(history, key){
     headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
     body: JSON.stringify({
       model:'deepseek-chat',
-      messages:[{ role:'system', content:'You are Jarvis, a helpful AI assistant.' }, ...history.slice(-20)]
+      messages:[{ role:'system', content: buildSystemPrompt() }, ...history.slice(-20).map(m => ({ role:m.role, content:m.content }))]
     })
-  }, 45000);
+  }, 60000);
   if(!res.ok) throw new Error('DeepSeek error ' + res.status);
   const data = await res.json();
   return data.choices?.[0]?.message?.content || '';
 }
 
-async function callGemini(history, key){
-  const contents = history.slice(-20).map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: m.content }]
-  }));
+async function callGemini(history, key, attachments){
+  const contents = history.slice(-20).map(m => {
+    if(m.role === 'user' && m.attachments && m.attachments.length){
+      const parts = [];
+      if(m.content) parts.push({ text: m.content });
+      for(const a of m.attachments){
+        if(a.type && a.type.startsWith('image/')){
+          const base64 = a.data.split(',')[1] || '';
+          parts.push({ inline_data:{ mime_type: a.type, data: base64 } });
+        } else {
+          parts.push({ text: `[${a.name}]:\n${String(a.data).slice(0, 3000)}` });
+        }
+      }
+      return { role:'user', parts };
+    }
+    return { role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] };
+  });
+
   const res = await fetchWithTimeout(
     'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + key,
     {
       method:'POST',
       headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({ contents })
-    },
-    45000
+      body: JSON.stringify({ contents, systemInstruction: { parts: [{ text: buildSystemPrompt() }] } })
+    }, 60000
   );
   if(!res.ok) throw new Error('Gemini error ' + res.status);
   const data = await res.json();
@@ -833,19 +1234,21 @@ function speak(text){
   if(!clean) return;
 
   speaking = true;
-  // CRITICAL: pause mic during TTS to prevent feedback loop
   pauseRecognition();
   try{ speechSynthesis.cancel(); }catch(_){}
 
   const u = new SpeechSynthesisUtterance(clean);
-  u.rate = 1.02; u.pitch = 1.0; u.volume = 1;
+  u.rate = parseFloat(state.settings.voiceRate) || 1;
+  u.pitch = parseFloat(state.settings.voicePitch) || 1;
+  u.volume = 1;
   const voices = speechSynthesis.getVoices();
-  const pref = voices.find(v => /Google UK English Male|Daniel|Alex/i.test(v.name)) || voices[0];
-  if(pref) u.voice = pref;
+  const wanted = state.settings.voiceURI;
+  const pref = wanted ? voices.find(v => v.voiceURI === wanted) : null;
+  const fallback = voices.find(v => /Google UK English Male|Daniel|Alex/i.test(v.name)) || voices[0];
+  u.voice = pref || fallback;
 
-  // Safety timeout: Chrome sometimes doesn't fire onend
   const estimatedMs = Math.max(2500, clean.length * 75);
-  let safetyTimer = setTimeout(() => { finishSpeak(); }, estimatedMs + 5000);
+  let safetyTimer = setTimeout(() => finishSpeak(), estimatedMs + 5000);
 
   function finishSpeak(){
     if(!speaking) return;
@@ -853,7 +1256,6 @@ function speak(text){
     clearTimeout(safetyTimer);
     setTimeout(resumeRecognition, 600);
   }
-
   u.onend = finishSpeak;
   u.onerror = finishSpeak;
   try{ speechSynthesis.speak(u); } catch(_){ finishSpeak(); }
@@ -879,9 +1281,7 @@ if(SR){
       if(e.results[i].isFinal) finalText += e.results[i][0].transcript;
     }
     if(!finalText) return;
-
     const low = finalText.toLowerCase().trim();
-    // match "jarvis" or "hey jarvis" etc. at the start only
     const wakeMatch = low.match(/^(hey\s+|ok(?:ay)?\s+|hi\s+)?jarvis\b[,.\s!]*/i);
     if(wakeMatch){
       const rest = finalText.slice(wakeMatch[0].length).trim();
@@ -901,49 +1301,31 @@ if(SR){
       $('#micBtn').classList.remove('listening');
       $('#hintBar').textContent = '';
     }
-    // 'no-speech' and 'aborted' are benign
   };
 
   recognition.onend = () => {
     if(listening){
       clearTimeout(restartTimer);
       restartTimer = setTimeout(() => {
-        if(listening){
-          try { recognition.start(); } catch(_) {}
-        }
+        if(listening){ try{ recognition.start(); }catch(_){} }
       }, 500);
     }
   };
 }
 
-function pauseRecognition(){
-  if(recognition && listening){
-    try{ recognition.abort(); }catch(_){}
-  }
-}
-function resumeRecognition(){
-  if(recognition && listening){
-    try{ recognition.start(); }catch(_){}
-  }
-}
+function pauseRecognition(){ if(recognition && listening){ try{ recognition.abort(); }catch(_){} } }
+function resumeRecognition(){ if(recognition && listening){ try{ recognition.start(); }catch(_){} } }
 
 function greet(){
   if(busy) return;
   const now = Date.now();
   if(now - lastGreetTime < 3000) return;
   lastGreetTime = now;
-
   const chat = currentChat();
   if(!chat) return;
   const greeting = "Hi, I'm Jarvis. How can I help you today?";
-
-  // If last message is already this greeting, don't spam
   const last = chat.messages[chat.messages.length - 1];
-  if(last && last.role === 'assistant' && last.content === greeting) {
-    speak(greeting);
-    return;
-  }
-
+  if(last && last.role === 'assistant' && last.content === greeting){ speak(greeting); return; }
   chat.messages.push({ role:'assistant', content: greeting });
   if(chat.title === 'New Chat') chat.title = 'Greeting';
   persist(); renderChatList(); renderMessages();
@@ -951,7 +1333,7 @@ function greet(){
 }
 
 function startListening(auto){
-  if(!SR){ if(!auto) toast('❌ Voice not supported in this browser'); return; }
+  if(!SR){ if(!auto) toast('❌ Voice not supported'); return; }
   try{
     recognition.start();
     listening = true;
@@ -970,39 +1352,110 @@ $('#micBtn').addEventListener('click', () => {
   if(listening) stopListening(); else startListening(false);
 });
 
-// Pause mic when tab hidden, resume when visible
 document.addEventListener('visibilitychange', () => {
-  if(document.hidden){
-    pauseRecognition();
-    try{ speechSynthesis.pause(); }catch(_){}
-  } else {
-    if(listening) resumeRecognition();
-    try{ speechSynthesis.resume(); }catch(_){}
+  if(document.hidden){ pauseRecognition(); try{ speechSynthesis.pause(); }catch(_){} }
+  else { if(listening) resumeRecognition(); try{ speechSynthesis.resume(); }catch(_){} }
+});
+
+/* ============ EXPORT CHAT ============ */
+$('#exportBtn').addEventListener('click', () => {
+  const chat = currentChat();
+  if(!chat || !chat.messages.length){ toast('❌ Nothing to export'); return; }
+  let content = `# ${chat.title}\n\n`;
+  content += `*Exported ${new Date().toLocaleString()}*\n\n---\n\n`;
+  for(const m of chat.messages){
+    content += `## ${m.role === 'user' ? 'You' : 'JARVIS'}\n\n${m.content}\n\n---\n\n`;
   }
+  const blob = new Blob([content], { type: 'text/markdown' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `jarvis-${chat.title.replace(/[^a-z0-9]/gi, '-').slice(0, 30)}-${Date.now()}.md`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('📥 Chat exported');
+});
+
+/* ============ SHORTCUTS ============ */
+$('#shortcutsBtn').addEventListener('click', () => $('#shortcutsModal').classList.remove('hidden'));
+$('#shortcutsClose').addEventListener('click', () => $('#shortcutsModal').classList.add('hidden'));
+
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){
+    $('#settingsModal').classList.add('hidden');
+    $('#shortcutsModal').classList.add('hidden');
+  }
+  if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); input.focus(); }
+  if((e.ctrlKey || e.metaKey) && e.key === 'n'){ e.preventDefault(); $('#newChatBtn').click(); }
+  if((e.ctrlKey || e.metaKey) && e.key === 'm'){ e.preventDefault(); $('#voiceToggle').click(); }
 });
 
 /* ============ SETTINGS ============ */
+$('#settingsTabs').addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  $$('#settingsTabs button').forEach(b => b.classList.toggle('active', b === btn));
+  const tab = btn.dataset.tab;
+  $('#tabKeys').classList.toggle('hidden', tab !== 'keys');
+  $('#tabVoice').classList.toggle('hidden', tab !== 'voice');
+  $('#tabAdvanced').classList.toggle('hidden', tab !== 'advanced');
+});
+
+$('#setRate').addEventListener('input', e => $('#rateVal').textContent = e.target.value);
+$('#setPitch').addEventListener('input', e => $('#pitchVal').textContent = e.target.value);
+
+function loadVoices(){
+  if(!('speechSynthesis' in window)) return;
+  const voices = speechSynthesis.getVoices();
+  const sel = $('#setVoice');
+  const current = state.settings.voiceURI || '';
+  sel.innerHTML = '<option value="">Default</option>' +
+    voices.map(v => `<option value="${v.voiceURI}" ${v.voiceURI === current ? 'selected' : ''}>${v.name} (${v.lang})</option>`).join('');
+}
+
 $('#settingsBtn').addEventListener('click', () => {
   const s = state.settings;
   $('#setGptKey').value = s.gptKey || '';
   $('#setClaudeKey').value = s.claudeKey || '';
   $('#setDeepseekKey').value = s.deepseekKey || '';
   $('#setGeminiKey').value = s.geminiKey || '';
+  $('#setSystem').value = s.system || '';
+  $('#setTemp').value = s.temp || 0.7;
+  $('#setRate').value = s.voiceRate || 1;
+  $('#pitchVal').textContent = s.voicePitch || 1;
+  $('#rateVal').textContent = s.voiceRate || 1;
+  $('#setPitch').value = s.voicePitch || 1;
   $('#autoListenSwitch').classList.toggle('on', s.autoListen !== false);
+  $('#autoScrollSwitch').classList.toggle('on', s.autoScroll !== false);
+  $('#streamSwitch').classList.toggle('on', s.stream !== false);
+  loadVoices();
   $('#settingsModal').classList.remove('hidden');
 });
 $('#settingsCancel').addEventListener('click', () => $('#settingsModal').classList.add('hidden'));
-$('#autoListenSwitch').addEventListener('click', function(){ this.classList.toggle('on'); });
+
+['#autoListenSwitch','#autoScrollSwitch','#streamSwitch'].forEach(sel => {
+  $(sel).addEventListener('click', function(){ this.classList.toggle('on'); });
+});
 
 $('#settingsSave').addEventListener('click', () => {
   state.settings.gptKey = $('#setGptKey').value.trim();
   state.settings.claudeKey = $('#setClaudeKey').value.trim();
   state.settings.deepseekKey = $('#setDeepseekKey').value.trim();
   state.settings.geminiKey = $('#setGeminiKey').value.trim();
+  state.settings.system = $('#setSystem').value.trim();
+  state.settings.temp = parseFloat($('#setTemp').value) || 0.7;
+  state.settings.voiceURI = $('#setVoice').value;
+  state.settings.voiceRate = parseFloat($('#setRate').value) || 1;
+  state.settings.voicePitch = parseFloat($('#setPitch').value) || 1;
   state.settings.autoListen = $('#autoListenSwitch').classList.contains('on');
-  db.saveSettings(state.email, state.settings);
+  state.settings.autoScroll = $('#autoScrollSwitch').classList.contains('on');
+  state.settings.stream = $('#streamSwitch').classList.contains('on');
 
+  db.saveSettings(state.email, state.settings);
   state.autoListen = state.settings.autoListen;
+  state.autoScroll = state.settings.autoScroll;
+  state.stream = state.settings.stream;
+
   if(state.autoListen && !listening) startListening(true);
   if(!state.autoListen && listening) stopListening();
 
@@ -1010,15 +1463,9 @@ $('#settingsSave').addEventListener('click', () => {
   toast('✅ Settings saved');
 });
 
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape') $('#settingsModal').classList.add('hidden');
-  if((e.ctrlKey || e.metaKey) && e.key === 'k'){ e.preventDefault(); input.focus(); }
-});
-
 if('speechSynthesis' in window){
-  // Preload voices
   speechSynthesis.getVoices();
-  speechSynthesis.onvoiceschanged = () => { speechSynthesis.getVoices(); };
+  speechSynthesis.onvoiceschanged = () => { speechSynthesis.getVoices(); loadVoices(); };
 }
 </script>
 </body>
