@@ -48,7 +48,7 @@
             pointer-events: none;
         }
 
-        .hud-wrapper.passive { filter: brightness(0.6); transform: scale(0.95); }
+        .hud-wrapper.passive { filter: brightness(0.8); transform: scale(0.95); }
         .hud-wrapper.wake-word { filter: brightness(1.5); transform: scale(1.1); }
         .hud-wrapper.listening { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(0, 255, 204, 0.4)); }
         .hud-wrapper.speaking { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(255, 0, 234, 0.4)); }
@@ -222,7 +222,8 @@
             <circle cx="400" cy="400" r="168" stroke="#ffffff" stroke-width="1.5" fill="none" opacity="0.8" />
             <circle cx="400" cy="400" r="150" fill="#00101a" opacity="0.8" />
         </svg>
-        <div class="jarvis-text" id="statusText">STANDBY</div>
+        <!-- Changed STANDBY to J.A.R.V.I.S here -->
+        <div class="jarvis-text" id="statusText">J.A.R.V.I.S</div>
     </div>
 
     <div class="ui-container">
@@ -246,13 +247,6 @@
     </div>
 
     <script>
-        // =====================================================================
-        // ⚠️ PASTE YOUR OPENAI API KEY HERE (Keep the quotes) ⚠️
-        // =====================================================================
-        const OPENAI_API_KEY = "YOUR_OPENAI_API_KEY_HERE"; 
-        // =====================================================================
-
-
         // --- DOM Elements ---
         const hud = document.getElementById('hud');
         const chatLog = document.getElementById('chatLog');
@@ -275,8 +269,6 @@
             recognition.continuous = true; 
             recognition.interimResults = true; 
             recognition.lang = 'en-US';
-        } else {
-            console.warn("Speech Recognition not supported in this browser.");
         }
 
         const synth = window.speechSynthesis;
@@ -288,7 +280,7 @@
             
             if (state === 'passive') {
                 hud.classList.add('passive');
-                statusText.innerText = "STANDBY";
+                statusText.innerText = "J.A.R.V.I.S"; // Changed from STANDBY
             } else if (state === 'wake') {
                 hud.classList.add('wake-word');
                 statusText.innerText = "YES SIR?";
@@ -319,7 +311,6 @@
             if (isSystemActive) return;
             isSystemActive = true;
             
-            // Prime the audio context
             const u = new SpeechSynthesisUtterance("");
             synth.speak(u);
 
@@ -328,11 +319,10 @@
                     try { recognition.start(); } catch(e) {}
                 }
                 updateState('passive');
-                addMessage("Voice module online.", "system");
+                addMessage("Voice module online. Neural network connected.", "system");
             }, 500);
         }
 
-        // Initialize on body click
         document.body.addEventListener('click', initSystem, { once: true });
 
         // --- Speech Recognition Event Handlers ---
@@ -354,11 +344,9 @@
 
             const currentText = (finalTranscript || interimTranscript).toLowerCase().trim();
 
-            // 1. Check for Wake Word ("Jarvis")
             if (!isAwake && currentText.includes('jarvis')) {
                 isAwake = true;
                 updateState('wake');
-                
                 let command = currentText.replace('jarvis', '').replace(/,/g, '').trim();
                 
                 if (command.length > 3) {
@@ -369,7 +357,6 @@
                 return;
             }
 
-            // 2. If we are awake, capture the command
             if (isAwake && finalTranscript) {
                 let command = finalTranscript.toLowerCase().replace('jarvis', '').trim();
                 if (command.length > 0) {
@@ -411,7 +398,7 @@
             if (e.key === 'Enter') handleTextSubmit();
         });
 
-        // --- Process & Respond (NOW WITH REAL API) ---
+        // --- Process & Respond (USING FREE NO-KEY API) ---
         async function processUserInput(text) {
             addMessage(text, 'user');
             updateState('processing');
@@ -419,51 +406,28 @@
             if(recognition) recognition.stop(); 
 
             try {
-                if (OPENAI_API_KEY === "YOUR_OPENAI_API_KEY_HERE" || !OPENAI_API_KEY) {
-                    throw new Error("API_KEY_MISSING");
-                }
+                // Constructing the prompt with J.A.R.V.I.S persona
+                const systemPrompt = "You are J.A.R.V.I.S., Tony Stark's AI assistant. You are highly intelligent, concise, slightly sarcastic but extremely polite. Address the user as 'sir'. Keep your spoken responses brief (1 to 3 sentences). User says: ";
+                const fullPrompt = encodeURIComponent(systemPrompt + text);
 
-                // Fetch from OpenAI API
-                const response = await fetch("https://api.openai.com/v1/chat/completions", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${OPENAI_API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        model: "gpt-4o-mini", // Fast and cost-effective model
-                        messages: [
-                            { 
-                                role: "system", 
-                                content: "You are J.A.R.V.I.S., Tony Stark's AI assistant. You are highly intelligent, concise, slightly sarcastic but extremely polite. Address the user as 'sir'. Keep your spoken responses brief (1 to 3 sentences)." 
-                            },
-                            { role: "user", content: text }
-                        ],
-                        max_tokens: 150
-                    })
-                });
-
+                // Using a FREE Public API that requires NO API KEY
+                const response = await fetch(`https://text.pollinations.ai/${fullPrompt}`);
+                
                 if (!response.ok) {
                     throw new Error(`API Error: ${response.status}`);
                 }
 
-                const data = await response.json();
-                const aiReply = data.choices[0].message.content;
+                let aiReply = await response.text();
+                
+                // Clean up the response just in case
+                aiReply = aiReply.trim();
                 
                 addMessage(aiReply, 'ai');
                 speakResponse(aiReply);
 
             } catch (error) {
                 console.error("API Error:", error);
-                
                 let errorMsg = "I am sorry sir, my connection to the mainframe is experiencing interference.";
-                
-                if (error.message === "API_KEY_MISSING") {
-                    errorMsg = "Please insert a valid API key into my system files to access my neural network.";
-                } else if (error.message.includes("401")) {
-                    errorMsg = "My API key appears to be invalid, sir.";
-                }
-
                 addMessage(errorMsg, 'ai');
                 speakResponse(errorMsg);
             }
