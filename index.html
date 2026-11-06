@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S - Fast Live Voice Assistant</title>
+    <title>J.A.R.V.I.S - Live Voice Assistant</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
@@ -22,7 +22,6 @@
             --speaking-color: #ff00ea;
             --text-main: #e2e8f0;
             --text-muted: #94a3b8;
-            --code-bg: #1e1e1e;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -53,11 +52,51 @@
             100% { opacity: 1; }
         }
 
+        /* --- PREMIUM START SCREEN --- */
+        #start-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-dark);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease;
+        }
+        #start-screen.hidden { opacity: 0; pointer-events: none; }
+        .start-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            color: var(--cyan);
+            text-shadow: 0 0 20px var(--cyan);
+            margin-bottom: 20px;
+            letter-spacing: 10px;
+        }
+        .start-btn {
+            background: transparent;
+            border: 2px solid var(--cyan);
+            color: var(--cyan);
+            padding: 15px 40px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .start-btn:hover {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.6);
+            transform: scale(1.05);
+        }
+
         .main-content {
             flex: 1; display: flex; flex-direction: column; position: relative;
             z-index: 10; width: 100%; max-width: 1200px; margin: 0 auto;
         }
 
+        /* --- HUD --- */
         .hud-wrapper {
             position: absolute;
             top: 50%; left: 50%;
@@ -68,10 +107,8 @@
             pointer-events: none; z-index: 0; opacity: 0.15;
             transition: all 0.3s ease;
         }
-
         .hud-wrapper.listening { opacity: 0.7; filter: drop-shadow(0 0 50px var(--accent)); }
         .hud-wrapper.speaking { opacity: 0.7; filter: drop-shadow(0 0 50px var(--speaking-color)); }
-
         .hud-wrapper::after {
             content: ''; position: absolute; width: 100%; height: 2px;
             background: rgba(0, 243, 255, 0.6); box-shadow: 0 0 20px var(--cyan);
@@ -104,7 +141,6 @@
             transition: all 0.3s ease;
             text-align: center;
         }
-
         .listening .logo-text { color: var(--accent); text-shadow: 0 0 15px var(--accent), 0 0 30px var(--accent); }
         .speaking .logo-text { color: var(--speaking-color); text-shadow: 0 0 15px var(--speaking-color), 0 0 30px var(--speaking-color); }
 
@@ -122,6 +158,7 @@
         .listening .reactor-core { background: radial-gradient(circle, #ffffff 0%, var(--accent) 30%, transparent 70%); box-shadow: 0 0 30px var(--accent), 0 0 60px var(--accent); }
         .speaking .reactor-core { background: radial-gradient(circle, #ffffff 0%, var(--speaking-color) 30%, transparent 70%); box-shadow: 0 0 30px var(--speaking-color), 0 0 60px var(--speaking-color); }
 
+        /* --- CHAT INTERFACE --- */
         .chat-container {
             flex: 1; overflow-y: auto; padding: 30px 10%;
             display: flex; flex-direction: column; gap: 20px;
@@ -129,7 +166,6 @@
         }
         .chat-container::-webkit-scrollbar { width: 6px; }
         .chat-container::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 6px; }
-        .chat-container::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
 
         .message { display: flex; gap: 15px; max-width: 100%; animation: fadeIn 0.3s ease; }
         .msg-avatar {
@@ -138,16 +174,13 @@
             flex-shrink: 0; font-family: 'Orbitron', sans-serif; font-weight: bold; font-size: 0.8rem;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-
         .user-msg { flex-direction: row-reverse; }
         .user-msg .msg-avatar { background: #334155; color: white; }
         .user-msg .msg-content {
             background: linear-gradient(135deg, #1e293b, #0f172a); 
             padding: 12px 18px; border-radius: 12px 12px 0 12px;
             max-width: 80%; line-height: 1.5; border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-
         .ai-msg .msg-avatar { 
             background: rgba(0, 243, 255, 0.1); border: 1px solid var(--cyan); 
             color: var(--cyan); box-shadow: 0 0 15px rgba(0,243,255,0.3); 
@@ -157,32 +190,12 @@
             padding: 18px; border-radius: 12px;
             max-width: 90%; line-height: 1.6; color: var(--text-main);
             overflow-x: auto; border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
         }
-
         .msg-content p { margin-bottom: 10px; }
         .msg-content p:last-child { margin-bottom: 0; }
-        .msg-content pre {
-            background: var(--code-bg); border: 1px solid #333;
-            border-radius: 8px; padding: 12px; margin: 10px 0; overflow-x: auto;
-        }
-        .msg-content code {
-            font-family: 'Share Tech Mono', monospace; font-size: 0.9rem;
-            background: rgba(255,255,255,0.1); padding: 2px 5px;
-            border-radius: 4px; color: var(--accent);
-        }
+        .msg-content pre { background: #1e1e1e; border: 1px solid #333; border-radius: 8px; padding: 12px; margin: 10px 0; overflow-x: auto; }
+        .msg-content code { font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px; color: var(--accent); }
         .msg-content pre code { background: transparent; padding: 0; color: #d4d4d4; }
-        .msg-content ul, .msg-content ol { margin: 10px 0 10px 20px; }
-        .msg-content strong { color: #fff; }
-
-        .msg-actions { display: flex; gap: 10px; margin-top: 12px; opacity: 0; transition: opacity 0.2s; }
-        .ai-msg:hover .msg-actions { opacity: 1; }
-        .action-btn {
-            background: transparent; border: none; color: var(--text-muted);
-            cursor: pointer; display: flex; align-items: center; gap: 5px;
-            font-size: 0.8rem; transition: color 0.2s;
-        }
-        .action-btn:hover { color: var(--cyan); }
 
         .typing-indicator {
             display: none; color: var(--cyan); font-size: 0.9rem;
@@ -192,36 +205,25 @@
         .typing-indicator.active { display: block; animation: pulse 1s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
+        /* --- INPUT AREA --- */
         .input-container {
             padding: 20px 10%; background: linear-gradient(to top, var(--bg-dark) 60%, transparent);
             z-index: 10; position: relative;
         }
-
         .input-box {
             background: var(--bg-panel); border: 1px solid var(--glass-border);
             border-radius: 16px; padding: 12px 18px; display: flex; flex-direction: column;
             gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); transition: all 0.3s ease;
             backdrop-filter: blur(20px);
         }
-        .input-box:focus-within { border-color: var(--cyan); box-shadow: 0 0 25px rgba(0, 243, 255, 0.2); }
-
         textarea {
             width: 100%; background: transparent; border: none; color: white;
             font-family: 'Inter', sans-serif; font-size: 1rem; resize: none; outline: none;
             max-height: 200px; min-height: 24px; line-height: 1.5;
         }
-        textarea::placeholder { color: var(--text-muted); }
-
         .input-actions { display: flex; justify-content: space-between; align-items: center; }
         .left-actions, .right-actions { display: flex; align-items: center; gap: 10px; }
-
-        .icon-btn {
-            background: transparent; border: none; color: var(--text-muted);
-            cursor: pointer; width: 38px; height: 38px; border-radius: 8px;
-            display: flex; justify-content: center; align-items: center; transition: all 0.2s;
-        }
-        .icon-btn:hover { background: rgba(255,255,255,0.1); color: white; }
-
+        
         .send-btn {
             background: var(--cyan); color: black; border: none;
             width: 38px; height: 38px; border-radius: 8px; cursor: pointer;
@@ -238,17 +240,33 @@
         }
         .lang-select option { background: var(--bg-dark); }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        @media (max-width: 768px) {
-            .chat-container { padding: 20px 5%; }
-            .input-container { padding: 20px 5%; }
-            .hud-wrapper { width: 100vmin; height: 100vmin; opacity: 0.1; }
-            .logo-text { font-size: 1.5rem; letter-spacing: 4px; }
+        /* --- VISUALIZER --- */
+        .visualizer-container {
+            position: absolute;
+            bottom: 100px;
+            width: 100%;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 10;
         }
+        .visualizer-container.active { opacity: 0.8; }
+        #audio-canvas { width: 60%; height: 100%; max-width: 500px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
+
+    <!-- START SCREEN (Required for Mic Access) -->
+    <div id="start-screen">
+        <div class="start-title">J.A.R.V.I.S</div>
+        <button class="start-btn" onclick="window.jarvisObj.startSystem()">INITIALIZE SYSTEM</button>
+    </div>
 
     <div class="main-content">
         
@@ -286,6 +304,10 @@
             <div class="reactor-core"></div>
         </div>
 
+        <div class="visualizer-container" id="visualizerContainer">
+            <canvas id="audio-canvas"></canvas>
+        </div>
+
         <div class="chat-container" id="chatContainer"></div>
 
         <div class="typing-indicator" id="typingIndicator">J.A.R.V.I.S is processing...</div>
@@ -296,14 +318,8 @@
                 
                 <div class="input-actions">
                     <div class="left-actions">
-                        <label for="fileUpload" class="icon-btn" title="Attach File">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-                        </label>
-                        <input type="file" id="fileUpload" style="display:none;" accept=".txt,.md,.json,.js,.py,.html,.css,.csv">
-                        
                         <select class="lang-select" id="langSelect" title="Select Language"></select>
                     </div>
-
                     <div class="right-actions">
                         <button class="send-btn" id="sendBtn">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
@@ -323,6 +339,7 @@
                 this.langSelect = document.getElementById('langSelect');
                 this.typingIndicator = document.getElementById('typingIndicator');
                 this.mainHud = document.getElementById('mainHud');
+                this.visContainer = document.getElementById('visualizerContainer');
                 
                 this.messages = [];
                 this.isListening = false;
@@ -330,7 +347,6 @@
                 this.isProcessing = false;
                 this.currentLang = 'en-US';
                 this.voices = [];
-                
                 this.recognition = null;
                 this.manualStop = false;
 
@@ -341,7 +357,20 @@
                 this.loadVoices();
                 this.setupSpeechRecognition();
                 this.setupEventListeners();
-                this.addMessage('ai', 'Systems online. I am listening, sir.');
+                this.setupAudioVisualizer();
+            }
+
+            startSystem() {
+                document.getElementById('start-screen').classList.add('hidden');
+                this.addMessage('ai', 'Systems online. Neural link established. I am listening, sir.');
+                
+                // Prime the audio context
+                const u = new SpeechSynthesisUtterance("");
+                window.speechSynthesis.speak(u);
+
+                setTimeout(() => {
+                    this.recognition.start();
+                }, 500);
             }
 
             addMessage(role, text) {
@@ -358,11 +387,8 @@
                 content.className = 'msg-content';
                 
                 if (role === 'ai') {
-                    let html = marked.parse(text);
-                    content.innerHTML = html;
-                    content.querySelectorAll('pre code').forEach((block) => {
-                        hljs.highlightElement(block);
-                    });
+                    content.innerHTML = marked.parse(text);
+                    content.querySelectorAll('pre code').forEach((block) => hljs.highlightElement(block));
                 } else {
                     content.innerText = text;
                 }
@@ -384,16 +410,15 @@
                 this.typingIndicator.classList.add('active');
                 this.isProcessing = true;
                 
-                // Stop listening while processing
                 this.manualStop = true;
-                this.recognition.stop();
+                if (this.isListening) this.recognition.stop();
 
                 const contextMessages = this.messages.slice(-4).map(m => ({
                     role: m.role,
                     content: m.content
                 }));
 
-                const systemPrompt = `You are J.A.R.V.I.S., Tony Stark's AI. Be highly intelligent, witty, slightly sarcastic, and formal. Address the user as 'sir'. Keep responses very brief (1-2 sentences max) so they are fast to speak. Reply in this language: ${this.currentLang}.`;
+                const systemPrompt = `You are J.A.R.V.I.S., Tony Stark's AI. Be highly intelligent, witty, formal. Address the user as 'sir'. Keep responses very brief (1-2 sentences max). Reply in this language: ${this.currentLang}.`;
                 
                 const payload = [
                     { role: "system", content: systemPrompt },
@@ -402,37 +427,29 @@
 
                 let aiReply = null;
 
-                // --- FAST API TIER 1: Pollinations POST (Reduced Tokens for Speed) ---
+                // FAST API TIER 1
                 try {
                     const res = await fetch("https://text.pollinations.ai/openai", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ 
-                            model: "openai", 
-                            messages: payload, 
-                            max_tokens: 150 // Keeping it short makes it much faster
-                        })
+                        body: JSON.stringify({ model: "openai", messages: payload, max_tokens: 100 })
                     });
                     if (res.ok) {
                         const data = await res.json();
-                        if (data.choices && data.choices[0].message.content) {
-                            aiReply = data.choices[0].message.content;
-                        }
+                        if (data.choices && data.choices[0].message.content) aiReply = data.choices[0].message.content;
                     }
                 } catch (e) { console.warn("Tier 1 failed"); }
 
-                // --- FAST API TIER 2: Pollinations GET ---
+                // FAST API TIER 2
                 if (!aiReply) {
                     try {
-                        let fullPrompt = `${systemPrompt}\n\nUser: ${text}\nJ.A.R.V.I.S:`;
+                        let fullPrompt = `${systemPrompt}\nUser: ${text}\nJ.A.R.V.I.S:`;
                         const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}`);
                         if (res.ok) aiReply = await res.text();
                     } catch (e) { console.warn("Tier 2 failed"); }
                 }
 
-                if (!aiReply) {
-                    aiReply = "My connection to the neural network is unstable, sir.";
-                }
+                if (!aiReply) aiReply = "My connection to the neural network is unstable, sir.";
 
                 aiReply = aiReply.replace(/J\.A\.R\.V\.I\.S\.?\s*/gi, "").replace(/Assistant:\s*/gi, "").trim();
 
@@ -440,18 +457,16 @@
                 this.addMessage('ai', aiReply);
                 this.isProcessing = false;
 
-                // Trigger Voice Response
                 this.speak(aiReply);
             }
 
             speak(text) {
-                if (!text) return;
+                if (!text) {
+                    this.resumeListening();
+                    return;
+                }
                 
-                let cleanText = text
-                    .replace(/```[\s\S]*?```/g, ' [Code] ') 
-                    .replace(/`([^`]+)`/g, '$1')
-                    .replace(/[*_#>-]/g, '')
-                    .trim();
+                let cleanText = text.replace(/```[\s\S]*?```/g, ' [Code] ').replace(/`([^`]+)`/g, '$1').replace(/[*_#>-]/g, '').trim();
 
                 window.speechSynthesis.cancel(); 
                 const utterance = new SpeechSynthesisUtterance(cleanText);
@@ -465,13 +480,14 @@
                 if (jarvisVoice) utterance.voice = jarvisVoice;
                 else utterance.voice = this.voices.find(v => v.lang === this.currentLang) || this.voices[0];
                 
-                utterance.rate = 1.1; // Slightly faster for snappy replies
-                utterance.pitch = 0.85; // Lower pitch for JARVIS
+                utterance.rate = 1.05; 
+                utterance.pitch = 0.85; 
 
                 utterance.onstart = () => { 
                     this.isSpeaking = true;
                     this.mainHud.classList.remove('listening');
                     this.mainHud.classList.add('speaking'); 
+                    if (this.isListening) this.recognition.stop();
                 };
                 
                 utterance.onend = () => { 
@@ -495,29 +511,43 @@
 
                 this.recognition = new SpeechRecognition();
                 this.recognition.continuous = true;
-                this.recognition.interimResults = false; // ONLY process final results for speed & accuracy
+                this.recognition.interimResults = true; 
                 this.recognition.lang = this.currentLang;
 
                 this.recognition.onstart = () => {
                     this.isListening = true;
                     this.manualStop = false;
                     this.mainHud.classList.add('listening');
+                    this.visContainer.classList.add('active');
                 };
 
                 this.recognition.onresult = (event) => {
                     if (this.isSpeaking || this.isProcessing) return;
 
-                    const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
+                    let finalTranscript = '';
+                    for (let i = event.resultIndex; i < event.results.length; ++i) {
+                        if (event.results[i].isFinal) {
+                            finalTranscript += event.results[i][0].transcript;
+                        }
+                    }
 
-                    // Wake word detection
-                    if (transcript.includes('jarvis') || transcript.includes('जार्विस')) {
-                        let command = transcript.replace(/jarvis|जार्विस/gi, '').replace(/,/g, '').trim();
-                        
-                        if (command.length > 0) {
-                            // Instant command
+                    const text = finalTranscript.toLowerCase().trim();
+                    
+                    // --- ROBUST WAKE WORD MATCHING (Fixes "Varvis" issue) ---
+                    const wakeWords = ['jarvis', 'jervis', 'varvis', 'javis', 'jarbis', 'जार्विस', 'जारविस'];
+                    const hasWakeWord = wakeWords.some(word => text.includes(word));
+
+                    if (hasWakeWord) {
+                        let command = text;
+                        // Remove wake word from the command
+                        wakeWords.forEach(word => {
+                            command = command.replace(word, '');
+                        });
+                        command = command.replace(/,/g, '').trim();
+
+                        if (command.length > 2) {
                             this.sendMessage(command);
                         } else {
-                            // Just "Jarvis"
                             this.speak("Yes, sir?");
                         }
                     }
@@ -525,17 +555,52 @@
 
                 this.recognition.onerror = (event) => {
                     if (event.error === 'not-allowed') {
-                        this.addMessage('system', 'Microphone access denied.');
+                        this.addMessage('system', 'Microphone access denied. Please allow mic.');
                     }
                 };
 
                 this.recognition.onend = () => {
                     this.isListening = false;
                     this.mainHud.classList.remove('listening');
+                    this.visContainer.classList.remove('active');
                     this.resumeListening();
                 };
-                
-                try { this.recognition.start(); } catch(e) {}
+            }
+
+            setupAudioVisualizer() {
+                const canvas = document.getElementById('audio-canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+                let analyser, dataArray;
+
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioContext.createAnalyser();
+                    const source = audioContext.createMediaStreamSource(stream);
+                    source.connect(analyser);
+                    analyser.fftSize = 256;
+                    const bufferLength = analyser.frequencyBinCount;
+                    dataArray = new Uint8Array(bufferLength);
+
+                    const draw = () => {
+                        requestAnimationFrame(draw);
+                        analyser.getByteFrequencyData(dataArray);
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        const barWidth = (canvas.width / bufferLength) * 2.5;
+                        let x = 0;
+                        for (let i = 0; i < bufferLength; i++) {
+                            const barHeight = dataArray[i] / 2;
+                            const gradient = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - barHeight);
+                            gradient.addColorStop(0, 'rgba(0, 243, 255, 0.1)');
+                            gradient.addColorStop(1, 'rgba(0, 243, 255, 0.8)');
+                            ctx.fillStyle = gradient;
+                            ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                            x += barWidth + 1;
+                        }
+                    };
+                    draw();
+                }).catch(e => console.warn("Visualizer disabled:", e));
             }
 
             setupEventListeners() {
