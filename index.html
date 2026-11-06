@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S - Advanced AI</title>
+    <title>J.A.R.V.I.S - Live Assistant</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -167,6 +167,7 @@
             box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
             position: relative;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         .send-btn::before {
@@ -187,33 +188,6 @@
         
         .send-btn:hover::before { opacity: 1; }
         .send-btn:active { transform: scale(0.95); }
-
-        /* --- MIC BUTTON --- */
-        .mic-btn {
-            background: rgba(0, 15, 30, 0.6);
-            border: 1px solid var(--glass-border);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            color: #8899aa;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-        .mic-btn:hover { color: var(--cyan); border-color: var(--cyan); }
-        .mic-btn.active {
-            color: var(--speaking-color);
-            border-color: var(--speaking-color);
-            box-shadow: 0 0 20px rgba(255, 0, 234, 0.4);
-            animation: pulse-mic 1.5s infinite;
-        }
-        @keyframes pulse-mic {
-            0% { box-shadow: 0 0 0 0 rgba(255, 0, 234, 0.4); }
-            70% { box-shadow: 0 0 0 15px rgba(255, 0, 234, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 0, 234, 0); }
-        }
 
         /* Audio Visualizer */
         .visualizer {
@@ -289,7 +263,7 @@
 
     <div class="ui-container">
         <div class="chat-log" id="chatLog">
-            <div class="message msg-system">Neural link established. How may I assist you?</div>
+            <div class="message msg-system">System online. Listening for wake word "Jarvis"...</div>
         </div>
         
         <div class="typing-indicator" id="typingIndicator">J.A.R.V.I.S is processing...</div>
@@ -299,16 +273,7 @@
         </div>
 
         <div class="input-bar">
-            <!-- Mic Toggle -->
-            <button class="mic-btn" id="micBtn" title="Toggle Voice Mode">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                    <line x1="12" y1="19" x2="12" y2="22"></line>
-                </svg>
-            </button>
-
-            <input type="text" id="chatInput" placeholder="Type a message or enable voice..." autocomplete="off">
+            <input type="text" id="chatInput" placeholder="Type a message or say 'Jarvis' to speak..." autocomplete="off">
             
             <!-- Premium Send Logo -->
             <button class="send-btn" id="sendBtn" title="Send">
@@ -327,7 +292,6 @@
         const chatLog = document.getElementById('chatLog');
         const chatInput = document.getElementById('chatInput');
         const sendBtn = document.getElementById('sendBtn');
-        const micBtn = document.getElementById('micBtn');
         const statusText = document.getElementById('statusText');
         const visualizer = document.getElementById('visualizer');
         const typingIndicator = document.getElementById('typingIndicator');
@@ -336,8 +300,12 @@
         let isSystemActive = false;
         let isSpeaking = false;
         let isAwake = false; 
-        let isVoiceMode = false; 
-        let chatHistory = []; // ADVANCED: Memory Context
+        let chatHistory = []; 
+        
+        // Voice Recognition Variables
+        let finalTranscript = '';
+        let interimTranscript = '';
+        let speechTimeout = null; // Timer to detect when you stop speaking
 
         // --- Web Speech API Setup ---
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -345,8 +313,8 @@
         
         if (SpeechRecognition) {
             recognition = new SpeechRecognition();
-            recognition.continuous = true; 
-            recognition.interimResults = true; 
+            recognition.continuous = true; // Keep listening
+            recognition.interimResults = true; // Show real-time words
             recognition.lang = 'en-US';
         }
 
@@ -385,115 +353,104 @@
             chatLog.scrollTop = chatLog.scrollHeight;
         }
 
-        // --- Core Initialization (No Click Blockers) ---
+        // --- Seamless Initialization ---
         function initSystem() {
             if (isSystemActive) return;
             isSystemActive = true;
             
-            // Prime the audio context
             const u = new SpeechSynthesisUtterance("");
-            synth.speak(u);
+            synth.speak(u); // Unlock audio
 
             setTimeout(() => {
                 updateState('passive');
-                if (isVoiceMode && recognition) {
+                if (recognition) {
                     try { recognition.start(); } catch(e) {}
                 }
             }, 300);
         }
 
-        // Initialize on first mouse move or keypress seamlessly
+        // Auto-start on mouse movement or keypress
         document.body.addEventListener('mousemove', initSystem, { once: true });
         document.body.addEventListener('keydown', initSystem, { once: true });
 
-        // --- Voice Mode Toggle ---
-        micBtn.addEventListener('click', () => {
-            initSystem();
-            isVoiceMode = !isVoiceMode;
-            
-            if (isVoiceMode) {
-                micBtn.classList.add('active');
-                chatInput.placeholder = "Voice mode active. Say 'Jarvis'...";
-                if(recognition) {
-                    try { recognition.start(); } catch(e) {}
-                }
-                updateState('passive');
-            } else {
-                micBtn.classList.remove('active');
-                chatInput.placeholder = "Type a message or enable voice...";
-                if(recognition) recognition.stop();
+        // --- THE CORE LISTENING LOGIC (PATIENT MODE) ---
+        recognition.onresult = (event) => {
+            if (!isSystemActive) return;
+
+            // 1. If J.A.R.V.I.S. is speaking and you start talking, he stops immediately.
+            if (isSpeaking) {
+                synth.cancel();
+                isSpeaking = false;
                 updateState('passive');
             }
-        });
 
-        // --- Speech Recognition Event Handlers ---
-        recognition.onstart = () => {
-            if(!isAwake && isVoiceMode) updateState('passive');
-        };
-
-        recognition.onresult = (event) => {
-            if (!isVoiceMode) return;
-
-            let interimTranscript = '';
-            let finalTranscript = '';
-
+            // 2. Gather spoken words
+            interimTranscript = '';
             for (let i = event.resultIndex; i < event.results.length; ++i) {
                 if (event.results[i].isFinal) {
-                    finalTranscript += event.results[i][0].transcript;
+                    finalTranscript += event.results[i][0].transcript + ' ';
                 } else {
                     interimTranscript += event.results[i][0].transcript;
                 }
             }
 
-            const currentText = (finalTranscript || interimTranscript).toLowerCase().trim();
+            const currentFullText = (finalTranscript + interimTranscript).toLowerCase().trim();
 
-            // ADVANCED: Voice Interruption
-            if (isSpeaking && currentText.length > 2) {
-                synth.cancel(); // Stop JARVIS from talking
-                isSpeaking = false;
-            }
-
-            if (!isAwake && currentText.includes('jarvis')) {
+            // 3. Check for Wake Word ("Jarvis")
+            if (!isAwake && currentFullText.includes('jarvis')) {
                 isAwake = true;
                 updateState('wake');
-                let command = currentText.replace('jarvis', '').replace(/,/g, '').trim();
                 
-                if (command.length > 3) {
-                    processUserInput(command);
-                } else {
-                    speakResponse("Yes sir?");
+                // Strip "Jarvis" from the text so we don't send it to the AI
+                finalTranscript = currentFullText.replace(/jarvis/gi, '').replace(/,/g, '').trim() + ' ';
+                
+                if (finalTranscript.trim().length === 0) {
+                    speakResponse("Yes sir? I am listening.");
+                    clearTimeout(speechTimeout);
+                    return;
                 }
-                return;
             }
 
-            if (isAwake && finalTranscript) {
-                let command = finalTranscript.toLowerCase().replace('jarvis', '').trim();
-                if (command.length > 0) {
-                    processUserInput(command);
-                }
+            // 4. If awake, wait for the user to STOP speaking before processing
+            if (isAwake) {
+                updateState('listening');
+                
+                // Reset the timer every time new words are detected
+                clearTimeout(speechTimeout);
+                
+                // Wait 1.5 seconds of silence before executing
+                speechTimeout = setTimeout(() => {
+                    const commandToProcess = finalTranscript.replace(/jarvis/gi, '').replace(/,/g, '').trim();
+                    
+                    if (commandToProcess.length > 0) {
+                        finalTranscript = ''; // Clear for next time
+                        interimTranscript = '';
+                        isAwake = false; // Go back to sleep after processing
+                        processUserInput(commandToProcess);
+                    }
+                }, 1500); // 1500ms = 1.5 seconds of silence
             }
         };
 
         recognition.onerror = (event) => {
             if (event.error === 'not-allowed') {
                 addMessage("Microphone access denied. Please allow mic permissions in your browser.", "system");
-                isVoiceMode = false;
-                micBtn.classList.remove('active');
+                isSystemActive = false;
             }
         };
 
         recognition.onend = () => {
-            if (isSystemActive && !isSpeaking && isVoiceMode) {
+            // Auto-restart listening if the browser cuts it off (prevents it from dying)
+            if (isSystemActive && !isSpeaking) {
                 try { recognition.start(); } catch(e) {}
             }
         };
 
-        // --- Text Chat Input ---
+        // --- Text Chat Input (Fallback) ---
         function handleTextSubmit() {
             initSystem(); 
             const text = chatInput.value.trim();
             if (text) {
-                isAwake = true;
                 processUserInput(text);
                 chatInput.value = '';
             }
@@ -504,7 +461,7 @@
             if (e.key === 'Enter') handleTextSubmit();
         });
 
-        // --- Advanced API Processing with Memory ---
+        // --- API Processing with Memory ---
         async function processUserInput(text) {
             addMessage(text, 'user');
             updateState('processing');
@@ -512,38 +469,29 @@
             
             if(recognition) recognition.stop(); 
 
-            // Add user message to memory
             chatHistory.push({ role: "User", content: text });
-            
-            // Keep memory limited to last 6 messages to avoid huge URLs
             if(chatHistory.length > 6) chatHistory.shift(); 
 
             try {
-                // Constructing a context-aware prompt
                 let contextStr = "You are J.A.R.V.I.S., Tony Stark's AI. You are highly intelligent, concise, polite, and slightly sarcastic. Address the user as 'sir'. Keep responses brief. ";
                 
                 chatHistory.forEach(msg => {
                     contextStr += `${msg.role}: ${msg.content}\n`;
                 });
-                
                 contextStr += "J.A.R.V.I.S:";
 
                 const fullPrompt = encodeURIComponent(contextStr);
-
-                // Free Public API
                 const response = await fetch(`https://text.pollinations.ai/${fullPrompt}`);
                 
-                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                if (!response.ok) throw new Error(`API Error`);
 
                 let aiReply = await response.text();
                 aiReply = aiReply.trim();
 
-                // Remove any accidental "J.A.R.V.I.S:" prefixes from the AI text
                 if (aiReply.startsWith("J.A.R.V.I.S:")) {
                     aiReply = aiReply.replace("J.A.R.V.I.S:", "").trim();
                 }
                 
-                // Add AI response to memory
                 chatHistory.push({ role: "J.A.R.V.I.S", content: aiReply });
 
                 typingIndicator.classList.remove('active');
@@ -551,7 +499,6 @@
                 speakResponse(aiReply);
 
             } catch (error) {
-                console.error("API Error:", error);
                 typingIndicator.classList.remove('active');
                 let errorMsg = "My connection to the mainframe is experiencing interference, sir.";
                 addMessage(errorMsg, 'ai');
@@ -568,7 +515,6 @@
             const utterance = new SpeechSynthesisUtterance(text);
             
             const voices = synth.getVoices();
-            // Aggressively search for a premium British Male voice
             const preferredVoice = voices.find(v => v.lang === 'en-GB' && v.name.includes('Male')) || 
                                    voices.find(v => v.name.includes('Google UK English Male')) ||
                                    voices.find(v => v.lang === 'en-GB') || 
@@ -580,9 +526,14 @@
 
             utterance.onend = () => {
                 isSpeaking = false;
-                isAwake = false;
                 updateState('passive');
-                if(recognition && isVoiceMode) {
+                
+                // Clear transcripts so we start fresh
+                finalTranscript = '';
+                interimTranscript = '';
+                
+                // Resume listening
+                if(recognition) {
                     try { recognition.start(); } catch(e) {}
                 }
             };
