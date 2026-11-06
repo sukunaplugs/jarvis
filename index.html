@@ -267,7 +267,6 @@
             display: flex; justify-content: center; align-items: center; transition: all 0.2s;
         }
         .icon-btn:hover { background: rgba(255,255,255,0.1); color: white; }
-        .icon-btn.listening { color: var(--speaking-color); background: rgba(255,0,234,0.1); animation: pulse 1s infinite; }
 
         .send-btn {
             background: var(--cyan); color: black; border: none;
@@ -408,9 +407,9 @@
         <div class="modal-content">
             <h2>System Settings</h2>
             <div class="setting-group">
-                <label>OpenAI API Key (Optional - For GPT-4/3.5)</label>
-                <input type="password" id="apiKeyInput" placeholder="sk-...">
-                <small style="color:var(--text-muted); font-size:0.75rem; display:block; margin-top:5px;">If empty, J.A.R.V.I.S uses a multi-tier free API.</small>
+                <label>OpenAI API Key (Hardcoded)</label>
+                <input type="password" id="apiKeyInput" placeholder="sk-..." disabled>
+                <small style="color:var(--text-muted); font-size:0.75rem; display:block; margin-top:5px;">API key is hardcoded in the source code.</small>
             </div>
             <div class="setting-group">
                 <label>AI Voice Output</label>
@@ -439,7 +438,10 @@
                 this.isListening = false;
                 this.isSpeaking = false;
                 this.voiceEnabled = localStorage.getItem('jarvis_voice') !== 'off';
-                this.apiKey = localStorage.getItem('jarvis_api_key') || '';
+                
+                // ⚠️ HARDCODED API KEY HERE ⚠️
+                this.apiKey = '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';
+                
                 this.currentLang = 'en-US';
                 this.voices = [];
                 
@@ -455,6 +457,10 @@
                     this.loadVoices();
                     this.setupSpeechRecognition();
                     this.setupEventListeners();
+
+                    // Pre-fill settings modal (read-only)
+                    document.getElementById('apiKeyInput').value = this.apiKey;
+                    document.getElementById('voiceToggle').value = this.voiceEnabled ? 'on' : 'off';
 
                     if (Object.keys(this.chats).length === 0) {
                         this.createNewChat();
@@ -598,7 +604,7 @@
 
                 let aiReply = null;
 
-                // --- TIER 1: Official OpenAI ---
+                // --- TIER 1: Official OpenAI (Hardcoded Key) ---
                 if (this.apiKey) {
                     try {
                         const res = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -616,11 +622,14 @@
                         if (res.ok) {
                             const data = await res.json();
                             aiReply = data.choices[0].message.content;
+                        } else {
+                            const errData = await res.json();
+                            console.error("OpenAI Error:", errData);
                         }
                     } catch (e) { console.warn("OpenAI API failed."); }
                 }
 
-                // --- TIER 2: Pollinations (New Gen Gateway) ---
+                // --- TIER 2: Pollinations (Fallback if Key fails) ---
                 if (!aiReply) {
                     try {
                         const res = await fetch("https://gen.pollinations.ai/v1/chat/completions", {
@@ -685,7 +694,7 @@
 
                 // --- FINAL FALLBACK ---
                 if (!aiReply) {
-                    aiReply = "All neural network routes are currently offline, sir. Please check your internet connection or configure an API key in the settings.";
+                    aiReply = "All neural network routes are currently offline, sir. Please check your internet connection or ensure the API key is valid.";
                 }
 
                 this.typingIndicator.classList.remove('active');
@@ -696,7 +705,6 @@
                     this.speak(aiReply);
                 }
                 
-                // Resume listening after AI finishes speaking
                 setTimeout(() => {
                     if (!this.isListening && this.recognition) {
                         try { this.recognition.start(); } catch(e) {}
@@ -744,8 +752,8 @@
                 }
 
                 this.recognition = new SpeechRecognition();
-                this.recognition.continuous = true; // Keep listening
-                this.recognition.interimResults = true; // Get real-time words
+                this.recognition.continuous = true;
+                this.recognition.interimResults = true;
                 this.recognition.lang = this.currentLang;
 
                 this.recognition.onstart = () => {
@@ -756,7 +764,6 @@
                 this.recognition.onresult = (event) => {
                     if (!this.isListening) return;
 
-                    // Stop speaking if user interrupts
                     if (this.isSpeaking) {
                         window.speechSynthesis.cancel();
                         this.isSpeaking = false;
@@ -774,22 +781,16 @@
 
                     const currentText = (this.finalTranscript + interimTranscript).toLowerCase().trim();
 
-                    // Wake Word Detection
                     if (currentText.includes('jarvis') || currentText.includes('जार्विस')) {
                         this.mainHud.classList.add('listening');
-                        
-                        // Extract command if spoken after wake word
                         const command = currentText.replace(/jarvis|जार्विस/gi, '').replace(/,/g, '').trim();
                         
                         if (command.length > 0) {
-                            // Command detected immediately
                             this.finalTranscript = '';
                             this.sendMessage(command);
                         } else {
-                            // Just said "Jarvis", wait for command
                             clearTimeout(this.speechTimeout);
                             this.speechTimeout = setTimeout(() => {
-                                // If no command after 3 seconds, reset
                                 this.finalTranscript = '';
                             }, 3000);
                         }
@@ -809,7 +810,6 @@
                     this.isListening = false;
                     this.mainHud.classList.remove('listening');
                     
-                    // Auto-restart listening (continuous mode)
                     if (this.voiceEnabled && !this.isSpeaking) {
                         setTimeout(() => {
                             try { this.recognition.start(); } catch(e) {}
@@ -817,7 +817,6 @@
                     }
                 };
                 
-                // Start listening immediately
                 try { this.recognition.start(); } catch(e) {}
             }
 
@@ -851,13 +850,8 @@
             }
 
             saveSettings() {
-                const key = document.getElementById('apiKeyInput').value.trim();
                 const voice = document.getElementById('voiceToggle').value;
-                
-                localStorage.setItem('jarvis_api_key', key);
                 localStorage.setItem('jarvis_voice', voice);
-                
-                this.apiKey = key;
                 this.voiceEnabled = (voice === 'on');
             }
 
