@@ -53,13 +53,11 @@
             100% { opacity: 1; }
         }
 
-        /* --- MAIN CHAT AREA --- */
         .main-content {
             flex: 1; display: flex; flex-direction: column; position: relative;
             z-index: 10; width: 100%; max-width: 1200px; margin: 0 auto;
         }
 
-        /* --- PREMIUM HUD LOGO --- */
         .hud-wrapper {
             position: absolute;
             top: 50%; left: 50%;
@@ -194,7 +192,6 @@
         .typing-indicator.active { display: block; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
 
-        /* --- INPUT AREA --- */
         .input-container {
             padding: 20px 10%; background: linear-gradient(to top, var(--bg-dark) 60%, transparent);
             z-index: 10; position: relative;
@@ -255,7 +252,6 @@
 
     <div class="main-content">
         
-        <!-- PREMIUM HUD CENTERPIECE -->
         <div class="hud-wrapper" id="mainHud">
             <svg class="hud-svg" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -290,12 +286,10 @@
             <div class="reactor-core"></div>
         </div>
 
-        <!-- Chat Area -->
         <div class="chat-container" id="chatContainer"></div>
 
         <div class="typing-indicator" id="typingIndicator">J.A.R.V.I.S is processing...</div>
 
-        <!-- Input Area -->
         <div class="input-container">
             <div class="input-box">
                 <textarea id="chatInput" rows="1" placeholder="Awaiting command or say 'Jarvis'..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
@@ -350,7 +344,6 @@
                     this.setupSpeechRecognition();
                     this.setupEventListeners();
 
-                    // Initial Greeting
                     this.addMessage('ai', 'Systems online. Neural link established. How may I assist you, sir?');
                 } catch (e) {
                     console.error("Initialization Error:", e);
@@ -419,7 +412,6 @@
                 this.typingIndicator.classList.add('active');
                 this.scrollToBottom();
 
-                // Context memory (last 6 messages to prevent overload)
                 const contextMessages = this.messages.slice(-6).map(m => ({
                     role: m.role,
                     content: m.content
@@ -435,74 +427,90 @@
                 let aiReply = null;
 
                 // =========================================================
-                // FREE API FALLBACK SYSTEM (NO KEYS REQUIRED)
+                // BULLETPROOF 5-TIER API FALLBACK SYSTEM
                 // =========================================================
 
-                // --- TIER 1: Pollinations (New Gen Gateway) ---
-                try {
-                    const res = await fetch("https://gen.pollinations.ai/v1/chat/completions", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            model: "openai",
-                            messages: payload,
-                            max_tokens: 600
-                        })
-                    });
-                    if (res.ok) {
-                        const data = await res.json();
-                        if (data.choices && data.choices[0].message.content) {
-                            aiReply = data.choices[0].message.content;
-                        }
-                    }
-                } catch (e) { console.warn("Tier 1 (Pollinations Gen) failed."); }
+                // --- TIER 1: Pollinations GET (Most Stable) ---
+                if (!aiReply) {
+                    try {
+                        let fullPrompt = `${systemPrompt}\n\n`;
+                        contextMessages.forEach(m => { fullPrompt += `${m.role}: ${m.content}\n`; });
+                        fullPrompt += `J.A.R.V.I.S:`;
 
-                // --- TIER 2: KeylessAI ---
+                        const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}`);
+                        if (res.ok) {
+                            aiReply = await res.text();
+                        }
+                    } catch (e) { console.warn("Tier 1 (Pollinations GET) failed."); }
+                }
+
+                // --- TIER 2: Pollinations POST ---
+                if (!aiReply) {
+                    try {
+                        const res = await fetch("https://text.pollinations.ai/openai", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ model: "openai", messages: payload, max_tokens: 600 })
+                        });
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.choices && data.choices[0].message.content) aiReply = data.choices[0].message.content;
+                        }
+                    } catch (e) { console.warn("Tier 2 (Pollinations POST) failed."); }
+                }
+
+                // --- TIER 3: CORS Proxy Wrapper ---
+                if (!aiReply) {
+                    try {
+                        const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent('https://text.pollinations.ai/openai')}`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ model: "openai", messages: payload })
+                        });
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.choices && data.choices[0].message.content) aiReply = data.choices[0].message.content;
+                        }
+                    } catch (e) { console.warn("Tier 3 (CORS Proxy) failed."); }
+                }
+
+                // --- TIER 4: KeylessAI ---
                 if (!aiReply) {
                     try {
                         const res = await fetch("https://keylessai.thryx.workers.dev/v1/chat/completions", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                model: "gpt-3.5-turbo",
-                                messages: payload,
-                                max_tokens: 600
-                            })
+                            body: JSON.stringify({ model: "gpt-3.5-turbo", messages: payload, max_tokens: 600 })
                         });
                         if (res.ok) {
                             const data = await res.json();
-                            if (data.choices && data.choices[0].message.content) {
-                                aiReply = data.choices[0].message.content;
-                            }
+                            if (data.choices && data.choices[0].message.content) aiReply = data.choices[0].message.content;
                         }
-                    } catch (e) { console.warn("Tier 2 (KeylessAI) failed."); }
+                    } catch (e) { console.warn("Tier 4 (KeylessAI) failed."); }
                 }
 
-                // --- TIER 3: Api.Airforce ---
+                // --- TIER 5: Api.Airforce ---
                 if (!aiReply) {
                     try {
                         const res = await fetch("https://api.airforce/v1/chat/completions", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                model: "gpt-3.5-turbo",
-                                messages: payload,
-                                max_tokens: 600
-                            })
+                            body: JSON.stringify({ model: "gpt-3.5-turbo", messages: payload, max_tokens: 600 })
                         });
                         if (res.ok) {
                             const data = await res.json();
-                            if (data.choices && data.choices[0].message.content) {
-                                aiReply = data.choices[0].message.content;
-                            }
+                            if (data.choices && data.choices[0].message.content) aiReply = data.choices[0].message.content;
                         }
-                    } catch (e) { console.warn("Tier 3 (Api.Airforce) failed."); }
+                    } catch (e) { console.warn("Tier 5 (Api.Airforce) failed."); }
                 }
 
                 // --- FINAL FALLBACK ---
                 if (!aiReply) {
-                    aiReply = "My neural network links are currently offline, sir. Please check your internet connection.";
+                    aiReply = "I am currently experiencing complete network isolation, sir. Please ensure you are not running this file directly (use a local server like VS Code Live Server) and check your internet connection.";
                 }
+
+                // Cleanup any AI prefixes
+                aiReply = aiReply.replace(/J\.A\.R\.V\.I\.S\.?\s*/gi, "").replace(/Assistant:\s*/gi, "").trim();
 
                 this.typingIndicator.classList.remove('active');
                 this.addMessage('ai', aiReply);
@@ -512,7 +520,6 @@
                     this.speak(aiReply);
                 }
                 
-                // Resume listening
                 setTimeout(() => {
                     if (!this.isListening && this.recognition) {
                         try { this.recognition.start(); } catch(e) {}
@@ -560,8 +567,8 @@
                 }
 
                 this.recognition = new SpeechRecognition();
-                this.recognition.continuous = true; // Keep listening
-                this.recognition.interimResults = true; // Real-time
+                this.recognition.continuous = true;
+                this.recognition.interimResults = true;
                 this.recognition.lang = this.currentLang;
 
                 this.recognition.onstart = () => {
@@ -589,7 +596,6 @@
 
                     const currentText = (this.finalTranscript + interimTranscript).toLowerCase().trim();
 
-                    // Wake Word Detection
                     if (currentText.includes('jarvis') || currentText.includes('जार्विस')) {
                         const command = currentText.replace(/jarvis|जार्विस/gi, '').replace(/,/g, '').trim();
                         
@@ -617,7 +623,6 @@
                     this.isListening = false;
                     this.mainHud.classList.remove('listening');
                     
-                    // Auto-restart
                     if (this.voiceEnabled && !this.isSpeaking) {
                         setTimeout(() => {
                             try { this.recognition.start(); } catch(e) {}
