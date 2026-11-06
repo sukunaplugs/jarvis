@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S - Voice AI</title>
+    <title>J.A.R.V.I.S - Live Voice AI</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
@@ -17,7 +17,6 @@
             --dark-cyan: #0066aa;
             --bg-dark: #05080f;
             --bg-panel: rgba(15, 23, 36, 0.75);
-            --bg-sidebar: rgba(8, 12, 20, 0.95);
             --glass-border: rgba(0, 243, 255, 0.2);
             --accent: #00ffcc;
             --speaking-color: #ff00ea;
@@ -54,56 +53,13 @@
             100% { opacity: 1; }
         }
 
-        .sidebar {
-            width: 260px;
-            background-color: var(--bg-sidebar);
-            border-right: 1px solid var(--glass-border);
-            display: flex;
-            flex-direction: column;
-            z-index: 100;
-            backdrop-filter: blur(20px);
-        }
-
-        .sidebar-header { padding: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-
-        .new-chat-btn {
-            width: 100%; padding: 12px; background: transparent;
-            border: 1px solid var(--cyan); color: var(--cyan);
-            border-radius: 8px; cursor: pointer; font-family: 'Orbitron', sans-serif;
-            font-size: 0.85rem; display: flex; align-items: center; justify-content: center;
-            gap: 10px; transition: all 0.3s ease; box-shadow: inset 0 0 10px rgba(0,243,255,0.05);
-            letter-spacing: 1px;
-        }
-        .new-chat-btn:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 15px rgba(0, 243, 255, 0.3); }
-
-        .chat-history { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 5px; }
-        .chat-history::-webkit-scrollbar { width: 4px; }
-        .chat-history::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-
-        .history-item {
-            padding: 12px 15px; border-radius: 8px; cursor: pointer;
-            color: var(--text-muted); font-size: 0.85rem;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: all 0.2s;
-            border-left: 2px solid transparent;
-        }
-        .history-item:hover, .history-item.active { 
-            background: rgba(255,255,255,0.05); color: var(--text-main); 
-            border-left: 2px solid var(--cyan);
-        }
-
-        .sidebar-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); }
-        .settings-btn {
-            width: 100%; background: transparent; border: none; color: var(--text-muted);
-            cursor: pointer; display: flex; align-items: center; gap: 10px;
-            font-size: 0.85rem; padding: 10px; border-radius: 8px; transition: all 0.2s;
-        }
-        .settings-btn:hover { background: rgba(255,255,255,0.05); color: white; }
-
+        /* --- MAIN CHAT AREA --- */
         .main-content {
             flex: 1; display: flex; flex-direction: column; position: relative;
-            z-index: 10;
+            z-index: 10; width: 100%; max-width: 1200px; margin: 0 auto;
         }
 
+        /* --- PREMIUM HUD LOGO --- */
         .hud-wrapper {
             position: absolute;
             top: 50%; left: 50%;
@@ -238,6 +194,7 @@
         .typing-indicator.active { display: block; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
 
+        /* --- INPUT AREA --- */
         .input-container {
             padding: 20px 10%; background: linear-gradient(to top, var(--bg-dark) 60%, transparent);
             z-index: 10; position: relative;
@@ -284,36 +241,9 @@
         }
         .lang-select option { background: var(--bg-dark); }
 
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
-            z-index: 1000; display: none; justify-content: center; align-items: center;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-content {
-            background: var(--bg-panel); border: 1px solid var(--glass-border);
-            border-radius: 16px; padding: 35px; width: 90%; max-width: 500px;
-            box-shadow: 0 0 50px rgba(0,243,255,0.15);
-        }
-        .modal-content h2 { font-family: 'Orbitron', sans-serif; color: var(--cyan); margin-bottom: 25px; letter-spacing: 2px;}
-        .setting-group { margin-bottom: 25px; }
-        .setting-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-muted); }
-        .setting-group input {
-            width: 100%; background: var(--bg-dark); border: 1px solid #334155;
-            color: white; padding: 14px; border-radius: 8px; outline: none; transition: border 0.3s;
-        }
-        .setting-group input:focus { border-color: var(--cyan); }
-        .modal-close {
-            background: var(--cyan); color: black; border: none; font-family: 'Orbitron';
-            padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%;
-            transition: all 0.2s;
-        }
-        .modal-close:hover { background: #fff; box-shadow: 0 0 20px var(--cyan); }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 768px) {
-            .sidebar { display: none; }
             .chat-container { padding: 20px 5%; }
             .input-container { padding: 20px 5%; }
             .hud-wrapper { width: 100vmin; height: 100vmin; opacity: 0.1; }
@@ -323,24 +253,9 @@
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <button class="new-chat-btn" onclick="window.jarvisObj.createNewChat()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-                NEW SESSION
-            </button>
-        </div>
-        <div class="chat-history" id="chatHistoryList"></div>
-        <div class="sidebar-footer">
-            <button class="settings-btn" onclick="document.getElementById('settingsModal').classList.add('active')">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                SYSTEM SETTINGS
-            </button>
-        </div>
-    </div>
-
     <div class="main-content">
         
+        <!-- PREMIUM HUD CENTERPIECE -->
         <div class="hud-wrapper" id="mainHud">
             <svg class="hud-svg" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -375,13 +290,15 @@
             <div class="reactor-core"></div>
         </div>
 
+        <!-- Chat Area -->
         <div class="chat-container" id="chatContainer"></div>
 
-        <div class="typing-indicator" id="typingIndicator">J.A.R.V.I.S is thinking...</div>
+        <div class="typing-indicator" id="typingIndicator">J.A.R.V.I.S is processing...</div>
 
+        <!-- Input Area -->
         <div class="input-container">
             <div class="input-box">
-                <textarea id="chatInput" rows="1" placeholder="Awaiting command..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
+                <textarea id="chatInput" rows="1" placeholder="Awaiting command or say 'Jarvis'..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
                 
                 <div class="input-actions">
                     <div class="left-actions">
@@ -403,25 +320,6 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="settingsModal">
-        <div class="modal-content">
-            <h2>System Settings</h2>
-            <div class="setting-group">
-                <label>OpenAI API Key (Hardcoded)</label>
-                <input type="password" id="apiKeyInput" placeholder="sk-..." disabled>
-                <small style="color:var(--text-muted); font-size:0.75rem; display:block; margin-top:5px;">API key is hardcoded in the source code.</small>
-            </div>
-            <div class="setting-group">
-                <label>AI Voice Output</label>
-                <select id="voiceToggle" style="width:100%; background:var(--bg-dark); color:white; padding:14px; border:1px solid #334155; border-radius:8px; outline:none;">
-                    <option value="on">Enabled</option>
-                    <option value="off">Muted (Text Only)</option>
-                </select>
-            </div>
-            <button class="modal-close" onclick="document.getElementById('settingsModal').classList.remove('active'); window.jarvisObj.saveSettings();">Save Configuration</button>
-        </div>
-    </div>
-
     <script>
         class JarvisGPT {
             constructor() {
@@ -430,18 +328,12 @@
                 this.sendBtn = document.getElementById('sendBtn');
                 this.langSelect = document.getElementById('langSelect');
                 this.typingIndicator = document.getElementById('typingIndicator');
-                this.historyList = document.getElementById('chatHistoryList');
                 this.mainHud = document.getElementById('mainHud');
                 
-                this.chats = JSON.parse(localStorage.getItem('jarvis_chats')) || {};
-                this.currentChatId = null;
+                this.messages = [];
                 this.isListening = false;
                 this.isSpeaking = false;
-                this.voiceEnabled = localStorage.getItem('jarvis_voice') !== 'off';
-                
-                // ⚠️ HARDCODED API KEY HERE ⚠️
-                this.apiKey = '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';
-                
+                this.voiceEnabled = true;
                 this.currentLang = 'en-US';
                 this.voices = [];
                 
@@ -458,79 +350,16 @@
                     this.setupSpeechRecognition();
                     this.setupEventListeners();
 
-                    // Pre-fill settings modal (read-only)
-                    document.getElementById('apiKeyInput').value = this.apiKey;
-                    document.getElementById('voiceToggle').value = this.voiceEnabled ? 'on' : 'off';
-
-                    if (Object.keys(this.chats).length === 0) {
-                        this.createNewChat();
-                    } else {
-                        const lastChatId = Object.keys(this.chats).sort((a,b) => this.chats[b].timestamp - this.chats[a].timestamp)[0];
-                        this.loadChat(lastChatId);
-                    }
+                    // Initial Greeting
+                    this.addMessage('ai', 'Systems online. Neural link established. How may I assist you, sir?');
                 } catch (e) {
                     console.error("Initialization Error:", e);
                 }
             }
 
-            createNewChat() {
-                const id = Date.now().toString();
-                this.chats[id] = { title: 'New Conversation', messages: [], timestamp: Date.now() };
-                this.currentChatId = id;
-                this.chatContainer.innerHTML = '';
-                this.saveToLocalStorage();
-                this.renderHistoryList();
-                this.addMessage('ai', 'Systems online. I am ready to assist you, sir.');
-            }
-
-            loadChat(id) {
-                this.currentChatId = id;
-                this.chatContainer.innerHTML = '';
-                const chat = this.chats[id];
-                
-                if (chat.messages.length === 0) {
-                    this.addMessage('ai', 'Systems online. I am ready to assist you, sir.');
-                } else {
-                    chat.messages.forEach(msg => {
-                        this.addMessageUI(msg.role, msg.content);
-                    });
-                }
-                this.renderHistoryList();
-            }
-
-            saveToLocalStorage() {
-                if (this.currentChatId) {
-                    const firstUserMsg = this.chats[this.currentChatId].messages.find(m => m.role === 'user');
-                    if (firstUserMsg) {
-                        this.chats[this.currentChatId].title = firstUserMsg.content.substring(0, 30) + '...';
-                    }
-                    this.chats[this.currentChatId].timestamp = Date.now();
-                }
-                localStorage.setItem('jarvis_chats', JSON.stringify(this.chats));
-            }
-
-            renderHistoryList() {
-                this.historyList.innerHTML = '';
-                const sortedChats = Object.entries(this.chats).sort((a,b) => b[1].timestamp - a[1].timestamp);
-                
-                sortedChats.forEach(([id, chat]) => {
-                    const div = document.createElement('div');
-                    div.className = `history-item ${id === this.currentChatId ? 'active' : ''}`;
-                    div.innerText = chat.title;
-                    div.onclick = () => this.loadChat(id);
-                    this.historyList.appendChild(div);
-                });
-            }
-
             addMessage(role, text) {
-                if (!this.chats[this.currentChatId]) return;
-                this.chats[this.currentChatId].messages.push({ role, content: text });
-                this.saveToLocalStorage();
-                this.renderHistoryList();
-                this.addMessageUI(role, text);
-            }
-
-            addMessageUI(role, text) {
+                this.messages.push({ role, content: text });
+                
                 const msgDiv = document.createElement('div');
                 msgDiv.className = `message ${role === 'user' ? 'user-msg' : 'ai-msg'}`;
                 
@@ -590,7 +419,8 @@
                 this.typingIndicator.classList.add('active');
                 this.scrollToBottom();
 
-                const contextMessages = this.chats[this.currentChatId].messages.slice(-10).map(m => ({
+                // Context memory (last 6 messages to prevent overload)
+                const contextMessages = this.messages.slice(-6).map(m => ({
                     role: m.role,
                     content: m.content
                 }));
@@ -604,53 +434,30 @@
 
                 let aiReply = null;
 
-                // --- TIER 1: Official OpenAI (Hardcoded Key) ---
-                if (this.apiKey) {
-                    try {
-                        const res = await fetch("https://api.openai.com/v1/chat/completions", {
-                            method: "POST",
-                            headers: { 
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${this.apiKey}`
-                            },
-                            body: JSON.stringify({
-                                model: "gpt-3.5-turbo",
-                                messages: payload,
-                                max_tokens: 600
-                            })
-                        });
-                        if (res.ok) {
-                            const data = await res.json();
+                // =========================================================
+                // FREE API FALLBACK SYSTEM (NO KEYS REQUIRED)
+                // =========================================================
+
+                // --- TIER 1: Pollinations (New Gen Gateway) ---
+                try {
+                    const res = await fetch("https://gen.pollinations.ai/v1/chat/completions", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            model: "openai",
+                            messages: payload,
+                            max_tokens: 600
+                        })
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.choices && data.choices[0].message.content) {
                             aiReply = data.choices[0].message.content;
-                        } else {
-                            const errData = await res.json();
-                            console.error("OpenAI Error:", errData);
                         }
-                    } catch (e) { console.warn("OpenAI API failed."); }
-                }
+                    }
+                } catch (e) { console.warn("Tier 1 (Pollinations Gen) failed."); }
 
-                // --- TIER 2: Pollinations (Fallback if Key fails) ---
-                if (!aiReply) {
-                    try {
-                        const res = await fetch("https://gen.pollinations.ai/v1/chat/completions", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                model: "openai",
-                                messages: payload,
-                                max_tokens: 600
-                            })
-                        });
-                        if (res.ok) {
-                            const data = await res.json();
-                            if (data.choices && data.choices[0].message.content) {
-                                aiReply = data.choices[0].message.content;
-                            }
-                        }
-                    } catch (e) { console.warn("Tier 2 (Pollinations Gen) failed."); }
-                }
-
-                // --- TIER 3: KeylessAI ---
+                // --- TIER 2: KeylessAI ---
                 if (!aiReply) {
                     try {
                         const res = await fetch("https://keylessai.thryx.workers.dev/v1/chat/completions", {
@@ -668,10 +475,10 @@
                                 aiReply = data.choices[0].message.content;
                             }
                         }
-                    } catch (e) { console.warn("Tier 3 (KeylessAI) failed."); }
+                    } catch (e) { console.warn("Tier 2 (KeylessAI) failed."); }
                 }
 
-                // --- TIER 4: Api.Airforce ---
+                // --- TIER 3: Api.Airforce ---
                 if (!aiReply) {
                     try {
                         const res = await fetch("https://api.airforce/v1/chat/completions", {
@@ -689,12 +496,12 @@
                                 aiReply = data.choices[0].message.content;
                             }
                         }
-                    } catch (e) { console.warn("Tier 4 (Api.Airforce) failed."); }
+                    } catch (e) { console.warn("Tier 3 (Api.Airforce) failed."); }
                 }
 
                 // --- FINAL FALLBACK ---
                 if (!aiReply) {
-                    aiReply = "All neural network routes are currently offline, sir. Please check your internet connection or ensure the API key is valid.";
+                    aiReply = "My neural network links are currently offline, sir. Please check your internet connection.";
                 }
 
                 this.typingIndicator.classList.remove('active');
@@ -705,6 +512,7 @@
                     this.speak(aiReply);
                 }
                 
+                // Resume listening
                 setTimeout(() => {
                     if (!this.isListening && this.recognition) {
                         try { this.recognition.start(); } catch(e) {}
@@ -752,8 +560,8 @@
                 }
 
                 this.recognition = new SpeechRecognition();
-                this.recognition.continuous = true;
-                this.recognition.interimResults = true;
+                this.recognition.continuous = true; // Keep listening
+                this.recognition.interimResults = true; // Real-time
                 this.recognition.lang = this.currentLang;
 
                 this.recognition.onstart = () => {
@@ -781,8 +589,8 @@
 
                     const currentText = (this.finalTranscript + interimTranscript).toLowerCase().trim();
 
+                    // Wake Word Detection
                     if (currentText.includes('jarvis') || currentText.includes('जार्विस')) {
-                        this.mainHud.classList.add('listening');
                         const command = currentText.replace(/jarvis|जार्विस/gi, '').replace(/,/g, '').trim();
                         
                         if (command.length > 0) {
@@ -798,7 +606,6 @@
                 };
 
                 this.recognition.onerror = (event) => {
-                    console.warn("Speech recognition error:", event.error);
                     if (event.error === 'not-allowed') {
                         this.addMessage('system', 'Microphone access denied. Please allow mic permissions.');
                         this.isListening = false;
@@ -810,6 +617,7 @@
                     this.isListening = false;
                     this.mainHud.classList.remove('listening');
                     
+                    // Auto-restart
                     if (this.voiceEnabled && !this.isSpeaking) {
                         setTimeout(() => {
                             try { this.recognition.start(); } catch(e) {}
@@ -847,12 +655,6 @@
                     this.currentLang = e.target.value;
                     if (this.recognition) this.recognition.lang = this.currentLang;
                 });
-            }
-
-            saveSettings() {
-                const voice = document.getElementById('voiceToggle').value;
-                localStorage.setItem('jarvis_voice', voice);
-                this.voiceEnabled = (voice === 'on');
             }
 
             loadVoices() {
