@@ -3,386 +3,445 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S. Live Assistant</title>
+    <title>J.A.R.V.I.S - Live Conversational AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-
         :root {
-            --primary: #00f3ff;
-            --bg: #010a17;
-            --pulse-scale: 1;
-            --status-color: #00f3ff;
+            --cyan: #00f3ff;
+            --dark-cyan: #0066aa;
+            --bg-color: #00050a;
+            --glass-bg: rgba(0, 20, 40, 0.6);
+            --glass-border: rgba(0, 243, 255, 0.3);
+            --text-glow: 0 0 10px var(--cyan), 0 0 20px var(--cyan);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { box-sizing: border-box; }
 
         body {
-            background-color: var(--bg);
-            background-image: radial-gradient(circle at center, #021a33 0%, #000000 100%);
+            margin: 0;
+            padding: 0;
             height: 100vh;
+            background: radial-gradient(circle at center, #001a33 0%, #00050a 80%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-family: 'Share Tech Mono', monospace;
             overflow: hidden;
-            color: var(--primary);
+            font-family: 'Inter', sans-serif;
+            color: white;
+            transition: all 0.5s ease;
+            cursor: pointer; /* Indicates you can click to start */
         }
 
-        .hud-container {
+        /* --- HUD CIRCLE --- */
+        .hud-wrapper {
             position: relative;
-            width: 80vmin;
-            height: 80vmin;
+            width: 65vmin;
+            height: 65vmin;
+            max-width: 500px;
+            max-height: 500px;
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: transform 0.5s ease, filter 0.5s ease;
+            margin-bottom: 20px;
+            pointer-events: none; /* Let clicks pass through to body */
         }
 
-        .core {
+        .hud-wrapper.passive { filter: brightness(0.6); transform: scale(0.95); }
+        .hud-wrapper.wake-word { filter: brightness(1.5); transform: scale(1.1); }
+        .hud-wrapper.listening { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(0, 255, 204, 0.4)); }
+        .hud-wrapper.speaking { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(255, 0, 234, 0.4)); }
+
+        svg { width: 100%; height: 100%; overflow: visible; }
+        .spin-slow { transform-origin: center; animation: rotate 60s linear infinite; }
+        .spin-reverse { transform-origin: center; animation: rotate-reverse 40s linear infinite; }
+        .spin-fast { transform-origin: center; animation: rotate 10s linear infinite; }
+
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        @keyframes rotate-reverse { 100% { transform: rotate(-360deg); } }
+
+        .jarvis-text {
             position: absolute;
-            width: 35vmin;
-            height: 35vmin;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(0, 243, 255, 0.05);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2), inset 0 0 30px rgba(0, 243, 255, 0.2);
-            border: 2px solid rgba(0, 243, 255, 0.5);
-            transform: scale(var(--pulse-scale));
-            transition: transform 0.05s ease-out, box-shadow 0.3s;
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.5rem, 4vmin, 2.5rem);
+            font-weight: 700;
+            letter-spacing: 8px;
+            text-shadow: var(--text-glow);
             z-index: 10;
+            transition: all 0.3s ease;
+        }
+        
+        .listening .jarvis-text { color: #00ffcc; text-shadow: 0 0 20px #00ffcc; }
+        .speaking .jarvis-text { color: #ff00ea; text-shadow: 0 0 20px #ff00ea; }
+
+        .pulse { animation: pulse-glow 2s ease-in-out infinite alternate; }
+        @keyframes pulse-glow {
+            0% { opacity: 0.7; filter: drop-shadow(0 0 5px var(--cyan)); }
+            100% { opacity: 1; filter: drop-shadow(0 0 20px var(--cyan)); }
         }
 
-        .core-text {
-            font-size: 3vmin;
-            font-weight: bold;
-            letter-spacing: 0.5vmin;
-            text-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary);
-            text-align: center;
-        }
-
-        .ring {
-            position: absolute;
-            border-radius: 50%;
-            border: 1px solid transparent;
-        }
-
-        .ring-1 {
-            width: 70vmin; height: 70vmin;
-            border-top: 2px solid var(--primary);
-            border-bottom: 2px solid var(--primary);
-            border-left: 1px dashed rgba(0, 243, 255, 0.3);
-            border-right: 1px dashed rgba(0, 243, 255, 0.3);
-            animation: spin 15s linear infinite;
-        }
-
-        .ring-2 {
-            width: 60vmin; height: 60vmin;
-            border-left: 4px solid var(--primary);
-            border-right: 4px solid var(--primary);
-            animation: reverse-spin 10s linear infinite;
-        }
-
-        .ring-3 {
-            width: 55vmin; height: 55vmin;
-            border: 2px solid transparent;
-            background: repeating-conic-gradient(from 0deg, var(--primary) 0deg 1deg, transparent 1deg 10deg);
-            -webkit-mask-image: radial-gradient(transparent 67%, black 68%, black 70%, transparent 71%);
-            mask-image: radial-gradient(transparent 67%, black 68%, black 70%, transparent 71%);
-            animation: spin 25s linear infinite reverse;
-            opacity: 0.7;
-        }
-
-        .ring-4 {
-            width: 45vmin; height: 45vmin;
-            border-top: 3px dashed var(--primary);
-            border-bottom: 3px dashed var(--primary);
-            animation: spin 8s linear infinite;
-            opacity: 0.5;
-        }
-
-        .scanner {
-            position: absolute;
-            width: 80vmin; height: 80vmin;
-            border-radius: 50%;
-            background: linear-gradient(to bottom, transparent 45%, rgba(0, 243, 255, 0.2) 50%, transparent 55%);
-            animation: spin 4s linear infinite;
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        .status-text {
-            position: absolute;
-            bottom: -8vmin;
-            font-size: 2vmin;
-            color: var(--status-color);
-            text-shadow: 0 0 10px var(--status-color);
-            letter-spacing: 2px;
-            text-align: center;
-            width: 100%;
-            transition: color 0.3s;
-        }
-
-        .hud-text {
-            position: absolute;
-            font-size: 1.5vmin;
-            opacity: 0.6;
-            letter-spacing: 2px;
-        }
-        .top-left { top: 5%; left: 5%; }
-        .top-right { top: 5%; right: 5%; text-align: right; }
-        .bottom-left { bottom: 5%; left: 5%; }
-        .bottom-right { bottom: 5%; right: 5%; text-align: right; }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes reverse-spin { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
-
-        .transcript-box {
+        /* --- CHAT INTERFACE --- */
+        .ui-container {
             position: absolute;
             bottom: 5%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80vw;
-            max-width: 800px;
-            height: 15vh;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            padding: 10px;
-            font-size: 1.5vmin;
-            overflow-y: auto;
-            color: #fff;
-            border-radius: 5px;
-            display: none;
+            width: 90%;
+            max-width: 700px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 20;
+            cursor: default; /* Reset cursor for chat area */
         }
 
-        .transcript-box.active { display: block; }
-        .user-text { color: #00ff88; margin-bottom: 5px; }
-        .ai-text { color: #00f3ff; margin-bottom: 5px; }
+        .chat-log {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 15px 20px;
+            height: 120px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            scrollbar-width: thin;
+            scrollbar-color: var(--cyan) transparent;
+            cursor: text;
+        }
+
+        .chat-log::-webkit-scrollbar { width: 6px; }
+        .chat-log::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 10px; }
+
+        .message { font-size: 0.95rem; line-height: 1.4; animation: fadeIn 0.3s ease; }
+        .msg-user { color: #aaa; text-align: right; }
+        .msg-ai { color: var(--cyan); text-shadow: 0 0 5px rgba(0, 243, 255, 0.4); }
+        .msg-system { color: #ff00ea; font-style: italic; font-size: 0.85rem; text-align: center; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .input-bar {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-bar input {
+            flex: 1;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 15px 20px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            cursor: text;
+        }
+
+        .input-bar input:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3), inset 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .input-bar button {
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px solid var(--cyan);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: var(--cyan);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .input-bar button:hover {
+            background: rgba(0, 243, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.5);
+        }
+
+        /* Audio Visualizer */
+        .visualizer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            height: 20px;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .visualizer.active { opacity: 1; }
+        .bar { width: 3px; height: 5px; background: var(--cyan); border-radius: 2px; box-shadow: 0 0 10px var(--cyan); }
+        
+        .listening .bar { animation: sound-wave 1s ease-in-out infinite alternate; background: #00ffcc; }
+        .speaking .bar { animation: sound-wave 0.5s ease-in-out infinite alternate; background: #ff00ea; }
+        
+        .bar:nth-child(1) { animation-delay: 0.0s; }
+        .bar:nth-child(2) { animation-delay: 0.2s; }
+        .bar:nth-child(3) { animation-delay: 0.4s; }
+        .bar:nth-child(4) { animation-delay: 0.1s; }
+        .bar:nth-child(5) { animation-delay: 0.3s; }
+
+        @keyframes sound-wave { 0% { height: 5px; } 100% { height: 20px; } }
+
     </style>
 </head>
 <body>
 
-    <div class="hud-container">
-        <div class="hud-text top-left">SYSTEM: ONLINE<br>WAKE WORD: "JARVIS"</div>
-        <div class="hud-text top-right">NETWORK: SECURE<br>LATENCY: 12ms</div>
-        <div class="hud-text bottom-left">MIC: <span id="mic-status">STANDBY</span></div>
-        <div class="hud-text bottom-right">MODE: LIVE<br>AI: CONNECTED</div>
-
-        <div class="ring ring-1"></div>
-        <div class="ring ring-2"></div>
-        <div class="ring ring-3"></div>
-        <div class="ring ring-4"></div>
-        
-        <div class="scanner"></div>
-
-        <div class="core" id="core">
-            <div class="core-text" id="core-text">J.A.R.V.I.S</div>
-        </div>
-
-        <div class="status-text" id="status-text">Say "JARVIS" to activate...</div>
+    <div class="hud-wrapper passive" id="hud">
+        <!-- SVG HUD -->
+        <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="4" result="blur" />
+                    <feMerge><feMergeNode in="blur" /><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+                <mask id="top-mask"><rect x="0" y="0" width="800" height="400" fill="white" /></mask>
+                <mask id="bottom-mask"><rect x="0" y="400" width="800" height="400" fill="white" /></mask>
+                <mask id="left-mask"><rect x="0" y="0" width="400" height="800" fill="white" /></mask>
+                <mask id="right-mask"><rect x="400" y="0" width="400" height="800" fill="white" /></mask>
+            </defs>
+            <circle cx="400" cy="400" r="380" stroke="var(--cyan)" stroke-width="1.5" fill="none" stroke-dasharray="2 10" opacity="0.4" class="spin-slow" />
+            <circle cx="400" cy="400" r="360" stroke="var(--cyan)" stroke-width="4" fill="none" stroke-dasharray="150 100 20 50 200 80 50 150" filter="url(#glow)" class="spin-reverse" />
+            <circle cx="400" cy="400" r="330" stroke="var(--cyan)" stroke-width="6" fill="none" stroke-dasharray="80 200 50 100 150 200" opacity="0.6" class="spin-fast" />
+            <circle cx="400" cy="400" r="280" stroke="var(--cyan)" stroke-width="12" fill="none" stroke-dasharray="2 8" opacity="0.7" mask="url(#top-mask)" />
+            <circle cx="400" cy="400" r="260" stroke="var(--cyan)" stroke-width="2" fill="none" stroke-dasharray="250 1000" transform="rotate(-90 400 400)" opacity="0.8" />
+            <circle cx="400" cy="400" r="250" stroke="var(--cyan)" stroke-width="25" fill="none" stroke-dasharray="3 8" mask="url(#left-mask)" filter="url(#glow)" />
+            <circle cx="400" cy="400" r="250" stroke="var(--dark-cyan)" stroke-width="25" fill="none" stroke-dasharray="2 9" mask="url(#left-mask)" opacity="0.3" />
+            <circle cx="400" cy="400" r="250" stroke="var(--cyan)" stroke-width="8" fill="none" stroke-dasharray="4 16" mask="url(#right-mask)" opacity="0.8" />
+            <circle cx="400" cy="400" r="210" stroke="var(--cyan)" stroke-width="6" fill="none" stroke-dasharray="2 12" mask="url(#bottom-mask)" opacity="0.6" />
+            <circle cx="400" cy="400" r="170" stroke="var(--cyan)" stroke-width="5" fill="none" filter="url(#glow)" class="pulse" />
+            <circle cx="400" cy="400" r="168" stroke="#ffffff" stroke-width="1.5" fill="none" opacity="0.8" />
+            <circle cx="400" cy="400" r="150" fill="#00101a" opacity="0.8" />
+        </svg>
+        <div class="jarvis-text" id="statusText">STANDBY</div>
     </div>
 
-    <div class="transcript-box" id="transcript-box"></div>
+    <!-- Chat & UI Container -->
+    <div class="ui-container">
+        <div class="chat-log" id="chatLog">
+            <div class="message msg-system">Click anywhere on the screen to activate voice, or type below.</div>
+        </div>
+        
+        <div class="visualizer" id="visualizer" style="align-self: center;">
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+        </div>
+
+        <div class="input-bar">
+            <input type="text" id="chatInput" placeholder="Type a command or say 'Jarvis'..." autocomplete="off">
+            <button id="sendBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
 
     <script>
-        // --- UI Elements ---
-        const core = document.getElementById('core');
-        const coreText = document.getElementById('core-text');
-        const statusText = document.getElementById('status-text');
-        const micStatus = document.getElementById('mic-status');
-        const transcriptBox = document.getElementById('transcript-box');
+        // --- DOM Elements ---
+        const hud = document.getElementById('hud');
+        const chatLog = document.getElementById('chatLog');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const statusText = document.getElementById('statusText');
+        const visualizer = document.getElementById('visualizer');
 
-        // --- State Management ---
-        let isListening = false;
-        let isProcessing = false;
+        // --- State Variables ---
+        let isSystemActive = false;
         let isSpeaking = false;
-        let audioContext;
-        let analyser;
-        let dataArray;
-        let animationFrameId;
+        let isAwake = false; 
 
         // --- Web Speech API Setup ---
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            alert("Your browser does not support the Web Speech API. Please use Google Chrome or Microsoft Edge.");
+        let recognition;
+        
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true; 
+            recognition.interimResults = true; 
+            recognition.lang = 'en-US';
+        } else {
+            console.warn("Speech Recognition not supported in this browser.");
         }
 
-        const recognition = new SpeechRecognition();
-        recognition.continuous = true; // Keep listening for wake word
-        recognition.interimResults = true;
-        recognition.lang = 'en-US';
-
-        // --- Text-to-Speech Setup ---
         const synth = window.speechSynthesis;
-        let jarvisVoice = null;
 
-        // Load voices and try to find a British Male voice for JARVIS
-        function loadVoices() {
-            const voices = synth.getVoices();
-            // Try to find a deep, British voice (like Daniel or George)
-            jarvisVoice = voices.find(v => v.lang === 'en-GB' && v.name.includes('Male')) ||
-                          voices.find(v => v.name.includes('Daniel')) ||
-                          voices.find(v => v.lang === 'en-GB') ||
-                          voices[0];
-        }
-        synth.onvoiceschanged = loadVoices;
-        loadVoices();
-
-        // --- Audio Visualizer Logic (Reusing previous code) ---
-        async function setupAudioVisualizer() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                analyser = audioContext.createAnalyser();
-                analyser.fftSize = 256;
-                const source = audioContext.createMediaStreamSource(stream);
-                source.connect(analyser);
-                dataArray = new Uint8Array(analyser.frequencyBinCount);
-                updateAudioVisualizer();
-            } catch (err) {
-                console.error("Mic access denied for visualizer:", err);
+        // --- UI Functions ---
+        function updateState(state) {
+            hud.className = 'hud-wrapper';
+            visualizer.className = 'visualizer';
+            
+            if (state === 'passive') {
+                hud.classList.add('passive');
+                statusText.innerText = "STANDBY";
+            } else if (state === 'wake') {
+                hud.classList.add('wake-word');
+                statusText.innerText = "YES SIR?";
+            } else if (state === 'listening') {
+                hud.classList.add('listening');
+                visualizer.classList.add('active');
+                statusText.innerText = "LISTENING";
+            } else if (state === 'processing') {
+                hud.classList.add('wake-word');
+                statusText.innerText = "PROCESSING";
+            } else if (state === 'speaking') {
+                hud.classList.add('speaking');
+                visualizer.classList.add('active');
+                statusText.innerText = "SPEAKING";
             }
         }
 
-        function updateAudioVisualizer() {
-            if (!analyser) return;
-            analyser.getByteFrequencyData(dataArray);
-            let sum = 0;
-            for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
-            let average = sum / dataArray.length;
-            let scale = 1 + (average / 60); 
-            document.documentElement.style.setProperty('--pulse-scale', scale);
-            let glowIntensity = Math.min(50, average * 0.5);
-            core.style.boxShadow = `0 0 ${20 + glowIntensity}px rgba(0, 243, 255, 0.6), inset 0 0 ${30 + glowIntensity}px rgba(0, 243, 255, 0.4)`;
-            animationFrameId = requestAnimationFrame(updateAudioVisualizer);
+        function addMessage(text, sender) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message msg-${sender}`;
+            msgDiv.innerText = text;
+            chatLog.appendChild(msgDiv);
+            chatLog.scrollTop = chatLog.scrollHeight;
         }
 
-        // --- Core Assistant Logic ---
+        // --- Core Initialization (Triggered by first click) ---
+        function initSystem() {
+            if (isSystemActive) return;
+            isSystemActive = true;
+            
+            // Prime the audio context for browsers
+            const u = new SpeechSynthesisUtterance("");
+            synth.speak(u);
 
-        // 1. Start the hands-free loop
-        function startAssistant() {
-            if (isListening) return;
-            isListening = true;
-            recognition.start();
-            setupAudioVisualizer();
-            micStatus.textContent = "ACTIVE";
-            statusText.textContent = "Listening for 'JARVIS'...";
-            statusText.style.color = "#00ff88";
-        }
-
-        // 2. Handle Speech Recognition Results
-        recognition.onresult = (event) => {
-            if (isProcessing || isSpeaking) return; // Ignore while AI is thinking/speaking to prevent echo
-
-            const last = event.results.length - 1;
-            const transcript = event.results[last][0].transcript.toLowerCase().trim();
-            const isFinal = event.results[last].isFinal;
-
-            // Wake Word Detection
-            if (transcript.includes("jarvis")) {
-                // Check if there is a command after the wake word
-                const commandText = transcript.replace("jarvis", "").trim();
-                
-                if (commandText.length > 0 && isFinal) {
-                    // Command given directly with wake word
-                    addToTranscript('user', commandText);
-                    processUserCommand(commandText);
-                } else if (isFinal) {
-                    // Just the wake word said
-                    statusText.textContent = "Yes, sir? I'm listening...";
-                    statusText.style.color = "#00f3ff";
-                    speakResponse("Yes, sir? How can I help you?");
+            setTimeout(() => {
+                if(recognition) {
+                    try { recognition.start(); } catch(e) {}
                 }
-            } else if (isFinal && transcript.length > 0) {
-                // If listening was manually triggered or already active
-                // Here we assume if it hears a command after activation, it processes it.
-                // For simplicity, let's just process any final sentence when the mic is active.
-                // In a real app, you'd use a state machine to track if the assistant is "awaiting command".
+                updateState('passive');
+                addMessage("Voice module online.", "system");
+            }, 500);
+        }
+
+        // Initialize on body click
+        document.body.addEventListener('click', initSystem, { once: true });
+
+        // --- Speech Recognition Event Handlers ---
+        recognition.onstart = () => {
+            if(!isAwake) updateState('passive');
+        };
+
+        recognition.onresult = (event) => {
+            let interimTranscript = '';
+            let finalTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+            }
+
+            const currentText = (finalTranscript || interimTranscript).toLowerCase().trim();
+
+            // 1. Check for Wake Word ("Jarvis")
+            if (!isAwake && currentText.includes('jarvis')) {
+                isAwake = true;
+                updateState('wake');
+                
+                let command = currentText.replace('jarvis', '').replace(/,/g, '').trim();
+                
+                if (command.length > 3) {
+                    processUserInput(command);
+                } else {
+                    speakResponse("Yes sir?");
+                }
+                return;
+            }
+
+            // 2. If we are awake, capture the command
+            if (isAwake && finalTranscript) {
+                let command = finalTranscript.toLowerCase().replace('jarvis', '').trim();
+                if (command.length > 0) {
+                    processUserInput(command);
+                }
             }
         };
 
         recognition.onerror = (event) => {
-            console.error("Speech recognition error:", event.error);
             if (event.error === 'not-allowed') {
-                statusText.textContent = "Microphone access denied.";
-                statusText.style.color = "#ff4444";
+                addMessage("Microphone access denied. Voice disabled.", "system");
+                isSystemActive = false;
             }
         };
 
         recognition.onend = () => {
-            // Automatically restart listening if it stops (e.g., due to silence)
-            // unless the AI is currently speaking or processing.
-            if (isListening && !isSpeaking && !isProcessing) {
-                recognition.start();
+            if (isSystemActive && !isSpeaking) {
+                try { recognition.start(); } catch(e) {}
             }
         };
 
-        // 3. Process the command (LLM Integration)
-        async function processUserCommand(text) {
-            isProcessing = true;
-            statusText.textContent = "Thinking...";
-            statusText.style.color = "#ffaa00";
-            coreText.textContent = "THINKING...";
-
-            try {
-                // ---------------------------------------------------------
-                // OPTION A: MOCK AI (Use this if you don't have an API key)
-                // ---------------------------------------------------------
-                // await new Promise(resolve => setTimeout(resolve, 1500));
-                // const aiResponse = `I heard you say: "${text}". This is a mock response.`;
-                
-                // ---------------------------------------------------------
-                // OPTION B: REAL OpenAI API (Requires a secure backend)
-                // ---------------------------------------------------------
-                // IMPORTANT: Never expose your API key in frontend code.
-                // You must create a backend endpoint (e.g., /api/chat) that
-                // uses your API key and returns the response.
-                // ---------------------------------------------------------
-                const response = await fetch('/api/chat', { // Replace with your actual backend endpoint
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text })
-                });
-
-                if (!response.ok) throw new Error("API request failed");
-                const data = await response.json();
-                const aiResponse = data.reply; // Assuming your backend returns { reply: "..." }
-
-                // Display and speak the response
-                addToTranscript('ai', aiResponse);
-                speakResponse(aiResponse);
-
-            } catch (error) {
-                console.error("Error processing command:", error);
-                const errorMsg = "I'm sorry, I encountered an error connecting to the AI brain.";
-                addToTranscript('ai', errorMsg);
-                speakResponse(errorMsg);
-            } finally {
-                isProcessing = false;
+        // --- Text Chat Input ---
+        function handleTextSubmit() {
+            initSystem(); // Ensure system initializes if they bypass the click listener
+            const text = chatInput.value.trim();
+            if (text) {
+                isAwake = true;
+                processUserInput(text);
+                chatInput.value = '';
             }
         }
 
-        // 4. Text-to-Speech (JARVIS Voice)
-        function speakResponse(text) {
-            if (synth.speaking) synth.cancel(); // Stop any current speech
+        sendBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent double firing with body click
+            handleTextSubmit();
+        });
+        
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleTextSubmit();
+        });
 
+        // --- Process & Respond ---
+        function processUserInput(text) {
+            addMessage(text, 'user');
+            updateState('processing');
+            
+            if(recognition) recognition.stop(); 
+
+            setTimeout(() => {
+                let response = generateAIResponse(text);
+                addMessage(response, 'ai');
+                speakResponse(response);
+            }, 800);
+        }
+
+        // --- Text-to-Speech (TTS) ---
+        function speakResponse(text) {
             isSpeaking = true;
-            statusText.textContent = "Speaking...";
-            statusText.style.color = "#00ff88";
-            coreText.textContent = "J.A.R.V.I.S";
+            updateState('speaking');
+            if(recognition) recognition.stop(); 
 
             const utterance = new SpeechSynthesisUtterance(text);
-            if (jarvisVoice) utterance.voice = jarvisVoice;
-            utterance.rate = 1.05; // Slightly faster
-            utterance.pitch = 0.9; // Slightly lower pitch for JARVIS feel
             
+            const voices = synth.getVoices();
+            const preferredVoice = voices.find(v => v.lang === 'en-GB' && v.name.includes('Male')) || 
+                                   voices.find(v => v.lang === 'en-GB') || 
+                                   voices.find(v => v.name.includes('Google UK English Male'));
+            
+            if (preferredVoice) utterance.voice = preferredVoice;
+            utterance.rate = 1.0;
+            utterance.pitch = 0.9;
+
             utterance.onend = () => {
                 isSpeaking = false;
-                statusText.textContent = "Listening for 'JARVIS'...";
-                statusText.style.color = "#00ff88";
-                // Recognition might have stopped while speaking, ensure it restarts
-                if (isListening && !recognition.active) {
+                isAwake = false;
+                updateState('passive');
+                if(recognition) {
                     try { recognition.start(); } catch(e) {}
                 }
             };
@@ -390,34 +449,28 @@
             synth.speak(utterance);
         }
 
-        // 5. Transcript Helper
-        function addToTranscript(role, text) {
-            transcriptBox.classList.add('active');
-            const div = document.createElement('div');
-            div.className = role === 'user' ? 'user-text' : 'ai-text';
-            div.textContent = `${role === 'user' ? 'YOU' : 'JARVIS'}: ${text}`;
-            transcriptBox.appendChild(div);
-            transcriptBox.scrollTop = transcriptBox.scrollHeight;
-            // Keep transcript clean
-            if (transcriptBox.children.length > 10) {
-                transcriptBox.removeChild(transcriptBox.firstChild);
+        // --- Mock AI Brain ---
+        function generateAIResponse(input) {
+            const text = input.toLowerCase();
+            
+            if (text.includes('hello') || text.includes('hi')) {
+                return "Hello, sir. How may I assist you today?";
+            } else if (text.includes('time')) {
+                return `The current time is ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.`;
+            } else if (text.includes('who are you')) {
+                return "I am J.A.R.V.I.S, your personal artificial intelligence assistant.";
+            } else if (text.includes('status')) {
+                return "All core systems are functioning within normal parameters.";
+            } else if (text.includes('stop') || text.includes('sleep')) {
+                return "Entering standby mode.";
+            } else {
+                return "I have processed your request, sir. However, my secondary logic modules are offline. Is there anything else?";
             }
         }
 
-        // --- Initialization ---
-        // Start the assistant automatically on page load
-        window.addEventListener('load', () => {
-            // Note: Browsers often require a user gesture (click) to start microphone access.
-            // If it doesn't start automatically, add a click listener to the body.
-            document.body.addEventListener('click', () => {
-                if (!isListening) {
-                    startAssistant();
-                }
-            }, { once: true });
-            
-            // Try to start immediately (might be blocked by browser policy)
-            startAssistant();
-        });
+        // Load voices asynchronously
+        window.speechSynthesis.onvoiceschanged = () => { synth.getVoices(); };
+        synth.getVoices();
 
     </script>
 </body>
