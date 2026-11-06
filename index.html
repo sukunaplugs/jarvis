@@ -57,25 +57,6 @@
             100% { opacity: 1; }
         }
 
-        /* --- BOOT SEQUENCE OVERLAY --- */
-        #boot-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-dark);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--cyan);
-            transition: opacity 0.5s ease;
-        }
-        #boot-overlay.hidden { opacity: 0; pointer-events: none; }
-        .boot-text { font-size: 1.2rem; margin-bottom: 10px; text-shadow: 0 0 10px var(--cyan); text-align: center;}
-        .boot-bar { width: 300px; height: 2px; background: #111; margin-top: 20px; border-radius: 2px; overflow: hidden; }
-        .boot-progress { width: 0%; height: 100%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); transition: width 0.3s ease; }
-
         /* --- SIDEBAR --- */
         .sidebar {
             width: 260px;
@@ -352,12 +333,6 @@
 </head>
 <body>
 
-    <!-- BOOT SEQUENCE -->
-    <div id="boot-overlay">
-        <div class="boot-text" id="bootText">INITIALIZING J.A.R.V.I.S. KERNEL...</div>
-        <div class="boot-bar"><div class="boot-progress" id="bootProgress"></div></div>
-    </div>
-
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="sidebar-header">
@@ -459,7 +434,7 @@
             <div class="setting-group">
                 <label>OpenAI API Key (Optional - For GPT-4/3.5)</label>
                 <input type="password" id="apiKeyInput" placeholder="sk-...">
-                <small style="color:var(--text-muted); font-size:0.75rem; display:block; margin-top:5px;">If empty, J.A.R.V.I.S uses a free public API.</small>
+                <small style="color:var(--text-muted); font-size:0.75rem; display:block; margin-top:5px;">If empty, J.A.R.V.I.S uses a multi-tier free API.</small>
             </div>
             <div class="setting-group">
                 <label>AI Voice Output</label>
@@ -496,60 +471,21 @@
             }
 
             init() {
-                // Fail-safe: Force hide boot screen after 3.5s no matter what
-                setTimeout(() => {
-                    const overlay = document.getElementById('boot-overlay');
-                    if (overlay) {
-                        overlay.classList.add('hidden');
-                        overlay.style.display = 'none';
-                    }
-                }, 3500);
-
                 try {
                     this.loadVoices();
                     this.setupSpeechRecognition();
                     this.setupEventListeners();
-                    this.runBootSequence();
+
+                    // Load chat immediately (No boot sequence)
+                    if (Object.keys(this.chats).length === 0) {
+                        this.createNewChat();
+                    } else {
+                        const lastChatId = Object.keys(this.chats).sort((a,b) => this.chats[b].timestamp - this.chats[a].timestamp)[0];
+                        this.loadChat(lastChatId);
+                    }
                 } catch (e) {
                     console.error("Initialization Error:", e);
-                    document.getElementById('boot-overlay').style.display = 'none';
                 }
-            }
-
-            runBootSequence() {
-                const bootText = document.getElementById('bootText');
-                const bootProgress = document.getElementById('bootProgress');
-                const bootOverlay = document.getElementById('boot-overlay');
-                
-                const messages = [
-                    "INITIALIZING KERNEL...",
-                    "LOADING NEURAL NETWORK...",
-                    "SYNCING LANGUAGE MATRIX...",
-                    "CALIBRATING AUDIO SENSORS...",
-                    "J.A.R.V.I.S. ONLINE."
-                ];
-
-                let i = 0;
-                const interval = setInterval(() => {
-                    if (i < messages.length) {
-                        bootText.innerText = messages[i];
-                        bootProgress.style.width = `${((i + 1) / messages.length) * 100}%`;
-                        i++;
-                    } else {
-                        clearInterval(interval);
-                        bootOverlay.classList.add('hidden');
-                        setTimeout(() => {
-                            bootOverlay.style.display = 'none';
-                            // Finish initialization
-                            if (Object.keys(this.chats).length === 0) {
-                                this.createNewChat();
-                            } else {
-                                const lastChatId = Object.keys(this.chats).sort((a,b) => this.chats[b].timestamp - this.chats[a].timestamp)[0];
-                                this.loadChat(lastChatId);
-                            }
-                        }, 500);
-                    }
-                }, 400); // Fast boot sequence
             }
 
             createNewChat() {
@@ -602,7 +538,7 @@
             }
 
             addMessage(role, text) {
-                if (!this.chats[this.currentChatId]) return; // Safety check
+                if (!this.chats[this.currentChatId]) return;
                 this.chats[this.currentChatId].messages.push({ role, content: text });
                 this.saveToLocalStorage();
                 this.renderHistoryList();
@@ -683,6 +619,11 @@
 
                 let aiReply = null;
 
+                // =========================================================
+                // MULTI-TIER API FALLBACK SYSTEM
+                // =========================================================
+
+                // --- TIER 1: Official OpenAI (if key provided) ---
                 if (this.apiKey) {
                     try {
                         const res = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -701,12 +642,13 @@
                             const data = await res.json();
                             aiReply = data.choices[0].message.content;
                         }
-                    } catch (e) { console.warn("OpenAI API failed, falling back."); }
+                    } catch (e) { console.warn("OpenAI API failed."); }
                 }
 
+                // --- TIER 2: Pollinations (New Gen Gateway) ---
                 if (!aiReply) {
                     try {
-                        const res = await fetch("https://text.pollinations.ai/openai", {
+                        const res = await fetch("https://gen.pollinations.ai/v1/chat/completions", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -717,12 +659,56 @@
                         });
                         if (res.ok) {
                             const data = await res.json();
-                            aiReply = data.choices[0].message.content;
+                            if (data.choices && data.choices[0].message.content) {
+                                aiReply = data.choices[0].message.content;
+                            }
                         }
-                    } catch (e) { console.warn("Free API failed."); }
+                    } catch (e) { console.warn("Tier 2 (Pollinations Gen) failed."); }
                 }
 
-                if (!aiReply) aiReply = "My connection to the neural network is unstable, sir. Please check your internet.";
+                // --- TIER 3: KeylessAI Fallback ---
+                if (!aiReply) {
+                    try {
+                        const res = await fetch("https://keylessai.thryx.workers.dev/v1/chat/completions", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                model: "gpt-3.5-turbo",
+                                messages: payload,
+                                max_tokens: 600
+                            })
+                        });
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.choices && data.choices[0].message.content) {
+                                aiReply = data.choices[0].message.content;
+                            }
+                        }
+                    } catch (e) { console.warn("Tier 3 (KeylessAI) failed."); }
+                }
+
+                // --- TIER 4: Api.Airforce Fallback ---
+                if (!aiReply) {
+                    try {
+                        const res = await fetch("https://api.airforce/v1/chat/completions", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                model: "gpt-3.5-turbo",
+                                messages: payload,
+                                max_tokens: 600
+                            })
+                        });
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data.choices && data.choices[0].message.content) {
+                                aiReply = data.choices[0].message.content;
+                            }
+                        }
+                    } catch (e) { console.warn("Tier 4 (Api.Airforce) failed."); }
+                }
+
+                if (!aiReply) aiReply = "My connection to all neural networks is currently offline, sir. Please check your internet connection or configure an API key in the settings.";
 
                 this.typingIndicator.classList.remove('active');
                 this.addMessage('ai', aiReply);
