@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S - Live Voice Assistant</title>
+    <title>J.A.R.V.I.S - Monochrome Assistant</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
@@ -13,15 +13,20 @@
 
     <style>
         :root {
-            --cyan: #00f3ff;
-            --dark-cyan: #0066aa;
-            --bg-dark: #05080f;
-            --bg-panel: rgba(15, 23, 36, 0.75);
-            --glass-border: rgba(0, 243, 255, 0.2);
-            --accent: #00ffcc;
-            --speaking-color: #ff00ea;
-            --text-main: #e2e8f0;
-            --text-muted: #94a3b8;
+            /* Monochrome Theme */
+            --white: #ffffff;
+            --gray-light: #cccccc;
+            --gray-mid: #888888;
+            --gray-dark: #333333;
+            
+            --bg-dark: #000000;
+            --bg-panel: rgba(20, 20, 20, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            
+            --accent: #ffffff;
+            --speaking-color: #aaaaaa;
+            --text-main: #ffffff;
+            --text-muted: #999999;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,12 +41,13 @@
             position: relative;
         }
 
+        /* Monochrome Background Gradients */
         body::before {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 60% 40%, rgba(0, 243, 255, 0.05) 0%, transparent 60%),
-                        radial-gradient(circle at 40% 60%, rgba(255, 0, 234, 0.03) 0%, transparent 50%);
+            background: radial-gradient(circle at 60% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 60%),
+                        radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
             z-index: 0;
             pointer-events: none;
             animation: bg-pulse 10s infinite alternate;
@@ -65,22 +71,22 @@
             transition: opacity 0.8s ease;
         }
         #start-screen.hidden { opacity: 0; pointer-events: none; }
-        .start-title { font-family: 'Orbitron', sans-serif; font-size: 3rem; color: var(--cyan); text-shadow: 0 0 20px var(--cyan); margin-bottom: 20px; letter-spacing: 10px; }
-        .start-btn { background: transparent; border: 2px solid var(--cyan); color: var(--cyan); padding: 15px 40px; font-family: 'Orbitron', sans-serif; font-size: 1.2rem; cursor: pointer; border-radius: 8px; box-shadow: 0 0 20px rgba(0, 243, 255, 0.2); transition: all 0.3s ease; }
-        .start-btn:hover { background: rgba(0, 243, 255, 0.1); box-shadow: 0 0 40px rgba(0, 243, 255, 0.6); transform: scale(1.05); }
+        .start-title { font-family: 'Orbitron', sans-serif; font-size: 3rem; color: var(--white); text-shadow: 0 0 20px rgba(255,255,255,0.5); margin-bottom: 20px; letter-spacing: 10px; }
+        .start-btn { background: transparent; border: 2px solid var(--white); color: var(--white); padding: 15px 40px; font-family: 'Orbitron', sans-serif; font-size: 1.2rem; cursor: pointer; border-radius: 8px; box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); transition: all 0.3s ease; }
+        .start-btn:hover { background: rgba(255, 255, 255, 0.1); box-shadow: 0 0 40px rgba(255, 255, 255, 0.4); transform: scale(1.05); }
 
         .main-content { flex: 1; display: flex; flex-direction: column; position: relative; z-index: 10; width: 100%; max-width: 1200px; margin: 0 auto; }
 
-        /* --- HUD --- */
+        /* --- HUD (Monochrome) --- */
         .hud-wrapper {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 75vmin; height: 75vmin; max-width: 800px; max-height: 800px;
             display: flex; justify-content: center; align-items: center;
             pointer-events: none; z-index: 0; opacity: 0.15; transition: all 0.3s ease;
         }
-        .hud-wrapper.listening { opacity: 0.7; filter: drop-shadow(0 0 50px var(--accent)); }
-        .hud-wrapper.speaking { opacity: 0.7; filter: drop-shadow(0 0 50px var(--speaking-color)); }
-        .hud-wrapper::after { content: ''; position: absolute; width: 100%; height: 2px; background: rgba(0, 243, 255, 0.6); box-shadow: 0 0 20px var(--cyan); border-radius: 50%; animation: scan 3s linear infinite; opacity: 0.5; }
+        .hud-wrapper.listening { opacity: 0.6; filter: drop-shadow(0 0 40px var(--white)); }
+        .hud-wrapper.speaking { opacity: 0.6; filter: drop-shadow(0 0 40px var(--gray-mid)); }
+        .hud-wrapper::after { content: ''; position: absolute; width: 100%; height: 2px; background: rgba(255, 255, 255, 0.4); box-shadow: 0 0 20px var(--white); border-radius: 50%; animation: scan 3s linear infinite; opacity: 0.5; }
         @keyframes scan { 0% { top: 5%; opacity: 0; transform: scaleX(0.8); } 10% { opacity: 1; transform: scaleX(1); } 90% { opacity: 1; transform: scaleX(1); } 100% { top: 95%; opacity: 0; transform: scaleX(0.8); } }
 
         svg.hud-svg { width: 100%; height: 100%; overflow: visible; }
@@ -91,62 +97,58 @@
         @keyframes rotate { 100% { transform: rotate(360deg); } }
         @keyframes rotate-reverse { 100% { transform: rotate(-360deg); } }
 
-        .logo-text { position: absolute; font-family: 'Orbitron', sans-serif; font-size: clamp(1.5rem, 4vmin, 3rem); font-weight: 900; letter-spacing: 8px; color: #ffffff; text-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan), 0 0 40px var(--cyan); z-index: 5; transition: all 0.3s ease; text-align: center; }
-        .listening .logo-text { color: var(--accent); text-shadow: 0 0 15px var(--accent), 0 0 30px var(--accent); }
-        .speaking .logo-text { color: var(--speaking-color); text-shadow: 0 0 15px var(--speaking-color), 0 0 30px var(--speaking-color); }
+        .logo-text { position: absolute; font-family: 'Orbitron', sans-serif; font-size: clamp(1.5rem, 4vmin, 3rem); font-weight: 900; letter-spacing: 8px; color: var(--white); text-shadow: 0 0 15px rgba(255,255,255,0.6); z-index: 5; transition: all 0.3s ease; text-align: center; }
+        .listening .logo-text { color: var(--accent); text-shadow: 0 0 25px var(--white); }
+        .speaking .logo-text { color: var(--gray-light); text-shadow: 0 0 20px var(--gray-mid); }
 
-        .reactor-core { position: absolute; width: 40px; height: 40px; background: radial-gradient(circle, #ffffff 0%, var(--cyan) 30%, transparent 70%); border-radius: 50%; box-shadow: 0 0 30px var(--cyan), 0 0 60px var(--cyan); animation: pulse-reactor 2s infinite alternate; margin-top: -120px; }
-        @keyframes pulse-reactor { 0% { transform: scale(0.9); box-shadow: 0 0 20px var(--cyan); } 100% { transform: scale(1.1); box-shadow: 0 0 40px var(--cyan), 0 0 80px var(--cyan); } }
-        .listening .reactor-core { background: radial-gradient(circle, #ffffff 0%, var(--accent) 30%, transparent 70%); box-shadow: 0 0 30px var(--accent), 0 0 60px var(--accent); }
-        .speaking .reactor-core { background: radial-gradient(circle, #ffffff 0%, var(--speaking-color) 30%, transparent 70%); box-shadow: 0 0 30px var(--speaking-color), 0 0 60px var(--speaking-color); }
+        .reactor-core { position: absolute; width: 40px; height: 40px; background: radial-gradient(circle, #ffffff 0%, #aaaaaa 40%, transparent 70%); border-radius: 50%; box-shadow: 0 0 30px var(--white), 0 0 60px var(--gray-mid); animation: pulse-reactor 2s infinite alternate; margin-top: -120px; }
+        @keyframes pulse-reactor { 0% { transform: scale(0.9); box-shadow: 0 0 20px var(--gray-mid); } 100% { transform: scale(1.1); box-shadow: 0 0 50px var(--white), 0 0 80px var(--gray-mid); } }
+        .listening .reactor-core { background: radial-gradient(circle, #ffffff 0%, var(--white) 40%, transparent 70%); box-shadow: 0 0 40px var(--white); }
+        .speaking .reactor-core { background: radial-gradient(circle, #ffffff 0%, var(--gray-mid) 40%, transparent 70%); box-shadow: 0 0 30px var(--gray-mid); }
 
-        /* --- CHAT --- */
+        /* --- CHAT (Monochrome) --- */
         .chat-container { flex: 1; overflow-y: auto; padding: 30px 10% 100px 10%; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth; z-index: 10; position: relative; }
         .chat-container::-webkit-scrollbar { width: 6px; }
-        .chat-container::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 6px; }
+        .chat-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 6px; }
 
         .message { display: flex; gap: 15px; max-width: 100%; animation: fadeIn 0.3s ease; }
-        .msg-avatar { width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0; font-family: 'Orbitron', sans-serif; font-weight: bold; font-size: 0.8rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .msg-avatar { width: 35px; height: 35px; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0; font-family: 'Orbitron', sans-serif; font-weight: bold; font-size: 0.8rem; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        
         .user-msg { flex-direction: row-reverse; }
-        .user-msg .msg-avatar { background: #334155; color: white; }
-        .user-msg .msg-content { background: linear-gradient(135deg, #1e293b, #0f172a); padding: 12px 18px; border-radius: 12px 12px 0 12px; max-width: 80%; line-height: 1.5; border: 1px solid rgba(255,255,255,0.1); }
-        .ai-msg .msg-avatar { background: rgba(0, 243, 255, 0.1); border: 1px solid var(--cyan); color: var(--cyan); box-shadow: 0 0 15px rgba(0,243,255,0.3); }
-        .ai-msg .msg-content { background: var(--bg-panel); backdrop-filter: blur(15px); padding: 18px; border-radius: 12px; max-width: 90%; line-height: 1.6; color: var(--text-main); overflow-x: auto; border: 1px solid var(--glass-border); }
+        .user-msg .msg-avatar { background: var(--gray-dark); color: var(--white); border: 1px solid var(--gray-mid); }
+        .user-msg .msg-content { background: #222222; padding: 12px 18px; border-radius: 12px 12px 0 12px; max-width: 80%; line-height: 1.5; border: 1px solid #444; color: #fff; }
+        
+        .ai-msg .msg-avatar { background: #111111; border: 1px solid var(--white); color: var(--white); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
+        .ai-msg .msg-content { background: var(--bg-panel); backdrop-filter: blur(15px); padding: 18px; border-radius: 12px; max-width: 90%; line-height: 1.6; color: var(--text-main); overflow-x: auto; border: 1px solid var(--glass-border); box-shadow: 0 8px 32px rgba(0,0,0,0.8); }
+        
         .msg-content p { margin-bottom: 10px; }
         .msg-content p:last-child { margin-bottom: 0; }
-        .msg-content pre { background: #1e1e1e; border: 1px solid #333; border-radius: 8px; padding: 12px; margin: 10px 0; overflow-x: auto; }
-        .msg-content code { font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px; color: var(--accent); }
+        .msg-content pre { background: #0a0a0a; border: 1px solid #333; border-radius: 8px; padding: 12px; margin: 10px 0; overflow-x: auto; }
+        .msg-content code { font-family: 'Share Tech Mono', monospace; font-size: 0.9rem; background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px; color: #fff; }
         .msg-content pre code { background: transparent; padding: 0; color: #d4d4d4; }
 
-        .typing-indicator { display: none; color: var(--cyan); font-size: 0.9rem; font-family: 'Share Tech Mono', monospace; margin-bottom: 20px; padding-left: 10%; z-index: 10; position: relative; }
+        .typing-indicator { display: none; color: var(--gray-light); font-size: 0.9rem; font-family: 'Share Tech Mono', monospace; margin-bottom: 20px; padding-left: 10%; z-index: 10; position: relative; }
         .typing-indicator.active { display: block; animation: pulse 1s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
         /* --- INPUT & DEBUG BOX --- */
-        .input-container { position: fixed; bottom: 0; width: 100%; max-width: 1200px; padding: 20px 10%; background: linear-gradient(to top, var(--bg-dark) 70%, transparent); z-index: 10; left: 50%; transform: translateX(-50%); }
+        .input-container { position: fixed; bottom: 0; width: 100%; max-width: 1200px; padding: 20px 10%; background: linear-gradient(to top, var(--bg-dark) 80%, transparent); z-index: 10; left: 50%; transform: translateX(-50%); }
         
-        /* Live Transcript Display (Shows what mic hears) */
-        #live-transcript {
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--accent);
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            min-height: 20px;
-            text-align: center;
-            text-shadow: 0 0 5px var(--accent);
-            opacity: 0.7;
-            transition: opacity 0.3s;
-        }
+        #live-transcript { font-family: 'Share Tech Mono', monospace; color: var(--white); font-size: 0.9rem; margin-bottom: 10px; min-height: 20px; text-align: center; text-shadow: 0 0 10px rgba(255,255,255,0.5); opacity: 0.8; transition: opacity 0.3s; }
 
-        .input-box { background: var(--bg-panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px 18px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); backdrop-filter: blur(20px); }
+        .input-box { background: var(--bg-panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px 18px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); backdrop-filter: blur(20px); }
+        .input-box:focus-within { border-color: var(--white); box-shadow: 0 0 20px rgba(255,255,255,0.1); }
+        
         textarea { width: 100%; background: transparent; border: none; color: white; font-family: 'Inter', sans-serif; font-size: 1rem; resize: none; outline: none; max-height: 200px; min-height: 24px; line-height: 1.5; }
+        textarea::placeholder { color: var(--gray-mid); }
+        
         .input-actions { display: flex; justify-content: space-between; align-items: center; }
         
-        .send-btn { background: var(--cyan); color: black; border: none; width: 38px; height: 38px; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.2s; box-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
-        .send-btn:hover { background: #fff; box-shadow: 0 0 20px var(--cyan); transform: scale(1.05); }
+        .send-btn { background: var(--white); color: black; border: none; width: 38px; height: 38px; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.2s; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .send-btn:hover { background: var(--gray-light); box-shadow: 0 0 20px rgba(255,255,255,0.5); transform: scale(1.05); }
 
-        .lang-select { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); border-radius: 8px; padding: 8px 12px; outline: none; font-size: 0.8rem; cursor: pointer; }
-        .lang-select option { background: var(--bg-dark); }
+        .lang-select { background: transparent; border: 1px solid var(--gray-dark); color: var(--gray-light); border-radius: 8px; padding: 8px 12px; outline: none; font-size: 0.8rem; cursor: pointer; }
+        .lang-select option { background: var(--bg-dark); color: white; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -173,18 +175,19 @@
                     <mask id="left-mask"><rect x="0" y="0" width="400" height="800" fill="white" /></mask>
                     <mask id="right-mask"><rect x="400" y="0" width="400" height="800" fill="white" /></mask>
                 </defs>
-                <circle cx="400" cy="400" r="380" stroke="var(--cyan)" stroke-width="2" fill="none" stroke-dasharray="4 12" opacity="0.3" class="spin-slow" />
-                <circle cx="400" cy="400" r="360" stroke="var(--cyan)" stroke-width="4" fill="none" stroke-dasharray="150 100 20 50 200 80 50 150" filter="url(#glow)" class="spin-reverse" />
-                <circle cx="400" cy="400" r="330" stroke="var(--cyan)" stroke-width="8" fill="none" stroke-dasharray="80 200 50 100 150 200" opacity="0.5" class="spin-fast" />
-                <circle cx="400" cy="400" r="280" stroke="var(--cyan)" stroke-width="15" fill="none" stroke-dasharray="2 10" opacity="0.6" mask="url(#top-mask)" />
-                <circle cx="400" cy="400" r="260" stroke="var(--cyan)" stroke-width="3" fill="none" stroke-dasharray="250 1000" transform="rotate(-90 400 400)" opacity="0.8" />
-                <circle cx="400" cy="400" r="240" stroke="var(--cyan)" stroke-width="30" fill="none" stroke-dasharray="4 10" mask="url(#left-mask)" filter="url(#glow)" opacity="0.7" />
-                <circle cx="400" cy="400" r="240" stroke="var(--dark-cyan)" stroke-width="30" fill="none" stroke-dasharray="2 12" mask="url(#left-mask)" opacity="0.2" />
-                <circle cx="400" cy="400" r="240" stroke="var(--cyan)" stroke-width="10" fill="none" stroke-dasharray="6 20" mask="url(#right-mask)" opacity="0.6" />
-                <circle cx="400" cy="400" r="200" stroke="var(--cyan)" stroke-width="8" fill="none" stroke-dasharray="2 15" mask="url(#bottom-mask)" opacity="0.5" />
-                <circle cx="400" cy="400" r="170" stroke="var(--cyan)" stroke-width="6" fill="none" filter="url(#glow)" class="spin-reactor" stroke-dasharray="120 30 60 30" />
-                <circle cx="400" cy="400" r="150" stroke="rgba(0, 243, 255, 0.2)" stroke-width="2" fill="none" />
-                <circle cx="400" cy="400" r="140" fill="rgba(0, 10, 20, 0.6)" />
+                <!-- Monochrome HUD Rings -->
+                <circle cx="400" cy="400" r="380" stroke="var(--white)" stroke-width="2" fill="none" stroke-dasharray="4 12" opacity="0.3" class="spin-slow" />
+                <circle cx="400" cy="400" r="360" stroke="var(--white)" stroke-width="4" fill="none" stroke-dasharray="150 100 20 50 200 80 50 150" filter="url(#glow)" class="spin-reverse" />
+                <circle cx="400" cy="400" r="330" stroke="var(--white)" stroke-width="8" fill="none" stroke-dasharray="80 200 50 100 150 200" opacity="0.5" class="spin-fast" />
+                <circle cx="400" cy="400" r="280" stroke="var(--white)" stroke-width="15" fill="none" stroke-dasharray="2 10" opacity="0.6" mask="url(#top-mask)" />
+                <circle cx="400" cy="400" r="260" stroke="var(--white)" stroke-width="3" fill="none" stroke-dasharray="250 1000" transform="rotate(-90 400 400)" opacity="0.8" />
+                <circle cx="400" cy="400" r="240" stroke="var(--white)" stroke-width="30" fill="none" stroke-dasharray="4 10" mask="url(#left-mask)" filter="url(#glow)" opacity="0.7" />
+                <circle cx="400" cy="400" r="240" stroke="var(--gray-mid)" stroke-width="30" fill="none" stroke-dasharray="2 12" mask="url(#left-mask)" opacity="0.2" />
+                <circle cx="400" cy="400" r="240" stroke="var(--white)" stroke-width="10" fill="none" stroke-dasharray="6 20" mask="url(#right-mask)" opacity="0.6" />
+                <circle cx="400" cy="400" r="200" stroke="var(--white)" stroke-width="8" fill="none" stroke-dasharray="2 15" mask="url(#bottom-mask)" opacity="0.5" />
+                <circle cx="400" cy="400" r="170" stroke="var(--white)" stroke-width="6" fill="none" filter="url(#glow)" class="spin-reactor" stroke-dasharray="120 30 60 30" />
+                <circle cx="400" cy="400" r="150" stroke="rgba(255, 255, 255, 0.2)" stroke-width="2" fill="none" />
+                <circle cx="400" cy="400" r="140" fill="rgba(0, 0, 0, 0.8)" />
             </svg>
             <div class="logo-text">J.A.R.V.I.S</div>
             <div class="reactor-core"></div>
@@ -194,8 +197,7 @@
         <div class="typing-indicator" id="typingIndicator">J.A.R.V.I.S is processing...</div>
 
         <div class="input-container">
-            <!-- LIVE DEBUG TEXT -->
-            <div id="live-transcript">Waiting for system initialization...</div>
+            <div id="live-transcript">System offline. Click initialize.</div>
 
             <div class="input-box">
                 <textarea id="chatInput" rows="1" placeholder="Say 'Jarvis' to wake..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
@@ -246,15 +248,13 @@
                 document.getElementById('start-screen').classList.add('hidden');
                 this.addMessage('ai', 'Systems online. Neural link established. I am listening, sir.');
                 
-                // Force mic permission prompt
                 try {
                     await navigator.mediaDevices.getUserMedia({ audio: true });
                 } catch (err) {
-                    this.liveTranscript.innerText = "Mic access denied. Please click the lock icon in the URL bar and allow microphone.";
+                    this.liveTranscript.innerText = "Mic access denied. Please allow microphone in browser settings.";
                     return;
                 }
 
-                // Prime the audio context
                 const u = new SpeechSynthesisUtterance("");
                 window.speechSynthesis.speak(u);
 
@@ -268,13 +268,12 @@
                 if (!this.recognition) return;
                 this.recognition.start();
                 
-                // Mic Watchdog: Force restart every 3 seconds if it silently dies
                 clearInterval(this.micWatchdog);
                 this.micWatchdog = setInterval(() => {
                     if (!this.isListening && !this.isSpeaking && !this.isProcessing) {
                         try { this.recognition.start(); } catch(e) {}
                     }
-                }, 3000);
+                }, 2000);
             }
 
             addMessage(role, text) {
@@ -318,23 +317,27 @@
 
                 let aiReply = null;
 
-                // TIER 1: Direct GET
+                // =========================================================
+                // ULTRA-ROBUST API FALLBACK SYSTEM (FIXES NETWORK ISOLATION)
+                // =========================================================
+
+                // TIER 1: Direct GET (Fastest)
                 try {
                     const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}`);
                     if (res.ok) aiReply = await res.text();
                 } catch (e) { console.warn("Tier 1 failed."); }
 
-                // TIER 2: CORS Proxy
-                if (!aiReply) {
+                // TIER 2: CORS Proxy (Bypasses strict browser security / file:// blocks)
+                if (!aiReply || aiReply.length < 2) {
                     try {
-                        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent('https://text.pollinations.ai/' + encodeURIComponent(fullPrompt))}`;
+                        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent('https://text.pollinations.ai/' + encodeURIComponent(fullPrompt))}`;
                         const res = await fetch(proxyUrl);
                         if (res.ok) aiReply = await res.text();
-                    } catch (e) { console.warn("Tier 2 failed."); }
+                    } catch (e) { console.warn("Tier 2 (Proxy) failed."); }
                 }
 
-                // TIER 3: Api.Airforce
-                if (!aiReply) {
+                // TIER 3: Alternative Free API (Api.Airforce)
+                if (!aiReply || aiReply.length < 2) {
                     try {
                         const res = await fetch("https://api.airforce/v1/chat/completions", {
                             method: "POST",
@@ -349,11 +352,31 @@
                             const data = await res.json();
                             aiReply = data.choices[0].message.content;
                         }
-                    } catch (e) { console.warn("Tier 3 failed."); }
+                    } catch (e) { console.warn("Tier 3 (Airforce) failed."); }
                 }
 
-                if (!aiReply) {
-                    aiReply = "I am experiencing complete network isolation, sir. Please check your internet.";
+                // TIER 4: Alternative Free API (KeylessAI)
+                if (!aiReply || aiReply.length < 2) {
+                    try {
+                        const res = await fetch("https://keylessai.thryx.workers.dev/v1/chat/completions", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                model: "gpt-3.5-turbo",
+                                messages: [{ role: "system", content: systemPrompt }, { role: "user", content: text }],
+                                max_tokens: 100
+                            })
+                        });
+                        if (res.ok) {
+                            const data = await res.json();
+                            aiReply = data.choices[0].message.content;
+                        }
+                    } catch (e) { console.warn("Tier 4 (Keyless) failed."); }
+                }
+
+                // FINAL FALLBACK
+                if (!aiReply || aiReply.length < 2) {
+                    aiReply = "All external networks are blocked, sir. Please ensure you are running this via a local server (like VS Code Live Server) and check your internet.";
                 }
 
                 aiReply = aiReply.replace(/J\.A\.R\.V\.I\.S\.?\s*/gi, "").replace(/Assistant:\s*/gi, "").trim();
@@ -435,13 +458,12 @@
                         }
                     }
 
-                    // Update the screen with what the mic is hearing
                     this.liveTranscript.innerText = `"${(finalText || interimText).trim()}"`;
 
                     if (finalText.length > 0) {
                         const text = finalText.toLowerCase().trim();
                         
-                        // EXPANDED WAKE WORDS
+                        // EXPANDED WAKE WORDS FOR ACCENTS
                         const wakeWords = ['jarvis', 'jervis', 'varvis', 'javis', 'jarbis', 'harvest', 'job is', 'जार्विस'];
                         const hasWakeWord = wakeWords.some(word => text.includes(word));
 
@@ -471,7 +493,7 @@
                 this.recognition.onend = () => {
                     this.isListening = false;
                     this.mainHud.classList.remove('listening');
-                    // Watchdog will auto-restart if needed
+                    // Watchdog will auto-restart
                 };
             }
 
