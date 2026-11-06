@@ -101,7 +101,7 @@
         .speaking .reactor-core { background: radial-gradient(circle, #ffffff 0%, var(--speaking-color) 30%, transparent 70%); box-shadow: 0 0 30px var(--speaking-color), 0 0 60px var(--speaking-color); }
 
         /* --- CHAT --- */
-        .chat-container { flex: 1; overflow-y: auto; padding: 30px 10%; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth; z-index: 10; position: relative; }
+        .chat-container { flex: 1; overflow-y: auto; padding: 30px 10% 100px 10%; display: flex; flex-direction: column; gap: 20px; scroll-behavior: smooth; z-index: 10; position: relative; }
         .chat-container::-webkit-scrollbar { width: 6px; }
         .chat-container::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 6px; }
 
@@ -122,23 +122,31 @@
         .typing-indicator.active { display: block; animation: pulse 1s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-        /* --- INPUT --- */
-        .input-container { padding: 20px 10%; background: linear-gradient(to top, var(--bg-dark) 60%, transparent); z-index: 10; position: relative; }
-        .input-box { background: var(--bg-panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px 18px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); transition: all 0.3s ease; backdrop-filter: blur(20px); }
+        /* --- INPUT & DEBUG BOX --- */
+        .input-container { position: fixed; bottom: 0; width: 100%; max-width: 1200px; padding: 20px 10%; background: linear-gradient(to top, var(--bg-dark) 70%, transparent); z-index: 10; left: 50%; transform: translateX(-50%); }
+        
+        /* Live Transcript Display (Shows what mic hears) */
+        #live-transcript {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            min-height: 20px;
+            text-align: center;
+            text-shadow: 0 0 5px var(--accent);
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .input-box { background: var(--bg-panel); border: 1px solid var(--glass-border); border-radius: 16px; padding: 12px 18px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); backdrop-filter: blur(20px); }
         textarea { width: 100%; background: transparent; border: none; color: white; font-family: 'Inter', sans-serif; font-size: 1rem; resize: none; outline: none; max-height: 200px; min-height: 24px; line-height: 1.5; }
         .input-actions { display: flex; justify-content: space-between; align-items: center; }
         
         .send-btn { background: var(--cyan); color: black; border: none; width: 38px; height: 38px; border-radius: 8px; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.2s; box-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
         .send-btn:hover { background: #fff; box-shadow: 0 0 20px var(--cyan); transform: scale(1.05); }
-        .send-btn:disabled { background: #334155; cursor: not-allowed; box-shadow: none; transform: none; }
 
         .lang-select { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); border-radius: 8px; padding: 8px 12px; outline: none; font-size: 0.8rem; cursor: pointer; }
         .lang-select option { background: var(--bg-dark); }
-
-        /* --- VISUALIZER --- */
-        .visualizer-container { position: absolute; bottom: 100px; width: 100%; height: 50px; display: flex; justify-content: center; align-items: center; pointer-events: none; opacity: 0; transition: opacity 0.3s ease; z-index: 10; }
-        .visualizer-container.active { opacity: 0.8; }
-        #audio-canvas { width: 60%; height: 100%; max-width: 500px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -148,6 +156,7 @@
     <div id="start-screen">
         <div class="start-title">J.A.R.V.I.S</div>
         <button class="start-btn" onclick="window.jarvisObj.startSystem()">INITIALIZE SYSTEM</button>
+        <p style="margin-top: 20px; color: #666; font-size: 0.9rem; text-align: center; max-width: 400px;">Note: You must allow microphone permissions in your browser for voice chat to work.</p>
     </div>
 
     <div class="main-content">
@@ -181,15 +190,13 @@
             <div class="reactor-core"></div>
         </div>
 
-        <div class="visualizer-container" id="visualizerContainer">
-            <canvas id="audio-canvas"></canvas>
-        </div>
-
         <div class="chat-container" id="chatContainer"></div>
-
         <div class="typing-indicator" id="typingIndicator">J.A.R.V.I.S is processing...</div>
 
         <div class="input-container">
+            <!-- LIVE DEBUG TEXT -->
+            <div id="live-transcript">Waiting for system initialization...</div>
+
             <div class="input-box">
                 <textarea id="chatInput" rows="1" placeholder="Say 'Jarvis' to wake..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
                 <div class="input-actions">
@@ -215,7 +222,7 @@
                 this.langSelect = document.getElementById('langSelect');
                 this.typingIndicator = document.getElementById('typingIndicator');
                 this.mainHud = document.getElementById('mainHud');
-                this.visContainer = document.getElementById('visualizerContainer');
+                this.liveTranscript = document.getElementById('live-transcript');
                 
                 this.messages = [];
                 this.isListening = false;
@@ -224,7 +231,7 @@
                 this.currentLang = 'en-US';
                 this.voices = [];
                 this.recognition = null;
-                this.manualStop = false;
+                this.micWatchdog = null;
 
                 this.init();
             }
@@ -233,19 +240,41 @@
                 this.loadVoices();
                 this.setupSpeechRecognition();
                 this.setupEventListeners();
-                this.setupAudioVisualizer();
             }
 
-            startSystem() {
+            async startSystem() {
                 document.getElementById('start-screen').classList.add('hidden');
                 this.addMessage('ai', 'Systems online. Neural link established. I am listening, sir.');
                 
+                // Force mic permission prompt
+                try {
+                    await navigator.mediaDevices.getUserMedia({ audio: true });
+                } catch (err) {
+                    this.liveTranscript.innerText = "Mic access denied. Please click the lock icon in the URL bar and allow microphone.";
+                    return;
+                }
+
+                // Prime the audio context
                 const u = new SpeechSynthesisUtterance("");
                 window.speechSynthesis.speak(u);
 
                 setTimeout(() => {
-                    this.recognition.start();
+                    this.startListening();
+                    this.liveTranscript.innerText = "Listening... Say 'Jarvis'";
                 }, 500);
+            }
+
+            startListening() {
+                if (!this.recognition) return;
+                this.recognition.start();
+                
+                // Mic Watchdog: Force restart every 3 seconds if it silently dies
+                clearInterval(this.micWatchdog);
+                this.micWatchdog = setInterval(() => {
+                    if (!this.isListening && !this.isSpeaking && !this.isProcessing) {
+                        try { this.recognition.start(); } catch(e) {}
+                    }
+                }, 3000);
             }
 
             addMessage(role, text) {
@@ -280,7 +309,8 @@
                 this.addMessage('user', text);
                 this.typingIndicator.classList.add('active');
                 this.isProcessing = true;
-                this.manualStop = true;
+                this.liveTranscript.innerText = "Processing...";
+                
                 if (this.isListening) this.recognition.stop();
 
                 const systemPrompt = `You are J.A.R.V.I.S., Tony Stark's AI. Be highly intelligent, witty, formal. Address the user as 'sir'. Keep responses very brief (1-2 sentences max). Reply in this language: ${this.currentLang}.`;
@@ -288,24 +318,22 @@
 
                 let aiReply = null;
 
-                // --- BULLETPROOF API SYSTEM ---
-
-                // TIER 1: Direct GET (Bypasses CORS completely)
+                // TIER 1: Direct GET
                 try {
                     const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}`);
                     if (res.ok) aiReply = await res.text();
-                } catch (e) { console.warn("Tier 1 blocked/failed."); }
+                } catch (e) { console.warn("Tier 1 failed."); }
 
-                // TIER 2: CORS Proxy (Forces connection if Tier 1 is blocked by network)
+                // TIER 2: CORS Proxy
                 if (!aiReply) {
                     try {
                         const proxyUrl = `https://corsproxy.io/?${encodeURIComponent('https://text.pollinations.ai/' + encodeURIComponent(fullPrompt))}`;
                         const res = await fetch(proxyUrl);
                         if (res.ok) aiReply = await res.text();
-                    } catch (e) { console.warn("Tier 2 proxy failed."); }
+                    } catch (e) { console.warn("Tier 2 failed."); }
                 }
 
-                // TIER 3: Api.Airforce (Alternative Provider)
+                // TIER 3: Api.Airforce
                 if (!aiReply) {
                     try {
                         const res = await fetch("https://api.airforce/v1/chat/completions", {
@@ -325,7 +353,7 @@
                 }
 
                 if (!aiReply) {
-                    aiReply = "I am experiencing complete network isolation, sir. Please ensure you are running this via a local server (like VS Code Live Server) and turn off any adblockers.";
+                    aiReply = "I am experiencing complete network isolation, sir. Please check your internet.";
                 }
 
                 aiReply = aiReply.replace(/J\.A\.R\.V\.I\.S\.?\s*/gi, "").replace(/Assistant:\s*/gi, "").trim();
@@ -339,7 +367,7 @@
 
             speak(text) {
                 if (!text) {
-                    this.resumeListening();
+                    this.startListening();
                     return;
                 }
                 
@@ -362,27 +390,26 @@
                     this.isSpeaking = true;
                     this.mainHud.classList.remove('listening');
                     this.mainHud.classList.add('speaking'); 
+                    this.liveTranscript.innerText = "J.A.R.V.I.S is speaking...";
                     if (this.isListening) this.recognition.stop();
                 };
                 
                 utterance.onend = () => { 
                     this.isSpeaking = false;
                     this.mainHud.classList.remove('speaking'); 
-                    this.resumeListening();
+                    this.liveTranscript.innerText = "Listening... Say 'Jarvis'";
+                    this.startListening();
                 };
                 
                 window.speechSynthesis.speak(utterance);
             }
 
-            resumeListening() {
-                if (!this.isListening && !this.isSpeaking && !this.isProcessing && !this.manualStop) {
-                    try { this.recognition.start(); } catch(e) {}
-                }
-            }
-
             setupSpeechRecognition() {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                if (!SpeechRecognition) return;
+                if (!SpeechRecognition) {
+                    this.liveTranscript.innerText = "Speech Recognition not supported. Use Chrome or Edge.";
+                    return;
+                }
 
                 this.recognition = new SpeechRecognition();
                 this.recognition.continuous = true;
@@ -391,88 +418,61 @@
 
                 this.recognition.onstart = () => {
                     this.isListening = true;
-                    this.manualStop = false;
                     this.mainHud.classList.add('listening');
-                    this.visContainer.classList.add('active');
                 };
 
                 this.recognition.onresult = (event) => {
                     if (this.isSpeaking || this.isProcessing) return;
 
-                    let finalTranscript = '';
+                    let interimText = '';
+                    let finalText = '';
+
                     for (let i = event.resultIndex; i < event.results.length; ++i) {
                         if (event.results[i].isFinal) {
-                            finalTranscript += event.results[i][0].transcript;
+                            finalText += event.results[i][0].transcript;
+                        } else {
+                            interimText += event.results[i][0].transcript;
                         }
                     }
 
-                    const text = finalTranscript.toLowerCase().trim();
-                    const wakeWords = ['jarvis', 'jervis', 'varvis', 'javis', 'jarbis', 'जार्विस', 'जारविस'];
-                    const hasWakeWord = wakeWords.some(word => text.includes(word));
+                    // Update the screen with what the mic is hearing
+                    this.liveTranscript.innerText = `"${(finalText || interimText).trim()}"`;
 
-                    if (hasWakeWord) {
-                        let command = text;
-                        wakeWords.forEach(word => {
-                            command = command.replace(word, '');
-                        });
-                        command = command.replace(/,/g, '').trim();
+                    if (finalText.length > 0) {
+                        const text = finalText.toLowerCase().trim();
+                        
+                        // EXPANDED WAKE WORDS
+                        const wakeWords = ['jarvis', 'jervis', 'varvis', 'javis', 'jarbis', 'harvest', 'job is', 'जार्विस'];
+                        const hasWakeWord = wakeWords.some(word => text.includes(word));
 
-                        if (command.length > 2) {
-                            this.sendMessage(command);
-                        } else {
-                            this.speak("Yes, sir?");
+                        if (hasWakeWord) {
+                            let command = text;
+                            wakeWords.forEach(word => {
+                                command = command.replace(word, '');
+                            });
+                            command = command.replace(/,/g, '').trim();
+
+                            if (command.length > 2) {
+                                this.sendMessage(command);
+                            } else {
+                                this.speak("Yes, sir?");
+                            }
                         }
                     }
                 };
 
                 this.recognition.onerror = (event) => {
+                    console.warn("Mic error:", event.error);
                     if (event.error === 'not-allowed') {
-                        this.addMessage('system', 'Microphone access denied. Please allow mic.');
+                        this.liveTranscript.innerText = "Microphone access denied. Please allow mic.";
                     }
                 };
 
                 this.recognition.onend = () => {
                     this.isListening = false;
                     this.mainHud.classList.remove('listening');
-                    this.visContainer.classList.remove('active');
-                    this.resumeListening();
+                    // Watchdog will auto-restart if needed
                 };
-            }
-
-            setupAudioVisualizer() {
-                const canvas = document.getElementById('audio-canvas');
-                const ctx = canvas.getContext('2d');
-                canvas.width = canvas.offsetWidth;
-                canvas.height = canvas.offsetHeight;
-                let analyser, dataArray;
-
-                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    analyser = audioContext.createAnalyser();
-                    const source = audioContext.createMediaStreamSource(stream);
-                    source.connect(analyser);
-                    analyser.fftSize = 256;
-                    const bufferLength = analyser.frequencyBinCount;
-                    dataArray = new Uint8Array(bufferLength);
-
-                    const draw = () => {
-                        requestAnimationFrame(draw);
-                        analyser.getByteFrequencyData(dataArray);
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        const barWidth = (canvas.width / bufferLength) * 2.5;
-                        let x = 0;
-                        for (let i = 0; i < bufferLength; i++) {
-                            const barHeight = dataArray[i] / 2;
-                            const gradient = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - barHeight);
-                            gradient.addColorStop(0, 'rgba(0, 243, 255, 0.1)');
-                            gradient.addColorStop(1, 'rgba(0, 243, 255, 0.8)');
-                            ctx.fillStyle = gradient;
-                            ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-                            x += barWidth + 1;
-                        }
-                    };
-                    draw();
-                }).catch(e => console.warn("Visualizer disabled:", e));
             }
 
             setupEventListeners() {
@@ -487,12 +487,10 @@
                 this.langSelect.addEventListener('change', (e) => {
                     this.currentLang = e.target.value;
                     if (this.recognition) {
-                        this.manualStop = true;
                         this.recognition.stop();
                         setTimeout(() => {
                             this.recognition.lang = this.currentLang;
-                            this.manualStop = false;
-                            this.resumeListening();
+                            this.startListening();
                         }, 500);
                     }
                 });
