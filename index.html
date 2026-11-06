@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S - Live Voice AI</title>
+    <title>J.A.R.V.I.S - Live Voice Assistant</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
@@ -58,6 +58,7 @@
             z-index: 10; width: 100%; max-width: 1200px; margin: 0 auto;
         }
 
+        /* --- PREMIUM HUD --- */
         .hud-wrapper {
             position: absolute;
             top: 50%; left: 50%;
@@ -122,6 +123,7 @@
         .listening .reactor-core { background: radial-gradient(circle, #ffffff 0%, var(--accent) 30%, transparent 70%); box-shadow: 0 0 30px var(--accent), 0 0 60px var(--accent); }
         .speaking .reactor-core { background: radial-gradient(circle, #ffffff 0%, var(--speaking-color) 30%, transparent 70%); box-shadow: 0 0 30px var(--speaking-color), 0 0 60px var(--speaking-color); }
 
+        /* --- CHAT INTERFACE --- */
         .chat-container {
             flex: 1; overflow-y: auto; padding: 30px 10%;
             display: flex; flex-direction: column; gap: 20px;
@@ -327,7 +329,7 @@
                 this.messages = [];
                 this.isListening = false;
                 this.isSpeaking = false;
-                this.voiceEnabled = true;
+                this.isProcessing = false;
                 this.currentLang = 'en-US';
                 this.voices = [];
                 
@@ -402,7 +404,7 @@
 
             async sendMessage(textOverride = null) {
                 const text = textOverride || this.chatInput.value.trim();
-                if (!text) return;
+                if (!text || this.isProcessing) return;
 
                 this.chatInput.value = '';
                 this.chatInput.style.height = 'auto';
@@ -410,6 +412,7 @@
                 this.addMessage('user', text);
                 this.sendBtn.disabled = true;
                 this.typingIndicator.classList.add('active');
+                this.isProcessing = true;
                 this.scrollToBottom();
 
                 const contextMessages = this.messages.slice(-6).map(m => ({
@@ -426,11 +429,7 @@
 
                 let aiReply = null;
 
-                // =========================================================
-                // BULLETPROOF 5-TIER API FALLBACK SYSTEM
-                // =========================================================
-
-                // --- TIER 1: Pollinations GET (Most Stable) ---
+                // --- TIER 1: Pollinations GET ---
                 if (!aiReply) {
                     try {
                         let fullPrompt = `${systemPrompt}\n\n`;
@@ -438,10 +437,8 @@
                         fullPrompt += `J.A.R.V.I.S:`;
 
                         const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}`);
-                        if (res.ok) {
-                            aiReply = await res.text();
-                        }
-                    } catch (e) { console.warn("Tier 1 (Pollinations GET) failed."); }
+                        if (res.ok) aiReply = await res.text();
+                    } catch (e) { console.warn("Tier 1 failed"); }
                 }
 
                 // --- TIER 2: Pollinations POST ---
@@ -456,25 +453,10 @@
                             const data = await res.json();
                             if (data.choices && data.choices[0].message.content) aiReply = data.choices[0].message.content;
                         }
-                    } catch (e) { console.warn("Tier 2 (Pollinations POST) failed."); }
+                    } catch (e) { console.warn("Tier 2 failed"); }
                 }
 
-                // --- TIER 3: CORS Proxy Wrapper ---
-                if (!aiReply) {
-                    try {
-                        const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent('https://text.pollinations.ai/openai')}`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ model: "openai", messages: payload })
-                        });
-                        if (res.ok) {
-                            const data = await res.json();
-                            if (data.choices && data.choices[0].message.content) aiReply = data.choices[0].message.content;
-                        }
-                    } catch (e) { console.warn("Tier 3 (CORS Proxy) failed."); }
-                }
-
-                // --- TIER 4: KeylessAI ---
+                // --- TIER 3: KeylessAI ---
                 if (!aiReply) {
                     try {
                         const res = await fetch("https://keylessai.thryx.workers.dev/v1/chat/completions", {
@@ -486,22 +468,7 @@
                             const data = await res.json();
                             if (data.choices && data.choices[0].message.content) aiReply = data.choices[0].message.content;
                         }
-                    } catch (e) { console.warn("Tier 4 (KeylessAI) failed."); }
-                }
-
-                // --- TIER 5: Api.Airforce ---
-                if (!aiReply) {
-                    try {
-                        const res = await fetch("https://api.airforce/v1/chat/completions", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ model: "gpt-3.5-turbo", messages: payload, max_tokens: 600 })
-                        });
-                        if (res.ok) {
-                            const data = await res.json();
-                            if (data.choices && data.choices[0].message.content) aiReply = data.choices[0].message.content;
-                        }
-                    } catch (e) { console.warn("Tier 5 (Api.Airforce) failed."); }
+                    } catch (e) { console.warn("Tier 3 failed"); }
                 }
 
                 // --- FINAL FALLBACK ---
@@ -509,26 +476,22 @@
                     aiReply = "I am currently experiencing complete network isolation, sir. Please ensure you are not running this file directly (use a local server like VS Code Live Server) and check your internet connection.";
                 }
 
-                // Cleanup any AI prefixes
                 aiReply = aiReply.replace(/J\.A\.R\.V\.I\.S\.?\s*/gi, "").replace(/Assistant:\s*/gi, "").trim();
 
                 this.typingIndicator.classList.remove('active');
                 this.addMessage('ai', aiReply);
                 this.sendBtn.disabled = false;
+                this.isProcessing = false;
 
-                if (this.voiceEnabled) {
-                    this.speak(aiReply);
-                }
-                
-                setTimeout(() => {
-                    if (!this.isListening && this.recognition) {
-                        try { this.recognition.start(); } catch(e) {}
-                    }
-                }, 500);
+                // Trigger Voice Response
+                this.speak(aiReply);
             }
 
             speak(text) {
-                if (!text) return;
+                if (!text) {
+                    this.resumeListening();
+                    return;
+                }
                 
                 let cleanText = text
                     .replace(/```[\s\S]*?```/g, ' [Code Block] ') 
@@ -540,23 +503,40 @@
                 const utterance = new SpeechSynthesisUtterance(cleanText);
                 utterance.lang = this.currentLang;
                 
-                const voice = this.voices.find(v => v.lang === this.currentLang) || this.voices[0];
-                if (voice) utterance.voice = voice;
+                // **ORIGINAL JARVIS VOICE OPTIMIZATION**
+                // Try to find a British Male voice
+                let jarvisVoice = this.voices.find(v => v.lang === 'en-GB' && v.name.includes('Male')) || 
+                                  this.voices.find(v => v.name === 'Google UK English Male') || 
+                                  this.voices.find(v => v.lang === 'en-GB');
+                                  
+                if (jarvisVoice) utterance.voice = jarvisVoice;
+                else utterance.voice = this.voices.find(v => v.lang === this.currentLang) || this.voices[0];
                 
-                utterance.rate = 1.05;
-                utterance.pitch = 0.9;
+                // Fine-tuned for JARVIS (Lower pitch, normal speed)
+                utterance.rate = 1.0; 
+                utterance.pitch = 0.85; 
 
                 utterance.onstart = () => { 
                     this.isSpeaking = true;
                     this.mainHud.classList.remove('listening');
                     this.mainHud.classList.add('speaking'); 
+                    if (this.recognition) this.recognition.stop(); // Stop mic while speaking
                 };
                 utterance.onend = () => { 
                     this.isSpeaking = false;
                     this.mainHud.classList.remove('speaking'); 
+                    this.resumeListening(); // Restart mic after speaking
                 };
                 
                 window.speechSynthesis.speak(utterance);
+            }
+
+            resumeListening() {
+                if (!this.isListening && !this.isSpeaking && !this.isProcessing && this.recognition) {
+                    setTimeout(() => {
+                        try { this.recognition.start(); } catch(e) {}
+                    }, 300);
+                }
             }
 
             setupSpeechRecognition() {
@@ -577,13 +557,7 @@
                 };
 
                 this.recognition.onresult = (event) => {
-                    if (!this.isListening) return;
-
-                    if (this.isSpeaking) {
-                        window.speechSynthesis.cancel();
-                        this.isSpeaking = false;
-                        this.mainHud.classList.remove('speaking');
-                    }
+                    if (this.isSpeaking || this.isProcessing) return;
 
                     let interimTranscript = '';
                     for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -596,17 +570,25 @@
 
                     const currentText = (this.finalTranscript + interimTranscript).toLowerCase().trim();
 
-                    if (currentText.includes('jarvis') || currentText.includes('जार्विस')) {
-                        const command = currentText.replace(/jarvis|जार्विस/gi, '').replace(/,/g, '').trim();
+                    if (currentText.length > 0) {
+                        // Reset silence timer
+                        clearTimeout(this.speechTimeout);
                         
-                        if (command.length > 0) {
-                            this.finalTranscript = '';
-                            this.sendMessage(command);
-                        } else {
-                            clearTimeout(this.speechTimeout);
+                        // If user said the wake word, or is just talking
+                        if (currentText.includes('jarvis') || currentText.includes('जार्विस')) {
+                            // Wait for 1.2 seconds of silence before sending
                             this.speechTimeout = setTimeout(() => {
-                                this.finalTranscript = '';
-                            }, 3000);
+                                let command = currentText.replace(/jarvis|जार्विस/gi, '').replace(/,/g, '').trim();
+                                
+                                // If they just said "Jarvis", acknowledge. If they said a command, process it.
+                                if (command.length === 0) {
+                                    this.speak("Yes, sir. I am listening.");
+                                    this.finalTranscript = '';
+                                } else {
+                                    this.finalTranscript = '';
+                                    this.sendMessage(command);
+                                }
+                            }, 1200); 
                         }
                     }
                 };
@@ -622,15 +604,10 @@
                 this.recognition.onend = () => {
                     this.isListening = false;
                     this.mainHud.classList.remove('listening');
-                    
-                    if (this.voiceEnabled && !this.isSpeaking) {
-                        setTimeout(() => {
-                            try { this.recognition.start(); } catch(e) {}
-                        }, 500);
-                    }
+                    this.resumeListening();
                 };
                 
-                try { this.recognition.start(); } catch(e) {}
+                this.recognition.start();
             }
 
             setupEventListeners() {
@@ -658,7 +635,11 @@
 
                 this.langSelect.addEventListener('change', (e) => {
                     this.currentLang = e.target.value;
-                    if (this.recognition) this.recognition.lang = this.currentLang;
+                    if (this.recognition) {
+                        this.recognition.stop();
+                        this.recognition.lang = this.currentLang;
+                        this.resumeListening();
+                    }
                 });
             }
 
@@ -689,7 +670,9 @@
                         this.langSelect.appendChild(option);
                     });
 
-                    this.langSelect.value = this.voices.find(v => v.lang === 'en-US') ? 'en-US' : this.voices[0].lang;
+                    // Default to UK English if available, else US
+                    this.langSelect.value = this.voices.find(v => v.lang === 'en-GB') ? 'en-GB' : 'en-US';
+                    this.currentLang = this.langSelect.value;
                 };
 
                 populateVoices();
