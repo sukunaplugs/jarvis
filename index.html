@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S - Live Conversational AI</title>
+    <title>J.A.R.V.I.S - Live AI Assistant</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -30,7 +30,7 @@
             font-family: 'Inter', sans-serif;
             color: white;
             transition: all 0.5s ease;
-            cursor: pointer; /* Indicates you can click to start */
+            cursor: pointer;
         }
 
         /* --- HUD CIRCLE --- */
@@ -45,7 +45,7 @@
             align-items: center;
             transition: transform 0.5s ease, filter 0.5s ease;
             margin-bottom: 20px;
-            pointer-events: none; /* Let clicks pass through to body */
+            pointer-events: none;
         }
 
         .hud-wrapper.passive { filter: brightness(0.6); transform: scale(0.95); }
@@ -92,7 +92,7 @@
             flex-direction: column;
             gap: 15px;
             z-index: 20;
-            cursor: default; /* Reset cursor for chat area */
+            cursor: default;
         }
 
         .chat-log {
@@ -198,7 +198,6 @@
 <body>
 
     <div class="hud-wrapper passive" id="hud">
-        <!-- SVG HUD -->
         <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
@@ -226,7 +225,6 @@
         <div class="jarvis-text" id="statusText">STANDBY</div>
     </div>
 
-    <!-- Chat & UI Container -->
     <div class="ui-container">
         <div class="chat-log" id="chatLog">
             <div class="message msg-system">Click anywhere on the screen to activate voice, or type below.</div>
@@ -237,7 +235,7 @@
         </div>
 
         <div class="input-bar">
-            <input type="text" id="chatInput" placeholder="Type a command or say 'Jarvis'..." autocomplete="off">
+            <input type="text" id="chatInput" placeholder="Ask me anything..." autocomplete="off">
             <button id="sendBtn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -248,6 +246,13 @@
     </div>
 
     <script>
+        // =====================================================================
+        // ⚠️ PASTE YOUR OPENAI API KEY HERE (Keep the quotes) ⚠️
+        // =====================================================================
+        const OPENAI_API_KEY = "YOUR_OPENAI_API_KEY_HERE"; 
+        // =====================================================================
+
+
         // --- DOM Elements ---
         const hud = document.getElementById('hud');
         const chatLog = document.getElementById('chatLog');
@@ -309,12 +314,12 @@
             chatLog.scrollTop = chatLog.scrollHeight;
         }
 
-        // --- Core Initialization (Triggered by first click) ---
+        // --- Core Initialization ---
         function initSystem() {
             if (isSystemActive) return;
             isSystemActive = true;
             
-            // Prime the audio context for browsers
+            // Prime the audio context
             const u = new SpeechSynthesisUtterance("");
             synth.speak(u);
 
@@ -388,7 +393,7 @@
 
         // --- Text Chat Input ---
         function handleTextSubmit() {
-            initSystem(); // Ensure system initializes if they bypass the click listener
+            initSystem(); 
             const text = chatInput.value.trim();
             if (text) {
                 isAwake = true;
@@ -398,7 +403,7 @@
         }
 
         sendBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent double firing with body click
+            e.stopPropagation(); 
             handleTextSubmit();
         });
         
@@ -406,18 +411,62 @@
             if (e.key === 'Enter') handleTextSubmit();
         });
 
-        // --- Process & Respond ---
-        function processUserInput(text) {
+        // --- Process & Respond (NOW WITH REAL API) ---
+        async function processUserInput(text) {
             addMessage(text, 'user');
             updateState('processing');
             
             if(recognition) recognition.stop(); 
 
-            setTimeout(() => {
-                let response = generateAIResponse(text);
-                addMessage(response, 'ai');
-                speakResponse(response);
-            }, 800);
+            try {
+                if (OPENAI_API_KEY === "YOUR_OPENAI_API_KEY_HERE" || !OPENAI_API_KEY) {
+                    throw new Error("API_KEY_MISSING");
+                }
+
+                // Fetch from OpenAI API
+                const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${OPENAI_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4o-mini", // Fast and cost-effective model
+                        messages: [
+                            { 
+                                role: "system", 
+                                content: "You are J.A.R.V.I.S., Tony Stark's AI assistant. You are highly intelligent, concise, slightly sarcastic but extremely polite. Address the user as 'sir'. Keep your spoken responses brief (1 to 3 sentences)." 
+                            },
+                            { role: "user", content: text }
+                        ],
+                        max_tokens: 150
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const aiReply = data.choices[0].message.content;
+                
+                addMessage(aiReply, 'ai');
+                speakResponse(aiReply);
+
+            } catch (error) {
+                console.error("API Error:", error);
+                
+                let errorMsg = "I am sorry sir, my connection to the mainframe is experiencing interference.";
+                
+                if (error.message === "API_KEY_MISSING") {
+                    errorMsg = "Please insert a valid API key into my system files to access my neural network.";
+                } else if (error.message.includes("401")) {
+                    errorMsg = "My API key appears to be invalid, sir.";
+                }
+
+                addMessage(errorMsg, 'ai');
+                speakResponse(errorMsg);
+            }
         }
 
         // --- Text-to-Speech (TTS) ---
@@ -447,25 +496,6 @@
             };
 
             synth.speak(utterance);
-        }
-
-        // --- Mock AI Brain ---
-        function generateAIResponse(input) {
-            const text = input.toLowerCase();
-            
-            if (text.includes('hello') || text.includes('hi')) {
-                return "Hello, sir. How may I assist you today?";
-            } else if (text.includes('time')) {
-                return `The current time is ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.`;
-            } else if (text.includes('who are you')) {
-                return "I am J.A.R.V.I.S, your personal artificial intelligence assistant.";
-            } else if (text.includes('status')) {
-                return "All core systems are functioning within normal parameters.";
-            } else if (text.includes('stop') || text.includes('sleep')) {
-                return "Entering standby mode.";
-            } else {
-                return "I have processed your request, sir. However, my secondary logic modules are offline. Is there anything else?";
-            }
         }
 
         // Load voices asynchronously
