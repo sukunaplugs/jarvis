@@ -3,479 +3,422 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S. System Interface</title>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <title>J.A.R.V.I.S. Live Assistant</title>
     <style>
-        /* --- Base Setup --- */
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
         :root {
-            --primary: #ffffff;
-            --bg: #030303;
-            --glass: rgba(20, 20, 20, 0.6);
-            --border: rgba(255, 255, 255, 0.2);
+            --primary: #00f3ff;
+            --bg: #010a17;
+            --pulse-scale: 1;
+            --status-color: #00f3ff;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Share Tech Mono', monospace;
-            user-select: none;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background-color: var(--bg);
-            color: var(--primary);
+            background-image: radial-gradient(circle at center, #021a33 0%, #000000 100%);
             height: 100vh;
-            overflow: hidden;
-            display: grid;
-            grid-template-columns: 250px 1fr 300px;
-            grid-template-rows: 60px 1fr 40px;
-            gap: 15px;
-            padding: 15px;
-            /* Animated Grid Background */
-            background-image: 
-                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            animation: gridMove 10s linear infinite;
-        }
-
-        /* --- Layout Panels --- */
-        .panel {
-            border: 1px solid var(--border);
-            background: var(--glass);
-            backdrop-filter: blur(5px);
-            padding: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .panel::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 10px; height: 10px;
-            border-top: 2px solid var(--primary);
-            border-left: 2px solid var(--primary);
-        }
-        .panel::after {
-            content: '';
-            position: absolute;
-            bottom: 0; right: 0; width: 10px; height: 10px;
-            border-bottom: 2px solid var(--primary);
-            border-right: 2px solid var(--primary);
-        }
-
-        /* Header */
-        header {
-            grid-column: 1 / -1;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            padding: 0 20px;
-            letter-spacing: 2px;
-            text-shadow: 0 0 5px var(--primary);
-        }
-
-        .clock { font-size: 1.2rem; }
-
-        /* Left Panel (Stats) */
-        .left-panel { display: flex; flex-direction: column; gap: 20px; }
-        .stat-box h3 { font-size: 0.8rem; color: #888; margin-bottom: 5px; }
-        .bar-bg { width: 100%; height: 8px; background: #222; border: 1px solid #444; }
-        .bar-fill { height: 100%; background: var(--primary); box-shadow: 0 0 10px var(--primary); transition: width 0.5s; }
-        
-        /* Equalizer Animation */
-        .equalizer { display: flex; align-items: flex-end; gap: 3px; height: 50px; margin-top: 20px; }
-        .eq-bar { width: 100%; background: var(--primary); height: 10%; transition: height 0.1s; }
-
-        /* Center HUD */
-        .center-panel {
-            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            position: relative;
+            font-family: 'Share Tech Mono', monospace;
+            overflow: hidden;
+            color: var(--primary);
         }
 
         .hud-container {
             position: relative;
-            width: 500px;
-            height: 500px;
+            width: 80vmin;
+            height: 80vmin;
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+
+        .core {
+            position: absolute;
+            width: 35vmin;
+            height: 35vmin;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 243, 255, 0.05);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2), inset 0 0 30px rgba(0, 243, 255, 0.2);
+            border: 2px solid rgba(0, 243, 255, 0.5);
+            transform: scale(var(--pulse-scale));
+            transition: transform 0.05s ease-out, box-shadow 0.3s;
+            z-index: 10;
+        }
+
+        .core-text {
+            font-size: 3vmin;
+            font-weight: bold;
+            letter-spacing: 0.5vmin;
+            text-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary);
+            text-align: center;
         }
 
         .ring {
             position: absolute;
             border-radius: 50%;
-            border: 2px solid transparent;
+            border: 1px solid transparent;
         }
 
         .ring-1 {
-            width: 100%; height: 100%;
+            width: 70vmin; height: 70vmin;
             border-top: 2px solid var(--primary);
-            border-bottom: 2px dashed #555;
+            border-bottom: 2px solid var(--primary);
+            border-left: 1px dashed rgba(0, 243, 255, 0.3);
+            border-right: 1px dashed rgba(0, 243, 255, 0.3);
             animation: spin 15s linear infinite;
         }
 
         .ring-2 {
-            width: 85%; height: 85%;
+            width: 60vmin; height: 60vmin;
             border-left: 4px solid var(--primary);
-            border-right: 4px solid transparent;
-            animation: spin-reverse 10s linear infinite;
-            box-shadow: 0 0 20px rgba(255,255,255,0.1);
+            border-right: 4px solid var(--primary);
+            animation: reverse-spin 10s linear infinite;
         }
 
         .ring-3 {
-            width: 70%; height: 70%;
-            border: 1px dotted #888;
-            animation: spin 20s linear infinite;
+            width: 55vmin; height: 55vmin;
+            border: 2px solid transparent;
+            background: repeating-conic-gradient(from 0deg, var(--primary) 0deg 1deg, transparent 1deg 10deg);
+            -webkit-mask-image: radial-gradient(transparent 67%, black 68%, black 70%, transparent 71%);
+            mask-image: radial-gradient(transparent 67%, black 68%, black 70%, transparent 71%);
+            animation: spin 25s linear infinite reverse;
+            opacity: 0.7;
         }
 
         .ring-4 {
-            width: 55%; height: 55%;
-            border-top: 2px solid var(--primary);
-            border-bottom: 2px solid var(--primary);
-            border-left: 2px solid transparent;
-            border-right: 2px solid transparent;
-            animation: spin-reverse 5s linear infinite;
-        }
-
-        .core {
-            width: 40%; height: 40%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.8) 100%);
-            border: 2px solid var(--primary);
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 40px rgba(255,255,255,0.3), inset 0 0 20px rgba(255,255,255,0.2);
-            z-index: 10;
-            animation: pulse 2s infinite alternate;
-        }
-
-        .core h1 {
-            font-size: 1.8rem;
-            letter-spacing: 5px;
-            text-shadow: 0 0 10px var(--primary);
-            margin-bottom: 5px;
-        }
-
-        .status {
-            font-size: 0.8rem;
-            color: #aaa;
-            letter-spacing: 2px;
-        }
-
-        /* Radar Scan Line */
-        .scanner {
-            position: absolute;
-            width: 100%; height: 2px;
-            background: var(--primary);
-            box-shadow: 0 0 15px 2px var(--primary);
-            top: 50%; left: 0;
-            animation: scan 3s linear infinite;
+            width: 45vmin; height: 45vmin;
+            border-top: 3px dashed var(--primary);
+            border-bottom: 3px dashed var(--primary);
+            animation: spin 8s linear infinite;
             opacity: 0.5;
         }
 
-        /* Right Panel (Chat Log) */
-        .right-panel {
-            display: flex;
-            flex-direction: column;
+        .scanner {
+            position: absolute;
+            width: 80vmin; height: 80vmin;
+            border-radius: 50%;
+            background: linear-gradient(to bottom, transparent 45%, rgba(0, 243, 255, 0.2) 50%, transparent 55%);
+            animation: spin 4s linear infinite;
+            pointer-events: none;
+            z-index: 5;
         }
-        .right-panel h3 { margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
-        #chat-log {
-            flex-grow: 1;
+
+        .status-text {
+            position: absolute;
+            bottom: -8vmin;
+            font-size: 2vmin;
+            color: var(--status-color);
+            text-shadow: 0 0 10px var(--status-color);
+            letter-spacing: 2px;
+            text-align: center;
+            width: 100%;
+            transition: color 0.3s;
+        }
+
+        .hud-text {
+            position: absolute;
+            font-size: 1.5vmin;
+            opacity: 0.6;
+            letter-spacing: 2px;
+        }
+        .top-left { top: 5%; left: 5%; }
+        .top-right { top: 5%; right: 5%; text-align: right; }
+        .bottom-left { bottom: 5%; left: 5%; }
+        .bottom-right { bottom: 5%; right: 5%; text-align: right; }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes reverse-spin { 0% { transform: rotate(360deg); } 100% { transform: rotate(0deg); } }
+
+        .transcript-box {
+            position: absolute;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80vw;
+            max-width: 800px;
+            height: 15vh;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            padding: 10px;
+            font-size: 1.5vmin;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            font-size: 0.9rem;
-            padding-right: 10px;
-        }
-        #chat-log::-webkit-scrollbar { width: 5px; }
-        #chat-log::-webkit-scrollbar-thumb { background: var(--primary); }
-        
-        .msg { line-height: 1.4; }
-        .msg.user { color: #888; }
-        .msg.jarvis { color: var(--primary); text-shadow: 0 0 5px rgba(255,255,255,0.5); }
-
-        /* Footer */
-        footer {
-            grid-column: 1 / -1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 0.8rem;
-            letter-spacing: 3px;
-            color: #666;
-            border-top: 1px solid var(--border);
+            color: #fff;
+            border-radius: 5px;
+            display: none;
         }
 
-        /* --- Animations --- */
-        @keyframes gridMove {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 40px; }
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes spin-reverse {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(-360deg); }
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 20px rgba(255,255,255,0.2), inset 0 0 10px rgba(255,255,255,0.1); }
-            100% { box-shadow: 0 0 60px rgba(255,255,255,0.6), inset 0 0 30px rgba(255,255,255,0.4); }
-        }
-        @keyframes scan {
-            0% { top: 0%; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-
-        /* Active State */
-        body.listening .ring-2 { animation-duration: 2s; border-left-width: 6px; }
-        body.listening .core { background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.8) 100%); }
-        body.listening .status { color: var(--primary); font-weight: bold; animation: blink 1s infinite; }
-        
-        @keyframes blink { 50% { opacity: 0; } }
-
+        .transcript-box.active { display: block; }
+        .user-text { color: #00ff88; margin-bottom: 5px; }
+        .ai-text { color: #00f3ff; margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div>J.A.R.V.I.S. SYSTEM v4.2</div>
-        <div class="clock" id="clock">00:00:00</div>
-        <div>STATUS: <span id="sys-status">ONLINE</span></div>
-    </header>
+    <div class="hud-container">
+        <div class="hud-text top-left">SYSTEM: ONLINE<br>WAKE WORD: "JARVIS"</div>
+        <div class="hud-text top-right">NETWORK: SECURE<br>LATENCY: 12ms</div>
+        <div class="hud-text bottom-left">MIC: <span id="mic-status">STANDBY</span></div>
+        <div class="hud-text bottom-right">MODE: LIVE<br>AI: CONNECTED</div>
 
-    <aside class="panel left-panel">
-        <div class="stat-box">
-            <h3>NEURAL NETWORK LOAD</h3>
-            <div class="bar-bg"><div class="bar-fill" id="cpu-bar" style="width: 45%;"></div></div>
-        </div>
-        <div class="stat-box">
-            <h3>MEMORY ALLOCATION</h3>
-            <div class="bar-bg"><div class="bar-fill" id="mem-bar" style="width: 60%;"></div></div>
-        </div>
-        <div class="stat-box">
-            <h3>VOICE RECOGNITION</h3>
-            <div class="bar-bg"><div class="bar-fill" id="net-bar" style="width: 80%;"></div></div>
-        </div>
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+        <div class="ring ring-4"></div>
         
-        <div class="equalizer" id="equalizer">
-            <!-- Bars generated by JS -->
-        </div>
-        
-        <p style="font-size: 0.7rem; color: #555; margin-top: auto;">
-            &gt; SYSTEM INITIALIZED<br>
-            &gt; AWAITING WAKE WORD<br>
-            &gt; SAY "JARVIS"
-        </p>
-    </aside>
+        <div class="scanner"></div>
 
-    <main class="panel center-panel">
-        <div class="hud-container">
-            <div class="ring ring-1"></div>
-            <div class="ring ring-2"></div>
-            <div class="ring ring-3"></div>
-            <div class="ring ring-4"></div>
-            <div class="scanner"></div>
-            
-            <div class="core">
-                <h1>J.A.R.V.I.S</h1>
-                <div class="status" id="core-status">STANDBY</div>
-            </div>
+        <div class="core" id="core">
+            <div class="core-text" id="core-text">J.A.R.V.I.S</div>
         </div>
-    </main>
 
-    <aside class="panel right-panel">
-        <h3>COMMUNICATION LOG</h3>
-        <div id="chat-log">
-            <div class="msg jarvis">System initialized. Waiting for voice command.</div>
-        </div>
-    </aside>
+        <div class="status-text" id="status-text">Say "JARVIS" to activate...</div>
+    </div>
 
-    <footer>
-        <span id="footer-text">MICROPHONE: ACTIVE | SPEECH SYNTHESIS: READY</span>
-    </footer>
+    <div class="transcript-box" id="transcript-box"></div>
 
     <script>
         // --- UI Elements ---
-        const clockEl = document.getElementById('clock');
-        const coreStatus = document.getElementById('core-status');
-        const sysStatus = document.getElementById('sys-status');
-        const chatLog = document.getElementById('chat-log');
-        const footerText = document.getElementById('footer-text');
-        const equalizer = document.getElementById('equalizer');
+        const core = document.getElementById('core');
+        const coreText = document.getElementById('core-text');
+        const statusText = document.getElementById('status-text');
+        const micStatus = document.getElementById('mic-status');
+        const transcriptBox = document.getElementById('transcript-box');
 
-        // --- 1. Real-Time Clock ---
-        setInterval(() => {
-            const now = new Date();
-            clockEl.innerText = now.toLocaleTimeString('en-US', { hour12: false });
-        }, 1000);
+        // --- State Management ---
+        let isListening = false;
+        let isProcessing = false;
+        let isSpeaking = false;
+        let audioContext;
+        let analyser;
+        let dataArray;
+        let animationFrameId;
 
-        // --- 2. Fake System Stats Fluctuation ---
-        setInterval(() => {
-            document.getElementById('cpu-bar').style.width = `${Math.floor(Math.random() * 40) + 30}%`;
-            document.getElementById('mem-bar').style.width = `${Math.floor(Math.random() * 20) + 50}%`;
-            document.getElementById('net-bar').style.width = `${Math.floor(Math.random() * 10) + 85}%`;
-        }, 2000);
-
-        // --- 3. Equalizer Animation Setup ---
-        for(let i=0; i<20; i++) {
-            let bar = document.createElement('div');
-            bar.classList.add('eq-bar');
-            equalizer.appendChild(bar);
-        }
-        const eqBars = document.querySelectorAll('.eq-bar');
-        
-        function animateEq(isSpeaking) {
-            eqBars.forEach(bar => {
-                if(isSpeaking) {
-                    bar.style.height = `${Math.random() * 100}%`;
-                } else {
-                    bar.style.height = `${Math.random() * 20 + 5}%`; // Idle height
-                }
-            });
-        }
-        setInterval(() => animateEq(document.body.classList.contains('listening')), 100);
-
-        // --- 4. Chat Log Function ---
-        function addLog(sender, text, isTyping = false) {
-            const msgDiv = document.createElement('div');
-            msgDiv.className = `msg ${sender.toLowerCase()}`;
-            chatLog.appendChild(msgDiv);
-            
-            if (isTyping && sender === 'Jarvis') {
-                let i = 0;
-                const typeInterval = setInterval(() => {
-                    msgDiv.innerText = text.substring(0, i);
-                    i++;
-                    chatLog.scrollTop = chatLog.scrollHeight;
-                    if (i > text.length) clearInterval(typeInterval);
-                }, 30);
-            } else {
-                msgDiv.innerText = text;
-                chatLog.scrollTop = chatLog.scrollHeight;
-            }
-        }
-
-        // --- 5. Speech Recognition & Synthesis ---
+        // --- Web Speech API Setup ---
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        
         if (!SpeechRecognition) {
-            addLog('Jarvis', 'ERROR: Your browser does not support voice recognition. Please use Chrome or Edge.');
-            footerText.innerText = "ERROR: BROWSER NOT SUPPORTED";
-        } else {
-            const recognition = new SpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = false;
-            recognition.lang = 'en-US';
-
-            function jarvisSpeak(text) {
-                return new Promise((resolve) => {
-                    const synth = window.speechSynthesis;
-                    const utterance = new SpeechSynthesisUtterance(text);
-                    
-                    // Select a British voice if available
-                    const voices = synth.getVoices();
-                    const jarvisVoice = voices.find(v => v.lang === 'en-GB' && v.name.includes('Male')) || voices[0];
-                    if (jarvisVoice) utterance.voice = jarvisVoice;
-                    
-                    utterance.rate = 1.0;
-                    utterance.pitch = 0.9; // Slightly deeper
-
-                    utterance.onstart = () => {
-                        document.body.classList.add('speaking');
-                        sysStatus.innerText = "RESPONDING";
-                        coreStatus.innerText = "SPEAKING";
-                    };
-
-                    utterance.onend = () => {
-                        document.body.classList.remove('speaking');
-                        sysStatus.innerText = "ONLINE";
-                        coreStatus.innerText = "STANDBY";
-                        resolve();
-                    };
-
-                    synth.speak(utterance);
-                });
-            }
-
-            recognition.onstart = () => {
-                document.body.classList.add('listening');
-                coreStatus.innerText = "LISTENING";
-                sysStatus.innerText = "LISTENING";
-            };
-
-            recognition.onresult = async (event) => {
-                const current = event.resultIndex;
-                const transcript = event.results[current][0].transcript.toLowerCase().trim();
-                
-                if (!transcript) return;
-                
-                // Log user speech
-                addLog('User', `"${transcript}"`);
-
-                // Check for Wake Word "Jarvis"
-                if (transcript.includes("jarvis")) {
-                    recognition.stop(); // Stop listening while processing/speaking
-                    document.body.classList.remove('listening');
-                    coreStatus.innerText = "PROCESSING";
-
-                    let responseText = "Yes sir, I am here.";
-                    
-                    // Basic conversational logic
-                    if (transcript.includes("how are you")) {
-                        responseText = "I am functioning within normal parameters, sir.";
-                    } else if (transcript.includes("hello") || transcript.includes("hi")) {
-                        responseText = "Hello sir. How may I assist you today?";
-                    } else if (transcript.includes("your name")) {
-                        responseText = "I am Just A Rather Very Intelligent System, sir.";
-                    } else if (transcript.includes("status")) {
-                        responseText = "All systems are operating at optimal capacity.";
-                    }
-
-                    // Jarvis replies
-                    addLog('Jarvis', responseText, true); // true = trigger typewriter effect
-                    await jarvisSpeak(responseText);
-
-                    // Resume listening after finishing speaking
-                    setTimeout(() => {
-                        recognition.start();
-                    }, 1000);
-                }
-            };
-
-            recognition.onerror = (event) => {
-                if (event.error === 'not-allowed') {
-                    addLog('Jarvis', 'Microphone access denied. Please allow microphone permissions.');
-                    footerText.innerText = "ERROR: MIC ACCESS DENIED";
-                }
-            };
-
-            recognition.onend = () => {
-                // Auto-restart if it stopped unexpectedly (and we aren't speaking)
-                if (!document.body.classList.contains('speaking')) {
-                    recognition.start();
-                }
-            };
-
-            // Start listening on load
-            window.addEventListener('load', () => {
-                // Wait for voices to load in browser
-                setTimeout(() => {
-                    recognition.start();
-                }, 1000);
-            });
+            alert("Your browser does not support the Web Speech API. Please use Google Chrome or Microsoft Edge.");
         }
+
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true; // Keep listening for wake word
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        // --- Text-to-Speech Setup ---
+        const synth = window.speechSynthesis;
+        let jarvisVoice = null;
+
+        // Load voices and try to find a British Male voice for JARVIS
+        function loadVoices() {
+            const voices = synth.getVoices();
+            // Try to find a deep, British voice (like Daniel or George)
+            jarvisVoice = voices.find(v => v.lang === 'en-GB' && v.name.includes('Male')) ||
+                          voices.find(v => v.name.includes('Daniel')) ||
+                          voices.find(v => v.lang === 'en-GB') ||
+                          voices[0];
+        }
+        synth.onvoiceschanged = loadVoices;
+        loadVoices();
+
+        // --- Audio Visualizer Logic (Reusing previous code) ---
+        async function setupAudioVisualizer() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                const source = audioContext.createMediaStreamSource(stream);
+                source.connect(analyser);
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                updateAudioVisualizer();
+            } catch (err) {
+                console.error("Mic access denied for visualizer:", err);
+            }
+        }
+
+        function updateAudioVisualizer() {
+            if (!analyser) return;
+            analyser.getByteFrequencyData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+            let average = sum / dataArray.length;
+            let scale = 1 + (average / 60); 
+            document.documentElement.style.setProperty('--pulse-scale', scale);
+            let glowIntensity = Math.min(50, average * 0.5);
+            core.style.boxShadow = `0 0 ${20 + glowIntensity}px rgba(0, 243, 255, 0.6), inset 0 0 ${30 + glowIntensity}px rgba(0, 243, 255, 0.4)`;
+            animationFrameId = requestAnimationFrame(updateAudioVisualizer);
+        }
+
+        // --- Core Assistant Logic ---
+
+        // 1. Start the hands-free loop
+        function startAssistant() {
+            if (isListening) return;
+            isListening = true;
+            recognition.start();
+            setupAudioVisualizer();
+            micStatus.textContent = "ACTIVE";
+            statusText.textContent = "Listening for 'JARVIS'...";
+            statusText.style.color = "#00ff88";
+        }
+
+        // 2. Handle Speech Recognition Results
+        recognition.onresult = (event) => {
+            if (isProcessing || isSpeaking) return; // Ignore while AI is thinking/speaking to prevent echo
+
+            const last = event.results.length - 1;
+            const transcript = event.results[last][0].transcript.toLowerCase().trim();
+            const isFinal = event.results[last].isFinal;
+
+            // Wake Word Detection
+            if (transcript.includes("jarvis")) {
+                // Check if there is a command after the wake word
+                const commandText = transcript.replace("jarvis", "").trim();
+                
+                if (commandText.length > 0 && isFinal) {
+                    // Command given directly with wake word
+                    addToTranscript('user', commandText);
+                    processUserCommand(commandText);
+                } else if (isFinal) {
+                    // Just the wake word said
+                    statusText.textContent = "Yes, sir? I'm listening...";
+                    statusText.style.color = "#00f3ff";
+                    speakResponse("Yes, sir? How can I help you?");
+                }
+            } else if (isFinal && transcript.length > 0) {
+                // If listening was manually triggered or already active
+                // Here we assume if it hears a command after activation, it processes it.
+                // For simplicity, let's just process any final sentence when the mic is active.
+                // In a real app, you'd use a state machine to track if the assistant is "awaiting command".
+            }
+        };
+
+        recognition.onerror = (event) => {
+            console.error("Speech recognition error:", event.error);
+            if (event.error === 'not-allowed') {
+                statusText.textContent = "Microphone access denied.";
+                statusText.style.color = "#ff4444";
+            }
+        };
+
+        recognition.onend = () => {
+            // Automatically restart listening if it stops (e.g., due to silence)
+            // unless the AI is currently speaking or processing.
+            if (isListening && !isSpeaking && !isProcessing) {
+                recognition.start();
+            }
+        };
+
+        // 3. Process the command (LLM Integration)
+        async function processUserCommand(text) {
+            isProcessing = true;
+            statusText.textContent = "Thinking...";
+            statusText.style.color = "#ffaa00";
+            coreText.textContent = "THINKING...";
+
+            try {
+                // ---------------------------------------------------------
+                // OPTION A: MOCK AI (Use this if you don't have an API key)
+                // ---------------------------------------------------------
+                // await new Promise(resolve => setTimeout(resolve, 1500));
+                // const aiResponse = `I heard you say: "${text}". This is a mock response.`;
+                
+                // ---------------------------------------------------------
+                // OPTION B: REAL OpenAI API (Requires a secure backend)
+                // ---------------------------------------------------------
+                // IMPORTANT: Never expose your API key in frontend code.
+                // You must create a backend endpoint (e.g., /api/chat) that
+                // uses your API key and returns the response.
+                // ---------------------------------------------------------
+                const response = await fetch('/api/chat', { // Replace with your actual backend endpoint
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
+
+                if (!response.ok) throw new Error("API request failed");
+                const data = await response.json();
+                const aiResponse = data.reply; // Assuming your backend returns { reply: "..." }
+
+                // Display and speak the response
+                addToTranscript('ai', aiResponse);
+                speakResponse(aiResponse);
+
+            } catch (error) {
+                console.error("Error processing command:", error);
+                const errorMsg = "I'm sorry, I encountered an error connecting to the AI brain.";
+                addToTranscript('ai', errorMsg);
+                speakResponse(errorMsg);
+            } finally {
+                isProcessing = false;
+            }
+        }
+
+        // 4. Text-to-Speech (JARVIS Voice)
+        function speakResponse(text) {
+            if (synth.speaking) synth.cancel(); // Stop any current speech
+
+            isSpeaking = true;
+            statusText.textContent = "Speaking...";
+            statusText.style.color = "#00ff88";
+            coreText.textContent = "J.A.R.V.I.S";
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            if (jarvisVoice) utterance.voice = jarvisVoice;
+            utterance.rate = 1.05; // Slightly faster
+            utterance.pitch = 0.9; // Slightly lower pitch for JARVIS feel
+            
+            utterance.onend = () => {
+                isSpeaking = false;
+                statusText.textContent = "Listening for 'JARVIS'...";
+                statusText.style.color = "#00ff88";
+                // Recognition might have stopped while speaking, ensure it restarts
+                if (isListening && !recognition.active) {
+                    try { recognition.start(); } catch(e) {}
+                }
+            };
+
+            synth.speak(utterance);
+        }
+
+        // 5. Transcript Helper
+        function addToTranscript(role, text) {
+            transcriptBox.classList.add('active');
+            const div = document.createElement('div');
+            div.className = role === 'user' ? 'user-text' : 'ai-text';
+            div.textContent = `${role === 'user' ? 'YOU' : 'JARVIS'}: ${text}`;
+            transcriptBox.appendChild(div);
+            transcriptBox.scrollTop = transcriptBox.scrollHeight;
+            // Keep transcript clean
+            if (transcriptBox.children.length > 10) {
+                transcriptBox.removeChild(transcriptBox.firstChild);
+            }
+        }
+
+        // --- Initialization ---
+        // Start the assistant automatically on page load
+        window.addEventListener('load', () => {
+            // Note: Browsers often require a user gesture (click) to start microphone access.
+            // If it doesn't start automatically, add a click listener to the body.
+            document.body.addEventListener('click', () => {
+                if (!isListening) {
+                    startAssistant();
+                }
+            }, { once: true });
+            
+            // Try to start immediately (might be blocked by browser policy)
+            startAssistant();
+        });
+
     </script>
 </body>
 </html>
