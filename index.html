@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S - Live Voice Assistant</title>
+    <title>J.A.R.V.I.S - Fast Live Voice Assistant</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
@@ -58,7 +58,6 @@
             z-index: 10; width: 100%; max-width: 1200px; margin: 0 auto;
         }
 
-        /* --- PREMIUM HUD --- */
         .hud-wrapper {
             position: absolute;
             top: 50%; left: 50%;
@@ -67,7 +66,7 @@
             max-width: 800px; max-height: 800px;
             display: flex; justify-content: center; align-items: center;
             pointer-events: none; z-index: 0; opacity: 0.15;
-            transition: all 0.5s ease;
+            transition: all 0.3s ease;
         }
 
         .hud-wrapper.listening { opacity: 0.7; filter: drop-shadow(0 0 50px var(--accent)); }
@@ -102,7 +101,7 @@
             color: #ffffff;
             text-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan), 0 0 40px var(--cyan);
             z-index: 5;
-            transition: all 0.5s ease;
+            transition: all 0.3s ease;
             text-align: center;
         }
 
@@ -123,7 +122,6 @@
         .listening .reactor-core { background: radial-gradient(circle, #ffffff 0%, var(--accent) 30%, transparent 70%); box-shadow: 0 0 30px var(--accent), 0 0 60px var(--accent); }
         .speaking .reactor-core { background: radial-gradient(circle, #ffffff 0%, var(--speaking-color) 30%, transparent 70%); box-shadow: 0 0 30px var(--speaking-color), 0 0 60px var(--speaking-color); }
 
-        /* --- CHAT INTERFACE --- */
         .chat-container {
             flex: 1; overflow-y: auto; padding: 30px 10%;
             display: flex; flex-direction: column; gap: 20px;
@@ -133,7 +131,7 @@
         .chat-container::-webkit-scrollbar-thumb { background: rgba(0, 243, 255, 0.3); border-radius: 6px; }
         .chat-container::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
 
-        .message { display: flex; gap: 15px; max-width: 100%; animation: fadeIn 0.4s ease; }
+        .message { display: flex; gap: 15px; max-width: 100%; animation: fadeIn 0.3s ease; }
         .msg-avatar {
             width: 35px; height: 35px; border-radius: 50%;
             display: flex; justify-content: center; align-items: center;
@@ -191,8 +189,8 @@
             font-family: 'Share Tech Mono', monospace; margin-bottom: 20px;
             padding-left: 10%; z-index: 10; position: relative;
         }
-        .typing-indicator.active { display: block; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        .typing-indicator.active { display: block; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
         .input-container {
             padding: 20px 10%; background: linear-gradient(to top, var(--bg-dark) 60%, transparent);
@@ -240,7 +238,7 @@
         }
         .lang-select option { background: var(--bg-dark); }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         @media (max-width: 768px) {
             .chat-container { padding: 20px 5%; }
@@ -294,7 +292,7 @@
 
         <div class="input-container">
             <div class="input-box">
-                <textarea id="chatInput" rows="1" placeholder="Awaiting command or say 'Jarvis'..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
+                <textarea id="chatInput" rows="1" placeholder="Say 'Jarvis' to wake..." oninput="this.style.height = '';this.style.height = this.scrollHeight + 'px'"></textarea>
                 
                 <div class="input-actions">
                     <div class="left-actions">
@@ -334,22 +332,16 @@
                 this.voices = [];
                 
                 this.recognition = null;
-                this.finalTranscript = '';
-                this.speechTimeout = null;
+                this.manualStop = false;
 
                 this.init();
             }
 
             init() {
-                try {
-                    this.loadVoices();
-                    this.setupSpeechRecognition();
-                    this.setupEventListeners();
-
-                    this.addMessage('ai', 'Systems online. Neural link established. How may I assist you, sir?');
-                } catch (e) {
-                    console.error("Initialization Error:", e);
-                }
+                this.loadVoices();
+                this.setupSpeechRecognition();
+                this.setupEventListeners();
+                this.addMessage('ai', 'Systems online. I am listening, sir.');
             }
 
             addMessage(role, text) {
@@ -377,28 +369,7 @@
 
                 msgDiv.appendChild(avatar);
                 msgDiv.appendChild(content);
-
-                if (role === 'ai') {
-                    const actions = document.createElement('div');
-                    actions.className = 'msg-actions';
-                    
-                    const copyBtn = document.createElement('button');
-                    copyBtn.className = 'action-btn';
-                    copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy';
-                    copyBtn.onclick = () => {
-                        navigator.clipboard.writeText(text);
-                        copyBtn.innerText = 'Copied!';
-                        setTimeout(() => copyBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy', 2000);
-                    };
-                    actions.appendChild(copyBtn);
-                    content.appendChild(actions);
-                }
-
                 this.chatContainer.appendChild(msgDiv);
-                this.scrollToBottom();
-            }
-
-            scrollToBottom() {
                 this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
             }
 
@@ -410,17 +381,19 @@
                 this.chatInput.style.height = 'auto';
                 
                 this.addMessage('user', text);
-                this.sendBtn.disabled = true;
                 this.typingIndicator.classList.add('active');
                 this.isProcessing = true;
-                this.scrollToBottom();
+                
+                // Stop listening while processing
+                this.manualStop = true;
+                this.recognition.stop();
 
-                const contextMessages = this.messages.slice(-6).map(m => ({
+                const contextMessages = this.messages.slice(-4).map(m => ({
                     role: m.role,
                     content: m.content
                 }));
 
-                const systemPrompt = `You are J.A.R.V.I.S., Tony Stark's AI. Be highly intelligent, witty, slightly sarcastic, and formal. Address the user as 'sir'. Format your responses beautifully using Markdown. Reply in this language: ${this.currentLang}.`;
+                const systemPrompt = `You are J.A.R.V.I.S., Tony Stark's AI. Be highly intelligent, witty, slightly sarcastic, and formal. Address the user as 'sir'. Keep responses very brief (1-2 sentences max) so they are fast to speak. Reply in this language: ${this.currentLang}.`;
                 
                 const payload = [
                     { role: "system", content: systemPrompt },
@@ -429,58 +402,42 @@
 
                 let aiReply = null;
 
-                // --- TIER 1: Pollinations GET ---
+                // --- FAST API TIER 1: Pollinations POST (Reduced Tokens for Speed) ---
+                try {
+                    const res = await fetch("https://text.pollinations.ai/openai", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ 
+                            model: "openai", 
+                            messages: payload, 
+                            max_tokens: 150 // Keeping it short makes it much faster
+                        })
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.choices && data.choices[0].message.content) {
+                            aiReply = data.choices[0].message.content;
+                        }
+                    }
+                } catch (e) { console.warn("Tier 1 failed"); }
+
+                // --- FAST API TIER 2: Pollinations GET ---
                 if (!aiReply) {
                     try {
-                        let fullPrompt = `${systemPrompt}\n\n`;
-                        contextMessages.forEach(m => { fullPrompt += `${m.role}: ${m.content}\n`; });
-                        fullPrompt += `J.A.R.V.I.S:`;
-
+                        let fullPrompt = `${systemPrompt}\n\nUser: ${text}\nJ.A.R.V.I.S:`;
                         const res = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}`);
                         if (res.ok) aiReply = await res.text();
-                    } catch (e) { console.warn("Tier 1 failed"); }
-                }
-
-                // --- TIER 2: Pollinations POST ---
-                if (!aiReply) {
-                    try {
-                        const res = await fetch("https://text.pollinations.ai/openai", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ model: "openai", messages: payload, max_tokens: 600 })
-                        });
-                        if (res.ok) {
-                            const data = await res.json();
-                            if (data.choices && data.choices[0].message.content) aiReply = data.choices[0].message.content;
-                        }
                     } catch (e) { console.warn("Tier 2 failed"); }
                 }
 
-                // --- TIER 3: KeylessAI ---
                 if (!aiReply) {
-                    try {
-                        const res = await fetch("https://keylessai.thryx.workers.dev/v1/chat/completions", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ model: "gpt-3.5-turbo", messages: payload, max_tokens: 600 })
-                        });
-                        if (res.ok) {
-                            const data = await res.json();
-                            if (data.choices && data.choices[0].message.content) aiReply = data.choices[0].message.content;
-                        }
-                    } catch (e) { console.warn("Tier 3 failed"); }
-                }
-
-                // --- FINAL FALLBACK ---
-                if (!aiReply) {
-                    aiReply = "I am currently experiencing complete network isolation, sir. Please ensure you are not running this file directly (use a local server like VS Code Live Server) and check your internet connection.";
+                    aiReply = "My connection to the neural network is unstable, sir.";
                 }
 
                 aiReply = aiReply.replace(/J\.A\.R\.V\.I\.S\.?\s*/gi, "").replace(/Assistant:\s*/gi, "").trim();
 
                 this.typingIndicator.classList.remove('active');
                 this.addMessage('ai', aiReply);
-                this.sendBtn.disabled = false;
                 this.isProcessing = false;
 
                 // Trigger Voice Response
@@ -488,13 +445,10 @@
             }
 
             speak(text) {
-                if (!text) {
-                    this.resumeListening();
-                    return;
-                }
+                if (!text) return;
                 
                 let cleanText = text
-                    .replace(/```[\s\S]*?```/g, ' [Code Block] ') 
+                    .replace(/```[\s\S]*?```/g, ' [Code] ') 
                     .replace(/`([^`]+)`/g, '$1')
                     .replace(/[*_#>-]/g, '')
                     .trim();
@@ -503,8 +457,7 @@
                 const utterance = new SpeechSynthesisUtterance(cleanText);
                 utterance.lang = this.currentLang;
                 
-                // **ORIGINAL JARVIS VOICE OPTIMIZATION**
-                // Try to find a British Male voice
+                // ORIGINAL JARVIS VOICE (UK Male)
                 let jarvisVoice = this.voices.find(v => v.lang === 'en-GB' && v.name.includes('Male')) || 
                                   this.voices.find(v => v.name === 'Google UK English Male') || 
                                   this.voices.find(v => v.lang === 'en-GB');
@@ -512,92 +465,67 @@
                 if (jarvisVoice) utterance.voice = jarvisVoice;
                 else utterance.voice = this.voices.find(v => v.lang === this.currentLang) || this.voices[0];
                 
-                // Fine-tuned for JARVIS (Lower pitch, normal speed)
-                utterance.rate = 1.0; 
-                utterance.pitch = 0.85; 
+                utterance.rate = 1.1; // Slightly faster for snappy replies
+                utterance.pitch = 0.85; // Lower pitch for JARVIS
 
                 utterance.onstart = () => { 
                     this.isSpeaking = true;
                     this.mainHud.classList.remove('listening');
                     this.mainHud.classList.add('speaking'); 
-                    if (this.recognition) this.recognition.stop(); // Stop mic while speaking
                 };
+                
                 utterance.onend = () => { 
                     this.isSpeaking = false;
                     this.mainHud.classList.remove('speaking'); 
-                    this.resumeListening(); // Restart mic after speaking
+                    this.resumeListening();
                 };
                 
                 window.speechSynthesis.speak(utterance);
             }
 
             resumeListening() {
-                if (!this.isListening && !this.isSpeaking && !this.isProcessing && this.recognition) {
-                    setTimeout(() => {
-                        try { this.recognition.start(); } catch(e) {}
-                    }, 300);
+                if (!this.isListening && !this.isSpeaking && !this.isProcessing && !this.manualStop) {
+                    try { this.recognition.start(); } catch(e) {}
                 }
             }
 
             setupSpeechRecognition() {
                 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                if (!SpeechRecognition) {
-                    console.warn("Speech Recognition not supported.");
-                    return;
-                }
+                if (!SpeechRecognition) return;
 
                 this.recognition = new SpeechRecognition();
                 this.recognition.continuous = true;
-                this.recognition.interimResults = true;
+                this.recognition.interimResults = false; // ONLY process final results for speed & accuracy
                 this.recognition.lang = this.currentLang;
 
                 this.recognition.onstart = () => {
                     this.isListening = true;
+                    this.manualStop = false;
                     this.mainHud.classList.add('listening');
                 };
 
                 this.recognition.onresult = (event) => {
                     if (this.isSpeaking || this.isProcessing) return;
 
-                    let interimTranscript = '';
-                    for (let i = event.resultIndex; i < event.results.length; ++i) {
-                        if (event.results[i].isFinal) {
-                            this.finalTranscript += event.results[i][0].transcript + ' ';
-                        } else {
-                            interimTranscript += event.results[i][0].transcript;
-                        }
-                    }
+                    const transcript = event.results[event.results.length - 1][0].transcript.toLowerCase().trim();
 
-                    const currentText = (this.finalTranscript + interimTranscript).toLowerCase().trim();
-
-                    if (currentText.length > 0) {
-                        // Reset silence timer
-                        clearTimeout(this.speechTimeout);
+                    // Wake word detection
+                    if (transcript.includes('jarvis') || transcript.includes('जार्विस')) {
+                        let command = transcript.replace(/jarvis|जार्विस/gi, '').replace(/,/g, '').trim();
                         
-                        // If user said the wake word, or is just talking
-                        if (currentText.includes('jarvis') || currentText.includes('जार्विस')) {
-                            // Wait for 1.2 seconds of silence before sending
-                            this.speechTimeout = setTimeout(() => {
-                                let command = currentText.replace(/jarvis|जार्विस/gi, '').replace(/,/g, '').trim();
-                                
-                                // If they just said "Jarvis", acknowledge. If they said a command, process it.
-                                if (command.length === 0) {
-                                    this.speak("Yes, sir. I am listening.");
-                                    this.finalTranscript = '';
-                                } else {
-                                    this.finalTranscript = '';
-                                    this.sendMessage(command);
-                                }
-                            }, 1200); 
+                        if (command.length > 0) {
+                            // Instant command
+                            this.sendMessage(command);
+                        } else {
+                            // Just "Jarvis"
+                            this.speak("Yes, sir?");
                         }
                     }
                 };
 
                 this.recognition.onerror = (event) => {
                     if (event.error === 'not-allowed') {
-                        this.addMessage('system', 'Microphone access denied. Please allow mic permissions.');
-                        this.isListening = false;
-                        this.mainHud.classList.remove('listening');
+                        this.addMessage('system', 'Microphone access denied.');
                     }
                 };
 
@@ -607,12 +535,11 @@
                     this.resumeListening();
                 };
                 
-                this.recognition.start();
+                try { this.recognition.start(); } catch(e) {}
             }
 
             setupEventListeners() {
                 this.sendBtn.addEventListener('click', () => this.sendMessage());
-                
                 this.chatInput.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
@@ -620,25 +547,16 @@
                     }
                 });
 
-                document.getElementById('fileUpload').addEventListener('change', (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        const content = event.target.result;
-                        this.chatInput.value = `I have attached a file named "${file.name}". Here are its contents:\n\n\`\`\`\n${content.substring(0, 3000)}\n\`\`\`\n\nPlease review this file and summarize it.`;
-                        this.chatInput.style.height = this.chatInput.scrollHeight + 'px';
-                    };
-                    reader.readAsText(file);
-                });
-
                 this.langSelect.addEventListener('change', (e) => {
                     this.currentLang = e.target.value;
                     if (this.recognition) {
+                        this.manualStop = true;
                         this.recognition.stop();
-                        this.recognition.lang = this.currentLang;
-                        this.resumeListening();
+                        setTimeout(() => {
+                            this.recognition.lang = this.currentLang;
+                            this.manualStop = false;
+                            this.resumeListening();
+                        }, 500);
                     }
                 });
             }
@@ -670,7 +588,6 @@
                         this.langSelect.appendChild(option);
                     });
 
-                    // Default to UK English if available, else US
                     this.langSelect.value = this.voices.find(v => v.lang === 'en-GB') ? 'en-GB' : 'en-US';
                     this.currentLang = this.langSelect.value;
                 };
